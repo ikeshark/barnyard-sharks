@@ -1,14 +1,298 @@
-body {
+* {
+  box-sizing: border-box;
   margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+/* a {
+  text-decoration: none;
+} */
+
+p, li, button {
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+}
+ul {list-style: none;}
+body {
+  font-size: 135%;
+  background-color: #e8d6cd;
+}
+
+button {
+  border: none;
+  display: block;
+  background: inherit;
+  cursor: pointer;
+}
+.gigWrapper {
+  flex-direction: row !important;
+}
+.gigWrapper label {
+  width: 40%;
+}
+.gigList {
+  width: 100%;
+  height: calc(100vh - 240px);
+  overflow-y: scroll;
+  padding: 0 10px;
+}
+.gigList li {
+  display: flex;
+}
+.gigList button {
+  flex-grow: 0;
+  width: auto !important;
+  margin: 2px !important;
+  padding: 2px 10px !important;
+}
+.gigList button:first-of-type {
+  flex-grow: 1;
+  text-align: left;
+}
+
+
+.flex {
+  display: flex;
+}
+
+
+nav {
+  box-shadow: 0 3px 1px slategrey;
+  background-color: #484143;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 3;
+}
+nav button {
+  padding: 15px 0;
+  text-transform: uppercase;
+  color: white;
+}
+/* header button {
+  color: #484143;
+  background: pink;
+  text-shadow: 1px 1px 0 white;
+  font-weight: bold;
+  padding: 6px;
+  border-radius: 4px;
+} */
+nav button:hover {
+  color: pink;
+}
+
+
+main {
+  margin-top: 68px;
+}
+
+.songList {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  min-height: 80vh;
+  max-height: 70vh;
+  margin-top: 15px;
+  width: 100%;
+  overflow-x: scroll;
+}
+.exit {
+  position: absolute;
+  top: 43%;
+  left: -40px;
+  font-size: 1.75em !important;
+  border-radius: 8px;
+  border: 1px solid black;
+}
+.flipRotate {
+  transform: rotate(180deg);
+}
+.filterWrapper {
+  width: 80%;
+  margin: 0px auto 0 auto;
+  background: #eee;
+  padding: 6px 6px 20px 6px;
+  height: 200px;
+  position: absolute;
+  top: 52px;
+  left: calc(20vw / 2);
+  display: flex;
+  box-shadow: 0px 5px 3px grey;
+  justify-content: center;
+  transition: transform .5s;
+}
+.filterWrapper div {
+  flex-grow: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.filterWrapper h3 {
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  padding: 0 0 0 5px;
+  font-size: 1.35rem;
+}
+.filterWrapper button {
+  padding: 5px 15px;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 10px;
+}
+.filterWrapper button:hover {
+  box-shadow: 0 0 10px 5px pink;
+}
+.filterSort {
+  border-left: 4px solid black;
+}
+.filterHide {
+  position: absolute;
+  bottom: -30px;
+}
+.hide {
+  transform: translateY(-90%);
+}
+
+
+.active {
+  background: deeppink;
+  color: white;
+}
+
+.label, iframe {
+  display: block;
+  margin: 0.7rem 0;
+  color: darkslategrey;
+  font-family: sans-serif;
+  font-size: 0.9rem;
+  border: 1px solid black;
+  box-shadow: -5px 5px 0px slategrey;
+  width: 50%;
+}
+
+.label {
+  padding: 12px 0 0 12px;
+}
+
+.label, iframe {
+  margin-left: 25px;
+}
+
+
+.label:focus-within {
+  background: #eee;
+}
+.button {
+  margin: 20px;
+  font-size: 1em;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.input {
+  display: block;
+  margin: 0.3rem 0;
+  font-size: 1.1em;
+  border: none;
+  text-decoration: none !important;
+  width: 90%;
+  padding: 6px 1px;
+  text-indent: 2px;
+  margin-left: -4px;
+}
+@keyframes slideIn {
+  from {transform: translateX(100%)},
+  to {transform: translateX(0)}
+}
+.wrapper {
+  position: fixed;
+  width: 80%;
+  right: 0;
+  top: 48px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  height: 90%;
+  background: white;
+  animation: slideIn .5s;
+  box-shadow: -4px 4px 1px slategrey;
+  font-size: 16px;
+  padding-top: 10px;
+}
+
+.wrapper button:not(.exit) {
+  border: 2px solid darkslategrey;
+  border-radius: 4px;
+  padding: 10px;
+  width: 40%;
+  box-shadow: 0 0 1px 2px slategrey;
+  margin: 10px;
+}
+.songList {
+  list-style: none;
+  margin: 90px 10px 0 10px;
+  padding: 0 0 0 10px;
+}
+.songList button {
+  border: 0;
+  font-size: 1rem;
+  margin: 3px 0;
+  border: 1px solid transparent;
+}
+.songList button:hover, .songList .active {
+  background: slategrey;
+  color: white;
+  border: 1px solid darkslategrey;
+}
+.audio {
+  height: 66px;
+  width: 100%;
+}
+.audioForm {
+  width: 50%;
+}
+.newSongBtn {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid black;
+  width: 60px;
+  height: 60px;
+  font-size: 0.7em;
+}
+
+.gigWrapper input {
+  display: inline !important;
+  width: 40%;
+  margin-left: 30px;
+}
+
+.modalSongList {
+  position: absolute;
+  left: -18vw;
+  top: 0;
+  height: 96vh;
+  background: white;
+  width: 96vw;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  padding: 0;
+}
+.modalSongList li {
+  width: 25%;
+}
+.modalSongList li button {
+  width: 100% !important;
+  margin: 0 !important;
 }
