@@ -51,9 +51,12 @@ class Gigs extends React.Component {
           />
         </div>
 
-        <button className="newSongBtn" onClick={this.addNewGig}>
-          new gig
-        </button>
+        {
+          this.props.authUser &&
+          <button className="newSongBtn" onClick={this.addNewGig}>
+            new gig
+          </button>
+        }
 
         {
           this.state.isDetail &&
@@ -63,6 +66,7 @@ class Gigs extends React.Component {
             songs={this.props.songs}
             gig={this.state.detailedGig}
             exit={this.exitDetail}
+            authUser={this.props.authUser}
           />
         }
       </main>

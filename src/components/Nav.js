@@ -2,6 +2,7 @@ import React from 'react';
 
 const Nav = ({ onClickNav, tab }) => (
   <nav>
+    <h1 className="hideForS">sharkApp</h1>
     <button
       onClick={onClickNav}
       value="songs"

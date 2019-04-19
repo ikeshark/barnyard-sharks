@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const Filter = ({
   isOpen,
@@ -9,10 +9,25 @@ const Filter = ({
   vocalistFilter,
   sortType,
   onSort,
-  }) => (
-    <div className={isOpen ? 'filterWrapper' : 'filterWrapper hide'}>
-      <div>
-        <h3>Filter By Status</h3>
+}) => {
+  const [isStatus, setIsStatus] = useState(true);
+
+  const flipState = () => {
+    setIsStatus(!isStatus)
+  }
+  return (
+    <div className={isOpen ? "filterWrapper" : "filterWrapper hideFilter"}>
+      <div className="filterSelectorWrapper">
+        <h3>FILTER</h3>
+        <button id="status" onClick={flipState} className={isStatus ? "active" : ""}>
+          Status
+        </button>
+        <button id="vocals" onClick={flipState} className={isStatus ? "" : "active"}>
+          Vocals
+        </button>
+      </div>
+
+      <div id="statusWrapper" className={isStatus ? "" : "hide"}>
         <button
           onClick={filterByStatus}
           className={statusFilter === "solid" ? "active" : ""}
@@ -42,9 +57,7 @@ const Filter = ({
           Retired
         </button>
       </div>
-
-      <div>
-        <h3>Filter By Vocals</h3>
+      <div id="vocalsWrapper" className={isStatus ? "hide" : ""}>
         <button
           onClick={filterByVocals}
           value="Preacher"
@@ -83,20 +96,20 @@ const Filter = ({
       </div>
 
       <div className="filterSort">
-        <h3>Sort By Date</h3>
+        <h3>Sort</h3>
         <button
           value="newest"
           onClick={onSort}
           className={sortType === "newest" ? "active" : ""}
         >
-          Newest
+          New
         </button>
         <button
           value="oldest"
           onClick={onSort}
           className={sortType === "oldest" ? "active" : ""}
         >
-          Oldest
+          Old
         </button>
       </div>
 
@@ -108,5 +121,5 @@ const Filter = ({
       </button>
     </div>
   );
-
+}
 export default Filter;

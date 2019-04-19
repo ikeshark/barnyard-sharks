@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
 
 import Firebase from './firebase';
+import Modal from './Modal';
 import Nav from './Nav';
 import Songs from './Songs';
 import Gigs from './Gigs';
+import { SignInForm, SignOutButton } from './User';
 
 const INITIAL_STATE = {
   songs: [],
   gigs: [],
   loading: false,
   tab: 'songs',
+  isAuthDisplay: false,
+  authUser: null,
 }
 
 class App extends Component {
@@ -33,11 +37,50 @@ class App extends Component {
         loading: false
       });
     });
+    this.firebase.auth.onAuthStateChanged(
+      authUser => {
+        authUser ?
+          this.setState({ authUser, isAuthDisplay: false }) :
+          this.setState({ authUser: null });
+
+      }
+    );
   }
 
   onClickNav = e => {
     this.setState({ tab: e.target.value });
   }
+
+  onShowSignIn = () => {
+    this.setState({ isAuthDisplay: true });
+  }
+
+  renderSignInOrOut = () => {
+    if (this.state.authUser) {
+      return (
+        <SignOutButton
+          className="userBtn"
+          firebase={this.firebase}
+        />
+      );
+    } else {
+      return (
+        <button
+          onClick={this.onShowSignIn}
+          className="userBtn"
+        >
+          Sign In
+        </button>
+      );
+    }
+  }
+
+  onModalClose = e => {
+    if (e.target === document.querySelector('.modalBG')) {
+      this.setState({ isAuthDisplay: false });
+    };
+  }
+
 
   renderMain = () => {
     switch (this.state.tab) {
@@ -46,6 +89,7 @@ class App extends Component {
           <Songs
             songs={this.state.songs}
             firebase={this.firebase}
+            authUser={this.state.authUser}
           />
         );
       case 'gigs':
@@ -54,6 +98,7 @@ class App extends Component {
             gigs={this.state.gigs}
             songs={this.state.songs}
             firebase={this.firebase}
+            authUser={this.state.authUser}
           />
         );
     }
@@ -66,7 +111,16 @@ class App extends Component {
         {!this.state.loading &&
           <div>
             <Nav onClickNav={this.onClickNav} tab={this.state.tab}/>
+
             {this.renderMain()}
+
+            {this.renderSignInOrOut()}
+
+            {this.state.isAuthDisplay &&
+              <Modal onClose={this.onModalClose}>
+                <SignInForm className="modalBox" firebase={this.firebase} />
+              </Modal>
+            }
           </div>
         }
       </div>

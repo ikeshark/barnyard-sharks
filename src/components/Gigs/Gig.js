@@ -4,7 +4,6 @@ import SetList from './SetList';
 import SongList from './../Songs/SongList';
 
 const INITIAL_STATE = {
-  auth: true,
   date: 0,
   dateInput: '',
   hasChanged: false,
@@ -20,6 +19,7 @@ class Gig extends React.Component {
     let setList;
     if (this.props.gig.setList && this.props.gig.setList.length) {
       setList = this.props.gig.setList.split(',');
+
     }
 
     this.setState({
@@ -28,9 +28,9 @@ class Gig extends React.Component {
       setList: setList || [],
     });
   }
-  componentWillUpdate(nextProps, nextState) {
-    console.log(nextState.setList);
-  }
+  // componentWillUpdate(nextProps, nextState) {
+  //   console.log(nextState.setList);
+  // }
   onChange = e => {
     this.setState({
       [e.target.name]: e.target.value,
@@ -163,7 +163,7 @@ class Gig extends React.Component {
         <label className="label">
           location
           <input
-            disabled={!this.state.auth}
+            disabled={!this.props.authUser}
             name="location"
             onChange={this.onChange}
             value={this.state.location}
@@ -173,7 +173,7 @@ class Gig extends React.Component {
         <label className="label">
           date
           <input
-            disabled={!this.state.auth}
+            disabled={!this.props.authUser}
             name="date"
             onChange={this.onDateChange}
             value={this.processDate(this.state.date) || this.state.dateInput}
@@ -184,13 +184,19 @@ class Gig extends React.Component {
 
         <SetList
           songs={this.props.songs}
+          authUser={this.props.authUser}
           setList={this.state.setList}
           onMoveUp={this.onMoveUp}
           onMoveDown={this.onMoveDown}
           onDelete={this.onDelete}
         />
 
-        <button onClick={this.onAddSong}>Add Song</button>
+        <button
+          onClick={this.onAddSong}
+          disabled={!this.props.authUser}
+        >
+          Add Song
+        </button>
         {this.renderSaveOrCreate()}
 
         {

@@ -2,14 +2,14 @@ import React from 'react';
 
 const INITIAL_STATE = {
   audio: '',
-  auth: true,
   dob: 0,
   dobInput: '',
   hasChanged: false,
   name: '',
   status: '',
   vox: '',
-}
+  isCover: false,
+};
 
 class Song extends React.Component {
   state = { ...INITIAL_STATE };
@@ -21,6 +21,7 @@ class Song extends React.Component {
       name: this.props.song.name,
       vox: this.props.song.vox,
       status: this.props.song.status,
+      isCover: this.props.song.isCover || false,
     });
   }
 
@@ -107,14 +108,18 @@ class Song extends React.Component {
   renderSaveOrCreate = () => {
     if (this.props.id === '') {
       return (
-        <button onClick={this.onCreate} disabled={!this.state.name}>
+        <button
+          className="button songCreate"
+          onClick={this.onCreate}
+          disabled={!this.state.name}
+        >
           create new song
         </button>
       );
     }
     return (
       <button
-        className="button"
+        className="button songEdit"
         onClick={this.onEdit}
         disabled={!this.state.hasChanged}
       >
@@ -126,10 +131,10 @@ class Song extends React.Component {
     if (this.state.audio) {
       if (this.state.audio.host === 'soundcloud') {
         const source = `https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/${this.state.audio.trackID}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=false&show_user=false&show_reposts=false&show_teaser=false`
-        return <iframe title="soundcloud" height="78" src={source}></iframe>
+        return <iframe title="soundcloud" height="70" src={source}></iframe>
       } else {
         const source = `https://bandcamp.com/EmbeddedPlayer/size=small/bgcol=ffffff/linkcol=0687f5/track=${this.state.audio.trackID}/transparent=true/`;
-        return <iframe title="bandcamp" height="42" src={source}><p>{this.state.name}</p></iframe>
+        return <iframe title="bandcamp" height="45" src={source}><p>{this.state.name}</p></iframe>
       }
     } else {
       return (
@@ -137,7 +142,7 @@ class Song extends React.Component {
           <label className="label audio">
             audio
             <input
-              disabled={!this.state.auth}
+              disabled={!this.props.authUser}
               placeholder="enter entire embed code"
               name="newAudio"
               onChange={this.onChange}
@@ -153,20 +158,20 @@ class Song extends React.Component {
   render() {
     return (
       <div className="wrapper">
-        <label className="label">
+        <label className="label songName">
           name
           <input
-            disabled={!this.state.auth}
+            disabled={!this.props.authUser}
             name="name"
             onChange={this.onChange}
             value={this.state.name}
             className="input"
           />
         </label>
-        <label className="label">
+        <label className="label songDate">
           date of birth
           <input
-            disabled={!this.state.auth}
+            disabled={!this.props.authUser}
             name="dob"
             onChange={this.onDateChange}
             value={this.processDate(this.state.dob) || this.state.dobInput}
@@ -174,20 +179,20 @@ class Song extends React.Component {
             placeholder="mm/dd/yyyy"
           />
         </label>
-        <label className="label">
+        <label className="label songStatus">
           status
           <input
-            disabled={!this.state.auth}
+            disabled={!this.props.authUser}
             name="status"
             onChange={this.onChange}
             value={this.state.status}
             className="input"
           />
         </label>
-        <label className="label">
+        <label className="label songVocalist">
           vocalist
           <input
-            disabled={!this.state.auth}
+            disabled={!this.props.authUser}
             name="vox"
             onChange={this.onChange}
             value={this.state.vox}
@@ -195,12 +200,36 @@ class Song extends React.Component {
           />
         </label>
         {this.renderAudio()}
-
+        <label className="label songLyrics">
+          lyrics
+          <input
+            type="input"
+            disabled={!this.props.authUser}
+            name="lyrics"
+            className="input"
+          />
+        </label>
+        <label className="label songCover">
+          cover?
+          <input
+            type="checkbox"
+            disabled={!this.props.authUser}
+            name="isCover"
+            onChange={this.onBoolChange}
+            value={this.state.isCover}
+            className="input"
+          />
+        </label>
+        <label className="label songRequired">
+          Required Sharks
+          <input
+            type="input"
+            disabled={!this.props.authUser}
+            name="requiredSharks"
+            className="input"
+          />
+        </label>
         {this.renderSaveOrCreate()}
-
-        <button>
-          Add to Setlist
-        </button>
 
         <button onClick={this.props.exit} className="button exit">
           >
@@ -210,7 +239,5 @@ class Song extends React.Component {
   }
 
 }
-
-
 
 export default Song;

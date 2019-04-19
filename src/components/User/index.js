@@ -1,12 +1,10 @@
 import React from 'react';
 
-const MyTop12 = ({ top12 }) => {
-  return (
-    <ul>
-      <li>song 1</li>
-      <li>song 2</li>
-      <li>song 3</li>
-      <li>song 4</li>
-    </ul>
-  );
-}
+import SignInForm from './SignInForm';
+import SignOutButton from './SignOutButton';
+
+export { SignInForm, SignOutButton };
+
+// change password
+// sign out
+// favs
