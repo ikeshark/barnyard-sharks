@@ -107,7 +107,7 @@ class Gig extends React.Component {
   }
 
   processDate = date => {
-    if (date == '') {
+    if (date === '') {
       return ''
     }
     else if (typeof date === 'string') {

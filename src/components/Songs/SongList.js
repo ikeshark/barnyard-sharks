@@ -9,6 +9,7 @@ class SongList extends React.Component {
     statusFilter: '',
     vocalistFilter: '',
     sortType: '',
+    isCover: false,
     isFilterShowing: true,
   }
 
@@ -45,15 +46,26 @@ class SongList extends React.Component {
       isFilterShowing: !prevState.isFilterShowing
     }));
   }
+  handleCoverFilter = () => {
+    this.setState(prevState => ({
+      isCover: !prevState.isCover }), this.displaySongs
+    );
+  }
 
   displaySongs = (songs = this.props.songs) => {
-    const { statusFilter, vocalistFilter, sortType } = this.state;
+    const { statusFilter, vocalistFilter, sortType, isCover } = this.state;
     let displayedSongs = Object.values(songs);
+    // no covers is default
+    if (!isCover) {
+      displayedSongs = displayedSongs.filter(song => song.isCover === undefined || song.isCover === false);
+    }
     if (statusFilter) {
       displayedSongs = displayedSongs.filter(song => song.status === statusFilter);
     }
     if (vocalistFilter) {
-      displayedSongs = displayedSongs.filter(song => song.vox === vocalistFilter);
+      const test = new RegExp(vocalistFilter);
+      console.log(vocalistFilter);
+      displayedSongs = displayedSongs.filter(song => test.test(song.vox));
     }
     if (sortType) {
       if (sortType === 'newest') {
@@ -88,6 +100,8 @@ class SongList extends React.Component {
           ))}
         </ul>
         <Filter
+          handleCoverFilter={this.handleCoverFilter}
+          isCover={this.state.isCover}
           isOpen={this.state.isFilterShowing}
           onToggleFilter={this.onToggleFilter}
           filterByStatus={this.filterByStatus}

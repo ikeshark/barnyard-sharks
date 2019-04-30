@@ -14,17 +14,17 @@ const renderDate = date => {
 }
 
 const SharkList = ({ sharks, detailedShark, showDetail }) => {
-  const sharkArray = Object.entries(sharks);
+  const sharkArray = Object.entries(sharks.active);
   return (
     <ul className="songList">
-      {sharkArray.map(gig => (
+      {sharkArray.map(shark => (
         <li key={shark[0]}>
           <button
             onClick={showDetail}
             className={detailedShark === shark[1] ? "active" : ""}
             value={shark[0]}
           >
-            {shark.name}
+            {shark[1].name}
           </button>
         </li>
       ))}

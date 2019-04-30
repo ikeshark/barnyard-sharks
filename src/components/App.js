@@ -5,11 +5,14 @@ import Modal from './Modal';
 import Nav from './Nav';
 import Songs from './Songs';
 import Gigs from './Gigs';
+import Sharks from './Sharks';
 import { SignInForm, SignOutButton } from './User';
 
 const INITIAL_STATE = {
   songs: [],
   gigs: [],
+  sharks: [],
+
   loading: false,
   tab: 'songs',
   isAuthDisplay: false,
@@ -37,12 +40,18 @@ class App extends Component {
         loading: false
       });
     });
+    this.firebase.db.ref('sharks').on('value', snapshot => {
+      this.setState({
+        sharks: snapshot.val(),
+        loading: false
+      });
+      console.log(snapshot.val())
+    });
     this.firebase.auth.onAuthStateChanged(
       authUser => {
         authUser ?
           this.setState({ authUser, isAuthDisplay: false }) :
           this.setState({ authUser: null });
-
       }
     );
   }
@@ -89,6 +98,7 @@ class App extends Component {
           <Songs
             songs={this.state.songs}
             firebase={this.firebase}
+            sharks={this.state.sharks}
             authUser={this.state.authUser}
           />
         );
@@ -96,6 +106,22 @@ class App extends Component {
         return (
           <Gigs
             gigs={this.state.gigs}
+            songs={this.state.songs}
+            firebase={this.firebase}
+            authUser={this.state.authUser}
+          />
+        );
+      case 'sharks':
+        return (
+          <Sharks
+            sharks={this.state.sharks}
+            firebase={this.firebase}
+            authUser={this.state.authUser}
+          />
+        );
+      default:
+        return (
+          <Songs
             songs={this.state.songs}
             firebase={this.firebase}
             authUser={this.state.authUser}

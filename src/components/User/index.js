@@ -1,4 +1,3 @@
-import React from 'react';
 
 import SignInForm from './SignInForm';
 import SignOutButton from './SignOutButton';

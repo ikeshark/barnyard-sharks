@@ -18,6 +18,7 @@ const Nav = ({ onClickNav, tab }) => (
       Gigs
     </button>
     <button
+      onClick={onClickNav}
       value="sharks"
       className={tab === 'sharks' ? "active" : ""}
     >

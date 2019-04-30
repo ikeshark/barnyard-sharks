@@ -1,23 +1,23 @@
 import React from 'react';
 
 import Shark from './Shark';
+import SharkList from './SharkList';
 
 const INITIAL_STATE = {
 
   detailedShark: {},
   detailedSharkID: '',
-  isDetail: false;
+  isDetail: false
 
 }
-
-
 
 class Sharks extends React.Component {
   state = {...INITIAL_STATE};
 
   showDetail = e => {
     const detailedSharkID = e.target.value;
-    const detailedShark = Object.entries(this.props.sharks)
+    console.log(detailedSharkID);
+    const detailedShark = Object.entries(this.props.sharks.active)
       .filter(shark => shark[0] === detailedSharkID)[0][1];
     this.setState({ isDetail: false }, () => {
       this.setState({
@@ -28,11 +28,16 @@ class Sharks extends React.Component {
     })
   }
 
+  exitDetail = () => {
+    this.setState({ ...INITIAL_STATE });
+  }
+
   render() {
     return (
-      <div>
+      <main>
         <SharkList
           sharks={this.props.sharks}
+          showDetail={this.showDetail}
           detailedShark={this.state.detailedShark}
         />
         {
@@ -43,9 +48,12 @@ class Sharks extends React.Component {
             sharks={this.props.sharks}
             shark={this.state.detailedShark}
             exit={this.exitDetail}
+            authUser={this.props.authUser}
           />
         }
-      </div>
+      </main>
     );
   }
 }
+
+export default Sharks;

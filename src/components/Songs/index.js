@@ -1,7 +1,6 @@
 import React from 'react';
 
 import Song from './Song';
-import Filter from './Filter';
 import SongList from './SongList';
 
 const INITIAL_STATE = {
@@ -31,7 +30,7 @@ class Songs extends React.Component {
     })
   }
   exitDetail = () => {
-    this.setState({ isDetail: false });
+    this.setState({ isDetail: false, detailedSong: '' });
   }
   addNewSong = () => {
     this.setState({
@@ -67,8 +66,10 @@ class Songs extends React.Component {
           <Song
             id={this.state.detailedSongID}
             firebase={this.props.firebase}
+            songs={this.props.songs}
             song={detailedSong}
             exit={this.exitDetail}
+            sharks={this.props.sharks}
             authUser={this.props.authUser}
           />
         }

@@ -1,4 +1,4 @@
-import * as firebase from 'firebase';
+
 
 import app from 'firebase/app';
 import 'firebase/auth';
@@ -33,9 +33,14 @@ class Firebase {
     this.auth.currentUser.updatePassword(password);
 
   // DB API //
+  getSongs = () => {
+    return this.db.ref('songs').once('value')
+    .then(snapshot => snapshot.val())
+  }
 
-  doCreateSong = song =>
+  doCreateSong = song => {
     this.db.ref().child('songs').push(song);
+  }
 
   doCreateGig = gig =>
     this.db.ref().child('gigs').push(gig);

@@ -7,6 +7,8 @@ const Filter = ({
   onToggleFilter,
   statusFilter,
   vocalistFilter,
+  handleCoverFilter,
+  isCover,
   sortType,
   onSort,
 }) => {
@@ -24,6 +26,9 @@ const Filter = ({
         </button>
         <button id="vocals" onClick={flipState} className={isStatus ? "" : "active"}>
           Vocals
+        </button>
+        <button id="covers" onClick={handleCoverFilter} className={isCover ? "active" : ""}>
+          Covers
         </button>
       </div>
 
@@ -60,22 +65,22 @@ const Filter = ({
       <div id="vocalsWrapper" className={isStatus ? "hide" : ""}>
         <button
           onClick={filterByVocals}
-          value="Preacher"
-          className={vocalistFilter === "Preacher" ? "active" : ""}
+          value="05x2qzOXABfcDkMGTClzDZxzBBt2"
+          className={vocalistFilter === "05x2qzOXABfcDkMGTClzDZxzBBt2" ? "active" : ""}
         >
           Preacher
         </button>
         <button
           onClick={filterByVocals}
-          value="Drummer"
-          className={vocalistFilter === "Drummer" ? "active" : ""}
+          value="r6hSiQpBaNfqiPgKatywDJCDRL13"
+          className={vocalistFilter === "r6hSiQpBaNfqiPgKatywDJCDRL13" ? "active" : ""}
         >
           Drummer
         </button>
         <button
           onClick={filterByVocals}
-          value="Shank"
-          className={vocalistFilter === "Shank" ? "active" : ""}
+          value="fUek7qwanvg3Sp8BJlp0NLswllO2"
+          className={vocalistFilter === "fUek7qwanvg3Sp8BJlp0NLswllO2" ? "active" : ""}
         >
           Shank
         </button>
