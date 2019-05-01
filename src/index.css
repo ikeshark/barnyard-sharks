@@ -136,7 +136,7 @@ nav button:hover {
 .label {
   width: 45%;
   font-size: 1rem;
-  min-height: 84px;
+  min-height: 78px;
 }
 .label, iframe {
   margin: 0 0 10px 0;
@@ -228,14 +228,13 @@ nav button:hover {
 .exit {
   position: absolute;
   top: 43%;
-  left: -42px;
-  font-size: 1.75em !important;
+  left: -44px;
+  font-size: 1.5em !important;
   border-radius: 8px;
   border: 1px solid black;
-  width: 30px;
+  width: 28px;
   height: 35px;
 }
-
 /* GIG PAGE */
 .gigWrapper {
   flex-direction: row !important;

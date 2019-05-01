@@ -205,6 +205,7 @@ class Gig extends React.Component {
             className="modalSongList"
             onClick={this.onPushToSetList}
             songs={Object.values(this.props.songs)}
+            sharks={this.props.sharks}
           />
         }
 

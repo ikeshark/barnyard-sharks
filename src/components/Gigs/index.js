@@ -67,6 +67,7 @@ class Gigs extends React.Component {
             gig={this.state.detailedGig}
             exit={this.exitDetail}
             authUser={this.props.authUser}
+            sharks={this.props.sharks}
           />
         }
       </main>

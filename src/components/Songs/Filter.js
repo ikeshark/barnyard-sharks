@@ -11,11 +11,18 @@ const Filter = ({
   isCover,
   sortType,
   onSort,
+  sharks,
 }) => {
   const [isStatus, setIsStatus] = useState(true);
 
   const flipState = () => {
     setIsStatus(!isStatus)
+  }
+
+  const getName = uid => {
+    if (sharks.active) {
+      return sharks.active[uid].name;
+    }
   }
   return (
     <div className={isOpen ? "filterWrapper" : "filterWrapper hideFilter"}>
@@ -62,27 +69,29 @@ const Filter = ({
           Retired
         </button>
       </div>
+
+
       <div id="vocalsWrapper" className={isStatus ? "hide" : ""}>
         <button
           onClick={filterByVocals}
           value="05x2qzOXABfcDkMGTClzDZxzBBt2"
           className={vocalistFilter === "05x2qzOXABfcDkMGTClzDZxzBBt2" ? "active" : ""}
         >
-          Preacher
+          {getName('05x2qzOXABfcDkMGTClzDZxzBBt2')}
         </button>
         <button
           onClick={filterByVocals}
           value="r6hSiQpBaNfqiPgKatywDJCDRL13"
           className={vocalistFilter === "r6hSiQpBaNfqiPgKatywDJCDRL13" ? "active" : ""}
         >
-          Drummer
+          {getName('r6hSiQpBaNfqiPgKatywDJCDRL13')}
         </button>
         <button
           onClick={filterByVocals}
           value="fUek7qwanvg3Sp8BJlp0NLswllO2"
           className={vocalistFilter === "fUek7qwanvg3Sp8BJlp0NLswllO2" ? "active" : ""}
         >
-          Shank
+          {getName('fUek7qwanvg3Sp8BJlp0NLswllO2')}
         </button>
         <button
           onClick={filterByVocals}

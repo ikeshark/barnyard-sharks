@@ -64,7 +64,6 @@ class SongList extends React.Component {
     }
     if (vocalistFilter) {
       const test = new RegExp(vocalistFilter);
-      console.log(vocalistFilter);
       displayedSongs = displayedSongs.filter(song => test.test(song.vox));
     }
     if (sortType) {
@@ -110,6 +109,7 @@ class SongList extends React.Component {
           vocalistFilter={this.state.vocalistFilter}
           onSort={this.onSort}
           sortType={this.state.sortType}
+          sharks={this.props.sharks}
         />
       </div>
     );

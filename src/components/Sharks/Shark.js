@@ -65,7 +65,6 @@ class Shark extends React.Component {
   }
 
   render() {
-    const { shark } = this.props;
     // if current user is the detailed shark, you are valid
     const validated = this.props.authUser.uid === this.props.id;
     return (
@@ -75,7 +74,7 @@ class Shark extends React.Component {
           <input
             name="name"
             onChange={this.handleChange}
-            value={shark.name}
+            value={this.state.name}
             disabled={!validated}
             className="input"
           />

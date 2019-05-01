@@ -31,13 +31,11 @@ class App extends Component {
     this.firebase.db.ref('songs').on('value', snapshot => {
       this.setState({
         songs: snapshot.val(),
-        loading: false
       });
     });
     this.firebase.db.ref('gigs').on('value', snapshot => {
       this.setState({
         gigs: snapshot.val(),
-        loading: false
       });
     });
     this.firebase.db.ref('sharks').on('value', snapshot => {
@@ -45,7 +43,6 @@ class App extends Component {
         sharks: snapshot.val(),
         loading: false
       });
-      console.log(snapshot.val())
     });
     this.firebase.auth.onAuthStateChanged(
       authUser => {
@@ -109,6 +106,7 @@ class App extends Component {
             songs={this.state.songs}
             firebase={this.firebase}
             authUser={this.state.authUser}
+            sharks={this.state.sharks}
           />
         );
       case 'sharks':

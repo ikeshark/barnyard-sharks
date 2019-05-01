@@ -51,6 +51,7 @@ class Songs extends React.Component {
           onClick={this.showDetail}
           songs={this.props.songs}
           detailedSong={detailedSong}
+          sharks={this.props.sharks}
         />
 
 

@@ -182,7 +182,6 @@ class Song extends React.Component {
 
   handleVoxChange = e => {
     const value = e.target.value;
-    const valueTest = new RegExp(value);
     let vox = this.state.vox;
     if (value === 'instrumental' && e.target.checked) {
       this.setState({ vox: 'instrumental' });
@@ -223,7 +222,6 @@ class Song extends React.Component {
 
   renderVocalistSelect = () => {
     let sharks = Object.entries(this.props.sharks.active);
-    let voxArray = this.state.vox.split(', ');
     let options = sharks.map(shark => {
       const test = new RegExp(shark[0]);
       return (

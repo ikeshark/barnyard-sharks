@@ -16,7 +16,6 @@ class Sharks extends React.Component {
 
   showDetail = e => {
     const detailedSharkID = e.target.value;
-    console.log(detailedSharkID);
     const detailedShark = Object.entries(this.props.sharks.active)
       .filter(shark => shark[0] === detailedSharkID)[0][1];
     this.setState({ isDetail: false }, () => {
