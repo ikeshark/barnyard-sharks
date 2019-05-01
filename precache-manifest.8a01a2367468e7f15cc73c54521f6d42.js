@@ -4,19 +4,19 @@ self.__precacheManifest = [
     "url": "/barnyard-sharks/static/js/runtime~main.ad91d716.js"
   },
   {
-    "revision": "a54e7b341ed4222dbdcc",
-    "url": "/barnyard-sharks/static/js/main.3dc9363b.chunk.js"
+    "revision": "ff4583799b935c829dde",
+    "url": "/barnyard-sharks/static/js/main.cec0fd4a.chunk.js"
   },
   {
     "revision": "8fedc764544c43c9a37e",
     "url": "/barnyard-sharks/static/js/2.1edc617a.chunk.js"
   },
   {
-    "revision": "a54e7b341ed4222dbdcc",
-    "url": "/barnyard-sharks/static/css/main.161a9f1e.chunk.css"
+    "revision": "ff4583799b935c829dde",
+    "url": "/barnyard-sharks/static/css/main.d23d8f7b.chunk.css"
   },
   {
-    "revision": "c98241db2852d97e43876bf04c962aef",
+    "revision": "f78e41c173baf9ba464bbc3c63c5f91e",
     "url": "/barnyard-sharks/index.html"
   }
 ];
