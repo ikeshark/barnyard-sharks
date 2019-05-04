@@ -1,0 +1,320 @@
+
+.flex {
+  display: flex;
+}
+
+.l-25w {width: 25%;}
+.l-33w {width: 33.33%;}
+.l-50w {width: 50%;}
+.l-66w {width: 66.66%;}
+.l-75w {width: 75%;}
+
+.l-95w {
+  width: 95% !important;
+}
+
+
+/* NAV */
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  position: fixed;
+  width: 100vw;
+  top: 0;
+  z-index: 3;
+}
+
+nav button, h1 {
+  margin: 10px auto;
+}
+
+
+/* FILTER */
+.filterWrapper {
+  align-items: center;
+  background: #eee;
+  bottom: -1px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  height: 200px;
+  justify-content: flex-end;
+  left: calc(10vw / 2);
+  margin: 0px auto 0 auto;
+  position: fixed;
+  width: 90%;
+  z-index:9;
+}
+.filterWrapper div {
+  flex-grow: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.filterWrapper h3 {
+  width: 100%;
+  margin: 0;
+}
+.filterWrapper button {
+  margin: 3px;
+}
+.filterHide {
+  position: absolute;
+  top: -35px;
+}
+
+/* SONG PAGE */
+
+.label, iframe {
+  display: block;
+  margin: 0.7rem 0;
+  width: 50%;
+}
+.label {
+  width: 45%;
+  min-height: 78px;
+}
+.label, iframe {
+  margin: 0 0 10px 0;
+}
+.input {
+  display: block;
+  margin: 0.3rem 0 0.3rem -4px;
+  width: 90%;
+}
+.songName, iframe, .audioForm, .songVocalist {
+  width: 96%;
+}
+.songVocalistOption {
+  min-height: 20px;
+  width: 30%;
+}
+.vocalSelectWrapper {
+  width: 100%;
+  display: flex;
+  flex-wrap:wrap;
+  position: absolute;
+  top: 100%;
+  left: 0px;
+  z-index: 5;
+}
+.audioForm {
+  height: 60px;
+}
+.label.audio {
+  width: 100%;
+  min-height: 60px;
+  max-height: 60px;
+}
+.songEdit, .songCreate {
+  width: 96% !important;
+}
+.button {
+  margin: 20px;
+}
+.songLyrics, .songRequired {
+  width: 44%;
+  height: 10%;
+}
+.songLyrics, .songVocalist {
+  position: relative;
+}
+.songLyrics span {
+  position: absolute;
+  top: 10px;
+}
+.songCover {
+  position: absolute;
+  top: 33px;
+  right: 25px;
+}
+/* song detail exit button */
+.exit {
+  position: absolute;
+  top: 43%;
+  left: -44px;
+  width: 28px;
+  height: 35px;
+}
+
+
+/* GIG PAGE */
+.gigWrapper {
+  flex-direction: row !important;
+}
+.gigWrapper label {
+  width: 96%;
+  min-height: 65px !important;
+}
+.gigList {
+  width: 100%;
+  height: calc(100vh - 300px);
+}
+.gigList li {
+  display: flex;
+}
+.gigList button {
+  flex-grow: 0;
+  width: auto !important;
+  margin: 2px !important;
+}
+.gigList button:first-of-type {
+  flex-grow: 1;
+}
+
+.gigWrapper input {
+  width: 100%;
+}
+
+/* SHARK */
+
+
+/* STATE */
+.hide {display: none!important;}
+.wrapper {
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  height: 90%;
+  justify-content: space-around;
+  position: fixed;
+  right: 0;
+  top: 60px;
+  width: 80%;
+  z-index: 9;
+}
+@media screen and (max-width: 420px) {
+  .hideForS {
+    display: none!important;
+  }
+}
+.songList {
+  height: 100%;
+  width: 100%;
+}
+.songList button {
+  margin: 3px 0;
+  width: 90%;
+}
+.songList li:last-of-type {
+  margin-bottom: 200px;
+}
+
+.audio {
+  height: 66px;
+  width: 100%;
+}
+.audioForm {
+  width: 96%;
+}
+.newSongBtn, .userBtn {
+  position: absolute;
+  right: 10px;
+  width: 60px;
+  height: 60px;
+}
+.newSongBtn {
+  top: 77px;
+}
+.userBtn {
+  bottom: 77px;
+  z-index: 1;
+}
+.modalBox {
+  min-width: 200px;
+  max-width: 650px;
+  flex-grow: 1;
+}
+
+h3 {
+  margin-bottom: 10px;
+}
+button.submit {
+  width: 90%;
+  margin: 20px auto;
+}
+
+.modalBox label {
+  width: 96%;
+}
+
+
+.modalSongList {
+  position: absolute;
+  left: -18vw;
+  top: 0;
+  height: 96vh;
+  width: 96vw;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+.modalSongList li {
+  width: 100%;
+}
+.modalSongList li button {
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+#statusWrapper {
+  order: 3;
+}
+
+#statusWrapper, #vocalsWrapper {
+  width: 45%;
+  height: 100%;
+  order: 3;
+}
+.filterSelectorWrapper {
+  width: 25%;
+}
+
+#status, #vocals, #covers {
+  width: 55%;
+  height: 25%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 75px;
+}
+.filterSort {
+  order: 99;
+  width: 22%;
+}
+.filterSort button {
+  width: 90%;
+}
+.mainWrapper {
+  height: 100%;
+  width: 100vw;
+}
+main {
+  margin-top: 60px;
+  height: calc(100vh - 60px);
+}
+
+
+.modalBG {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9;
+}
+
+.songLyricsModal {
+  height: 80vh;
+  width: 90vw;
+}
+.songLyricsModal textarea {
+  width: 103%;
+  height: 95%;
+}

@@ -1,0 +1,281 @@
+:root {
+  --shadowColor: rgba(48,41,43,0.8);
+}
+
+body {
+  background-color: #e8d6cd;
+}
+
+.fontFutura {
+  font-family: 'Futura', sans-serif;
+}
+.fontMetal {
+  font-family: 'Metal Mania', serif;
+}
+
+.red {
+  color: #c00;
+  font-weight: bold;
+}
+
+
+nav, #status, #vocals, #covers {
+  font-family: 'Metal Mania';
+  -webkit-text-stroke: 0.01em black;
+}
+
+
+/* NAV */
+
+nav {
+  box-shadow: 0 3px 1px slategrey;
+  background-color: #484143;
+}
+
+
+nav button, h1 {
+  padding: 5px 10px;
+  text-transform: uppercase;
+  color: white;
+  font-size: 1.15em;
+}
+h1 {
+  text-shadow: 2px 2px black;
+  letter-spacing: 0.5rem;
+  color: white;
+  font-size: 1.25em;
+}
+nav button:hover {
+  color: pink;
+}
+
+/* FILTER */
+.filterWrapper {
+  box-shadow: 0px -2px 33px 12px rgba(0,0,0,0.5);
+  padding: 10px 5px 10px 5px;
+}
+.filterWrapper h3 {
+  text-align: center;
+  padding: 0 0 0 5px;
+  font-size: 1.35rem;
+}
+.filterWrapper button {
+  padding: 5px 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+.filterWrapper button:hover {
+  box-shadow: 0 0 10px 5px pink;
+}
+.filterSort {
+  border-left: 2px solid black;
+}
+
+/* SONG PAGE */
+.label, iframe {
+  color: darkslategrey;
+  font-family: sans-serif;
+  font-size: 0.9rem;
+  border: 1px solid black;
+  box-shadow: -5px 5px 0px var(--shadowColor);
+}
+.label {
+  padding: 12px 0 0 12px;
+}
+.label {
+  font-size: 1rem;
+}
+.label input {
+  font-size: 1.3rem;
+  letter-spacing: 0.02cm;
+}
+.label:focus-within {
+  background: #eee;
+}
+.input {
+  font-size: 1.1em;
+  border: none;
+  text-decoration: none !important;
+  padding: 6px 1px;
+  text-indent: 2px;
+}
+[name=dob] {
+  font-size:1.1rem !important;
+  letter-spacing: 0.008em !important;
+}
+.vocalSelectWrapper {
+  padding: 10px;
+  background: white;
+  border: 1px solid white;
+  box-shadow: -2px 2px 0px grey;
+}
+.label.audio {
+  line-height: 1em;
+  padding: 7px 0 0 7px;
+}
+.label.audio input {
+  font-size: 1rem;
+}
+.button {
+  font-size: 1em;
+}
+.songLyrics, .songVocalist {
+  text-align: left;
+}
+/* song detail exit button */
+.exit {
+  font-size: 1.5em !important;
+  border-radius: 8px;
+  border: 1px solid black;
+}
+
+/* GIG PAGE */
+.gigWrapper label {
+  padding: 11px 0 0 11px;
+  line-height: 10px;
+}
+.gigList {
+  overflow-y: scroll;
+  padding: 0 5px 0 3px;
+}
+.gigList button {
+  padding: 2px 5px !important;
+}
+.gigList button:first-of-type {
+  text-align: left;
+}
+
+.gigWrapper input {
+  font-size: 1.1rem !important;
+}
+
+.hideFilter {
+  transform: rotate(180deg);
+}
+
+/* SHARK */
+
+/* STATE */
+.flipRotate {
+  transform: rotate(0deg);
+}
+.hideFilter {
+  transform: translateY(95%);
+}
+.active {
+  background: deeppink;
+  color: white;
+  text-shadow: 2px 2px black;
+  box-shadow: 1px 1px 0px black;
+}
+.active:hover {
+  color: white;
+}
+@keyframes slideIn {
+  from {transform: translateX(100%)},
+  to {transform: translateX(0)}
+}
+.wrapper {
+  animation: slideIn .5s;
+  background: white;
+  box-shadow: -4px 4px 1px var(--shadowColor);
+  font-size: 16px;
+  padding: 20px 10px 10px 10px;
+}
+.songEdit {
+  border: 1px solid darkslategrey;
+  border-radius: 4px;
+  padding: 7px;
+  box-shadow: 0 0 1px 2px var(--shadowColor);
+}
+.songCover input {visibility: hidden;}
+.songCover {color: darkslategrey}
+.songList {
+  padding: 10px 0 0 10px;
+  overflow-x: scroll;
+}
+.songList button {
+  font-size: 1.25em;
+  text-align: left;
+  border: 1px solid transparent;
+}
+.songList .active {
+  background: deeppink;
+  color: white;
+  border: 1px solid darkslategrey;
+}
+@media screen and (min-width: 700px) {
+  .songList button:hover {
+    background: deeppink;
+    color: white;
+    border: 1px solid darkslategrey;
+  }
+}
+.newSongBtn, .userBtn {
+  border-radius: 50%;
+  background: white;
+  border: 2px solid black;
+  font-size: 0.7em;
+}
+.modalBox {
+  background: white;
+  padding: 20px 30px;
+}
+
+@media screen and (min-width: 800px) {
+  .modalBox {
+    padding: 40px 80px;
+  }
+}
+h3 {
+  font-family: futura;
+  text-transform: uppercase;
+  text-align: center;
+}
+button.submit {
+  color: deeppink;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  font-size: 1.35em;
+  font-weight: bold;
+  border: 1px solid currentColor;
+  box-shadow: 1px 1px 1px currentColor,
+    -1px -1px 1px currentColor;
+}
+button.submit:disabled {
+  color: darkgrey;
+}
+.modalSongList {
+  background: white;
+  padding: 0;
+}
+#statusWrapper, #vocalsWrapper {
+  overflow: hidden;
+}
+#status, #vocals, #covers {
+  font-size: 1.65rem;
+  border-radius: 5px;
+}
+.filterSort {
+  padding-left: 5px;
+}
+
+h3 {
+  text-decoration: underline;
+}
+
+.mainWrapper {
+  overflow-y: hidden;
+}
+.modalBG {
+  background: rgba(0,0,0,0.6);
+}
+
+.songLyricsModal {
+  background: white;
+  padding: 10px 20px 20px 20px;
+}
+.songLyricsModal textarea {
+  border: 1px solid black;
+  padding: 5px 10px;
+}
