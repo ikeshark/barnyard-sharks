@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Modal from '../../Modal';
+import SharkSelect from '../../common/SharkSelect';
 
 const INITIAL_STATE = {
   audio: '',
@@ -59,7 +60,7 @@ class Song extends React.Component {
         const source = `https://bandcamp.com/EmbeddedPlayer/size=small/bgcol=ffffff/linkcol=0687f5/track=${this.state.audio.trackID}/transparent=true/`;
         return <iframe title="bandcamp" height="45" src={source}><p>{this.state.name}</p></iframe>
       }
-    } else {
+    } else if (this.props.authUser) {
       return (
         <form className="audioForm" onSubmit={this.processAudioEmbed}>
           <label className="label audio">
@@ -75,9 +76,8 @@ class Song extends React.Component {
           </label>
         </form>
       );
-    }
+    } else {return}
   }
-
 
   onChange = e => {
     this.setState({
@@ -220,53 +220,6 @@ class Song extends React.Component {
     return outputArray.join(', ');
   }
 
-  renderVocalistSelect = () => {
-    let sharks = Object.entries(this.props.sharks.active);
-    let options = sharks.map(shark => {
-      const test = new RegExp(shark[0]);
-      return (
-        <label key={shark[0]} className="label songVocalistOption">
-          {shark[1].name}
-          <input
-            key={shark[0]}
-            type="checkbox"
-            checked={test.test(this.state.vox)}
-            value={shark[0]}
-            className="input"
-            onChange={this.handleVoxChange}
-          />
-        </label>
-      )}
-    );
-    let gangAndInstrumental = (
-      <>
-      <label key="gang" className="label songVocalistOption">
-        gang
-        <input
-          type="checkbox"
-          value="gang"
-          checked={/gang/.test(this.state.vox)}
-          className="input"
-          onChange={this.handleVoxChange}
-        />
-      </label>
-      <label key="instrumental" className="label songVocalistOption">
-        instrumental
-        <input
-          type="checkbox"
-          checked={/instrumental/.test(this.state.vox)}
-          value="instrumental"
-          className="input"
-          onChange={this.handleVoxChange}
-        />
-      </label>
-      </>
-    )
-    options.push(gangAndInstrumental);
-
-    return options
-  }
-
   renderSaveOrCreate = () => {
     if (this.props.id === '') {
       return (
@@ -335,17 +288,44 @@ class Song extends React.Component {
 
         <button
           className="label songVocalist"
+          disabled={!this.props.authUser}
           onClick={() => this.setState(prevState => ({ isVocalEdit: !prevState.isVocalEdit }))}
         >
           vocalist
-          <p
-            className="input"
-
-          >
+          <p className="input">
             {this.processVox()}
           </p>
           {this.state.isVocalEdit &&
-            <div className="vocalSelectWrapper">{this.renderVocalistSelect()}</div>
+            <div className="vocalSelectWrapper">
+              <SharkSelect
+                checkedCondition={this.state.vox}
+                handleChange={this.handleVoxChange}
+                sharks={this.props.sharks}
+              >
+                <>
+                  <label key="gang" className="label songVocalistOption">
+                    gang
+                    <input
+                      type="checkbox"
+                      value="gang"
+                      checked={/gang/.test(this.state.vox)}
+                      className="input"
+                      onChange={this.handleVoxChange}
+                    />
+                  </label>
+                  <label key="instrumental" className="label songVocalistOption">
+                    instrumental
+                    <input
+                      type="checkbox"
+                      checked={/instrumental/.test(this.state.vox)}
+                      value="instrumental"
+                      className="input"
+                      onChange={this.handleVoxChange}
+                    />
+                  </label>
+                </>
+              </SharkSelect>
+            </div>
           }
         </button>
         {this.renderAudio()}
@@ -356,21 +336,20 @@ class Song extends React.Component {
           <span>{this.state.lyrics ? "" : "Add "} Lyrics</span>
         </button>
         <label className="songCover">
-          cover?
+          {this.state.isCover ? "cover" : "original"}
           <input
             type="checkbox"
             disabled={!this.props.authUser}
             name="isCover"
             onChange={this.onBoolChange}
             checked={this.state.isCover}
-            className="input"
           />
         </label>
         <label className="label songRequired">
           Required Sharks
 
         </label>
-        {this.renderSaveOrCreate()}
+        {this.props.authUser && this.renderSaveOrCreate()}
 
         {
           this.state.isLyricDisplay &&
@@ -378,7 +357,9 @@ class Song extends React.Component {
             <label className="label songLyricsModal">
               lyrics
               <textarea
-                readOnly={!this.props.authUser}                name="lyrics"
+                disabled={!this.props.authUser}
+                readOnly={!this.props.authUser}
+                name="lyrics"
                 className="input"
                 onChange={this.onChange}
                 value={this.state.lyrics}

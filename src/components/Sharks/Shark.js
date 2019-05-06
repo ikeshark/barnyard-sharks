@@ -66,7 +66,7 @@ class Shark extends React.Component {
 
   render() {
     // if current user is the detailed shark, you are valid
-    const validated = this.props.authUser.uid === this.props.id;
+    const validated = this.props.authUser && this.props.authUser.uid === this.props.id;
     return (
       <form className="wrapper">
         <label className="label l-95w">

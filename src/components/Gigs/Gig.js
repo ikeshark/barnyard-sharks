@@ -191,13 +191,16 @@ class Gig extends React.Component {
           onDelete={this.onDelete}
         />
 
-        <button
-          onClick={this.onAddSong}
-          disabled={!this.props.authUser}
-        >
-          Add Song
-        </button>
-        {this.renderSaveOrCreate()}
+        {this.props.authUser &&
+          <button
+            onClick={this.onAddSong}
+            disabled={!this.props.authUser}
+          >
+            Add Song
+          </button>
+        }
+
+        {this.props.authUser && this.renderSaveOrCreate()}
 
         {
           this.state.isAddSong &&

@@ -1,10 +1,14 @@
 import React from 'react';
 
 const SharkList = ({ sharks, detailedShark, showDetail }) => {
-  const sharkArray = Object.entries(sharks.active);
+  const activeSharks = Object.entries(sharks.active);
+  console.log(sharks)
+  const retiredSharks = Object.entries(sharks.retired);
   return (
+
     <ul className="songList">
-      {sharkArray.map(shark => (
+      <h3>ACTIVE</h3>
+      {activeSharks.map(shark => (
         <li key={shark[0]}>
           <button
             onClick={showDetail}
@@ -15,7 +19,18 @@ const SharkList = ({ sharks, detailedShark, showDetail }) => {
           </button>
         </li>
       ))}
+      <h3>RETIRED</h3>
+      {retiredSharks.map(shark => (
+        <li key={shark[0]}>
+          <button
+            value={shark[0]}
+          >
+            {shark[1].name}
+          </button>
+        </li>
+      ))}
     </ul>
+
   );
 }
 

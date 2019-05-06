@@ -35,7 +35,7 @@ const Filter = ({
           Vocals
         </button>
         <button id="covers" onClick={handleCoverFilter} className={isCover ? "active" : ""}>
-          Covers
+          Sharks
         </button>
       </div>
 
@@ -124,6 +124,10 @@ const Filter = ({
           className={sortType === "oldest" ? "active" : ""}
         >
           Old
+        </button>
+        <h3>SHOW</h3>
+        <button id="covers" onClick={handleCoverFilter} className={isCover ? "active" : ""}>
+          Covers
         </button>
       </div>
 
