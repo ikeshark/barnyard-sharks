@@ -89,6 +89,10 @@ class App extends Component {
 
 
   renderMain = () => {
+    // this is because i'm not getting loading to work right
+    if (this.state.sharks.length === 0) {
+      return false;
+    }
     switch (this.state.tab) {
       case 'songs':
         return (

@@ -11,9 +11,11 @@ const INITIAL_STATE = {
   name: '',
   status: '',
   vox: '',
+  lyrics: '',
+  reqSharks: '',
   isCover: false,
   isVocalEdit: false,
-  lyrics: '',
+  isReqSharksEdit: false,
   error: '',
 };
 
@@ -29,9 +31,9 @@ class Song extends React.Component {
       status: this.props.song.status,
       isCover: this.props.song.isCover || false,
       lyrics: this.props.song.lyrics || '',
+      reqSharks: this.props.song.reqSharks || '',
     });
   }
-
 
   processAudioEmbed = () => {
     const embed = this.state.newAudio
@@ -87,7 +89,7 @@ class Song extends React.Component {
     });
   }
   onEdit = () => {
-    const { audio, dob, name, status, vox, isCover, lyrics } = this.state;
+    const { audio, dob, name, status, vox, isCover, lyrics, reqSharks } = this.state;
     const songs = Object.entries(this.props.songs);
     let validation = true;
     // see if any songs share the same name as edited song
@@ -106,7 +108,8 @@ class Song extends React.Component {
         status,
         vox,
         isCover,
-        lyrics
+        lyrics,
+        reqSharks,
       });
       this.setState({ hasChanged: false });
     }
@@ -119,7 +122,8 @@ class Song extends React.Component {
       status: this.state.status,
       name: this.state.name,
       isCover: this.state.isCover,
-      lyrics: this.state.lyrics
+      lyrics: this.state.lyrics,
+      reqSharks: this.state.reqSharks,
     };
 
     const titles = Object.values(this.props.songs).map(song => song.name);
@@ -173,20 +177,51 @@ class Song extends React.Component {
   closeModal = e => {
     if (e) {
       if (e.target === document.querySelector('.modalBG')) {
-        this.setState({ isLyricDisplay: false });
+        this.setState({
+          isLyricDisplay: false,
+          isReqSharksEdit: false,
+          isVocalEdit: false,
+        });
       }
     } else {
-      this.setState({ isLyricDisplay: false });
+      this.setState({
+        isLyricDisplay: false,
+        isReqSharksEdit: false,
+        isVocalEdit: false,
+      });
     }
   }
-
+  handleReqSharksChange = e => {
+    const value = e.target.value;
+    let reqSharks = this.state.reqSharks;
+    if (e.target.checked) {
+      this.setState({
+        reqSharks: reqSharks ? `${reqSharks}, ${value}` : value,
+        hasChanged: true
+      });
+    } else if (!e.target.checked) {
+      const test = new RegExp(',');
+      // if there is a comma, ie multiple values
+      if (test.test(reqSharks)) {
+        let reqSharksArray = reqSharks.split(', ');
+        reqSharksArray.splice(reqSharksArray.indexOf(value), 1);
+        reqSharks = reqSharksArray.join(', ');
+      } else {
+        reqSharks = '';
+      }
+      this.setState({ reqSharks, hasChanged: true });
+    }
+  }
   handleVoxChange = e => {
     const value = e.target.value;
     let vox = this.state.vox;
     if (value === 'instrumental' && e.target.checked) {
-      this.setState({ vox: 'instrumental' });
+      this.setState({ vox: 'instrumental', hasChanged: true });
     } else if (e.target.checked) {
-      this.setState({ vox: vox ? `${vox}, ${value}` : value})
+      this.setState({
+        vox: vox ? `${vox}, ${value}` : value,
+        hasChanged: true
+      });
     } else if (!e.target.checked) {
       const test = new RegExp(',');
       // if there is a comma, ie multiple values
@@ -197,7 +232,7 @@ class Song extends React.Component {
       } else {
         vox = '';
       }
-      this.setState({ vox });
+      this.setState({ vox, hasChanged: true });
     }
   }
 
@@ -289,14 +324,16 @@ class Song extends React.Component {
         <button
           className="label songVocalist"
           disabled={!this.props.authUser}
-          onClick={() => this.setState(prevState => ({ isVocalEdit: !prevState.isVocalEdit }))}
+          onClick={() => this.setState({ isVocalEdit: true })}
         >
           vocalist
           <p className="input">
             {this.processVox()}
           </p>
-          {this.state.isVocalEdit &&
-            <div className="vocalSelectWrapper">
+        </button>
+        {this.state.isVocalEdit &&
+          <Modal onClose={this.closeModal}>
+            <div className="modalSelectWrapper">
               <SharkSelect
                 checkedCondition={this.state.vox}
                 handleChange={this.handleVoxChange}
@@ -326,8 +363,8 @@ class Song extends React.Component {
                 </>
               </SharkSelect>
             </div>
-          }
-        </button>
+          </Modal>
+        }
         {this.renderAudio()}
         <button
           className="label songLyrics"
@@ -345,10 +382,26 @@ class Song extends React.Component {
             checked={this.state.isCover}
           />
         </label>
-        <label className="label songRequired">
+        <button
+          className="label songRequired"
+          disabled={!this.props.authUser}
+          onClick={() => this.setState(prevState => ({ isReqSharksEdit: !prevState.isReqSharksEdit }))}
+        >
           Required Sharks
+        </button>
 
-        </label>
+        {this.state.isReqSharksEdit &&
+          <Modal onClose={this.closeModal}>
+            <div className="modalSelectWrapper">
+              <h3>WHO IS REQUIRED</h3>
+              <SharkSelect
+                checkedCondition={this.state.reqSharks}
+                handleChange={this.handleReqSharksChange}
+                sharks={this.props.sharks}
+              />
+            </div>
+          </Modal>
+        }
         {this.props.authUser && this.renderSaveOrCreate()}
 
         {

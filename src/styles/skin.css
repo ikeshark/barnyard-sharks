@@ -103,7 +103,7 @@ nav button:hover {
   font-size:1.1rem !important;
   letter-spacing: 0.008em !important;
 }
-.vocalSelectWrapper {
+.vocalSelectWrapper, .vocalSelectReqSharks, .modalSelectWrapper {
   padding: 10px;
   background: white;
   border: 1px solid white;

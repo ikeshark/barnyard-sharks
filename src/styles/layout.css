@@ -65,6 +65,10 @@ nav button, h1 {
   top: -35px;
 }
 
+.sharkSort {
+  width: 79%;
+}
+
 /* SONG PAGE */
 
 .label, iframe {
@@ -91,14 +95,31 @@ nav button, h1 {
   min-height: 20px;
   width: 30%;
 }
-.vocalSelectWrapper {
+.vocalSelectWrapper, .vocalSelectReqSharks {
   width: 100%;
   display: flex;
+  justify-content: center;
   flex-wrap:wrap;
   position: absolute;
   top: 100%;
   left: 0px;
   z-index: 5;
+}
+.modalSelectWrapper {
+  width: 80%;
+  display: flex;
+  flex-wrap: wrap;
+  height: 50%;
+}
+.modalSelectWrapper > * {
+  flex-grow: 1;
+}
+.vocalSelectReqSharks {
+  top: 40%;
+  left: -25px;
+}
+.modalSelectWrapper h3 {
+  width: 100%;
 }
 .audioForm {
   height: 60px;

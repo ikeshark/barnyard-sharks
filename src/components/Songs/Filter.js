@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import SharkSelect from '../common/SharkSelect';
+
 const Filter = ({
   isOpen,
   filterByStatus,
@@ -7,16 +9,18 @@ const Filter = ({
   onToggleFilter,
   statusFilter,
   vocalistFilter,
+  sharksFilter,
+  handleSharksFilter,
   handleCoverFilter,
   isCover,
   sortType,
   onSort,
   sharks,
 }) => {
-  const [isStatus, setIsStatus] = useState(true);
+  const [filterView, setFilterView] = useState('status');
 
-  const flipState = () => {
-    setIsStatus(!isStatus)
+  const flipState = e => {
+    setFilterView(e.target.value)
   }
 
   const getName = uid => {
@@ -24,22 +28,38 @@ const Filter = ({
       return sharks.active[uid].name;
     }
   }
+
   return (
     <div className={isOpen ? "filterWrapper" : "filterWrapper hideFilter"}>
       <div className="filterSelectorWrapper">
         <h3>FILTER</h3>
-        <button id="status" onClick={flipState} className={isStatus ? "active" : ""}>
+        <button
+          id="status"
+          onClick={flipState}
+          className={filterView === 'status' ? "active" : ""}
+          value="status"
+        >
           Status
         </button>
-        <button id="vocals" onClick={flipState} className={isStatus ? "" : "active"}>
+        <button
+          id="vocals"
+          onClick={flipState}
+          className={filterView === 'vocals' ? "active" : ""}
+          value="vocals"
+        >
           Vocals
         </button>
-        <button id="covers" onClick={handleCoverFilter} className={isCover ? "active" : ""}>
+        <button
+          id="covers"
+          onClick={flipState}
+          className={filterView === 'sharks' ? "active" : ""}
+          value="sharks"
+        >
           Sharks
         </button>
       </div>
 
-      <div id="statusWrapper" className={isStatus ? "" : "hide"}>
+      <div id="statusWrapper" className={filterView === 'status' ? "" : "hide"}>
         <button
           onClick={filterByStatus}
           className={statusFilter === "solid" ? "active" : ""}
@@ -70,8 +90,16 @@ const Filter = ({
         </button>
       </div>
 
+      <div id="sharksWrapper" className={filterView === 'sharks' ? "sharkSort" : "hide"}>
+        <h3>Who is <i>not</i> here?</h3>
+        <SharkSelect
+          sharks={sharks}
+          handleChange={handleSharksFilter}
+          checkedCondition={sharksFilter}
+        />
+      </div>
 
-      <div id="vocalsWrapper" className={isStatus ? "hide" : ""}>
+      <div id="vocalsWrapper" className={filterView === 'vocals' ? "" : "hide"}>
         <button
           onClick={filterByVocals}
           value="05x2qzOXABfcDkMGTClzDZxzBBt2"
@@ -125,8 +153,8 @@ const Filter = ({
         >
           Old
         </button>
-        <h3>SHOW</h3>
-        <button id="covers" onClick={handleCoverFilter} className={isCover ? "active" : ""}>
+        <h3>HIDE</h3>
+        <button id="covers" onClick={handleCoverFilter} className={isCover ? "" : "active"}>
           Covers
         </button>
       </div>
