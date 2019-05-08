@@ -127,6 +127,7 @@ class SongList extends React.Component {
           {this.state.displayedSongs.map(song => (
             <li key={song.name}>
               <button
+                type="button"
                 onClick={this.props.onClick}
                 className={this.props.detailedSong === song ? "active" : ""}
               >

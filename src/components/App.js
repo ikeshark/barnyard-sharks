@@ -118,6 +118,7 @@ class App extends Component {
           <Sharks
             sharks={this.state.sharks}
             firebase={this.firebase}
+            songs={this.state.songs}
             authUser={this.state.authUser}
           />
         );

@@ -2,7 +2,6 @@ import React from 'react';
 
 const SharkList = ({ sharks, detailedShark, showDetail }) => {
   const activeSharks = Object.entries(sharks.active);
-  console.log(sharks)
   const retiredSharks = Object.entries(sharks.retired);
   return (
 

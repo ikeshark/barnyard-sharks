@@ -19,7 +19,6 @@ class Gig extends React.Component {
     let setList;
     if (this.props.gig.setList && this.props.gig.setList.length) {
       setList = this.props.gig.setList.split(',');
-
     }
 
     this.setState({

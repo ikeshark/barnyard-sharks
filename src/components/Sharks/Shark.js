@@ -1,9 +1,16 @@
 import React from 'react';
 
+import SetList from '../Gigs/SetList';
+import SongList from './../Songs/SongList';
+
 const INITIAL_STATE = {
   name: '',
   sharkSince: 0,
+  favSongs: [],
+
   dateInput: '',
+
+  isAddSong: false,
   hasChanged: false,
 }
 
@@ -11,9 +18,15 @@ class Shark extends React.Component {
   state = { ...INITIAL_STATE };
 
   componentDidMount() {
+    let favSongs;
+    if (this.props.shark.favSongs && this.props.shark.favSongs.length) {
+      favSongs = this.props.shark.favSongs.split(',');
+    }
+
     this.setState({
       name: this.props.shark.name || '',
       sharkSince: this.props.shark.sharkSince || '',
+      favSongs: favSongs || []
     });
   }
 
@@ -25,9 +38,13 @@ class Shark extends React.Component {
   }
 
   handleEdit = () => {
+    let favSongs = this.state.favSongs;
+
+    favSongs = favSongs.join(',');
     this.props.firebase.db.ref(`sharks/active/${this.props.id}`).update({
       name: this.state.name,
-      sharkSince: this.state.sharkSince
+      sharkSince: this.state.sharkSince,
+      favSongs,
     });
     this.setState({ hasChanged: false });
   }
@@ -64,6 +81,50 @@ class Shark extends React.Component {
     }
   }
 
+
+    onMoveUp = e => {
+      const position = parseInt(e.target.value);
+      let favSongs = this.state.favSongs;
+      [favSongs[position], favSongs[position - 1]] =
+        [favSongs[position - 1], favSongs[position]];
+      this.setState({ favSongs });
+    }
+    onMoveDown = e => {
+      const position = parseInt(e.target.value);
+      let favSongs = this.state.favSongs;
+      [favSongs[position], favSongs[position + 1]] =
+        [favSongs[position + 1], favSongs[position]];
+      this.setState({ favSongs });
+    }
+    onDelete = e => {
+      const position = parseInt(e.target.value);
+      let favSongs = this.state.favSongs;
+      favSongs.splice(position, 1);
+      this.setState({ favSongs });
+    }
+    onAddSong = () => {
+      this.setState({
+        isAddSong: true
+      });
+    }
+    onPushToFavSongs = e => {
+      const songName = e.target.innerText;
+      let songID;
+      Object.entries(this.props.songs).forEach(entry => {
+        if (entry[1].name === songName) {
+          songID = entry[0];
+        }
+      });
+      let favSongs = this.state.favSongs;
+      favSongs.push(songID);
+      this.setState({
+        favSongs: favSongs,
+        isAddSong: false,
+        hasChanged: true,
+      });
+    }
+
+
   render() {
     // if current user is the detailed shark, you are valid
     const validated = this.props.authUser && this.props.authUser.uid === this.props.id;
@@ -90,14 +151,43 @@ class Shark extends React.Component {
             className="input"
           />
         </label>
+
+        <SetList
+          songs={this.props.songs}
+          authUser={this.props.authUser}
+          setList={this.state.favSongs}
+          onMoveUp={this.onMoveUp}
+          onMoveDown={this.onMoveDown}
+          onDelete={this.onDelete}
+        />
+
         {validated &&
-          <button
-            type="submit"
-            onClick={this.handleEdit}
-            disabled={!this.state.hasChanged || !validated}
-          >
-            save edits
-          </button>
+          <>
+            <button
+              onClick={this.onAddSong}
+              disabled={!this.props.authUser}
+              type="button"
+            >
+              Add Song
+            </button>
+            <button
+              type="submit"
+              onClick={this.handleEdit}
+              disabled={!this.state.hasChanged || !validated}
+            >
+              save edits
+            </button>
+          </>
+        }
+
+        {
+          this.state.isAddSong &&
+          <SongList
+            className="modalSongList"
+            onClick={this.onPushToFavSongs}
+            songs={Object.values(this.props.songs)}
+            sharks={this.props.sharks}
+          />
         }
         <button
           type="button"

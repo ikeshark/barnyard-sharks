@@ -44,6 +44,7 @@ class Sharks extends React.Component {
           <Shark
             id={this.state.detailedSharkID}
             firebase={this.props.firebase}
+            songs={this.props.songs}
             sharks={this.props.sharks}
             shark={this.state.detailedShark}
             exit={this.exitDetail}

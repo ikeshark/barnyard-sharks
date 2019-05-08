@@ -34,6 +34,7 @@ const Filter = ({
       <div className="filterSelectorWrapper">
         <h3>FILTER</h3>
         <button
+          type="button"
           id="status"
           onClick={flipState}
           className={filterView === 'status' ? "active" : ""}
@@ -42,6 +43,7 @@ const Filter = ({
           Status
         </button>
         <button
+          type="button"
           id="vocals"
           onClick={flipState}
           className={filterView === 'vocals' ? "active" : ""}
@@ -50,6 +52,7 @@ const Filter = ({
           Vocals
         </button>
         <button
+          type="button"
           id="covers"
           onClick={flipState}
           className={filterView === 'sharks' ? "active" : ""}
@@ -61,6 +64,7 @@ const Filter = ({
 
       <div id="statusWrapper" className={filterView === 'status' ? "" : "hide"}>
         <button
+          type="button"
           onClick={filterByStatus}
           className={statusFilter === "solid" ? "active" : ""}
           value="solid"
@@ -68,6 +72,7 @@ const Filter = ({
           Solid
         </button>
         <button
+          type="button"
           onClick={filterByStatus}
           className={statusFilter === "shakey" ? "active" : ""}
           value="shakey"
@@ -75,6 +80,7 @@ const Filter = ({
           Shakey
         </button>
         <button
+          type="button"
           onClick={filterByStatus}
           className={statusFilter === "inactive" ? "active" : ""}
           value="inactive"
@@ -82,6 +88,7 @@ const Filter = ({
           Inactive
         </button>
         <button
+          type="button"
           onClick={filterByStatus}
           className={statusFilter === "retired" ? "active" : ""}
           value="retired"
@@ -101,6 +108,7 @@ const Filter = ({
 
       <div id="vocalsWrapper" className={filterView === 'vocals' ? "" : "hide"}>
         <button
+          type="button"
           onClick={filterByVocals}
           value="05x2qzOXABfcDkMGTClzDZxzBBt2"
           className={vocalistFilter === "05x2qzOXABfcDkMGTClzDZxzBBt2" ? "active" : ""}
@@ -108,6 +116,7 @@ const Filter = ({
           {getName('05x2qzOXABfcDkMGTClzDZxzBBt2')}
         </button>
         <button
+          type="button"
           onClick={filterByVocals}
           value="r6hSiQpBaNfqiPgKatywDJCDRL13"
           className={vocalistFilter === "r6hSiQpBaNfqiPgKatywDJCDRL13" ? "active" : ""}
@@ -115,6 +124,7 @@ const Filter = ({
           {getName('r6hSiQpBaNfqiPgKatywDJCDRL13')}
         </button>
         <button
+          type="button"
           onClick={filterByVocals}
           value="fUek7qwanvg3Sp8BJlp0NLswllO2"
           className={vocalistFilter === "fUek7qwanvg3Sp8BJlp0NLswllO2" ? "active" : ""}
@@ -122,6 +132,7 @@ const Filter = ({
           {getName('fUek7qwanvg3Sp8BJlp0NLswllO2')}
         </button>
         <button
+          type="button"
           onClick={filterByVocals}
           value="gang"
           className={vocalistFilter === "gang" ? "active" : ""}
@@ -129,6 +140,7 @@ const Filter = ({
           Gang
         </button>
         <button
+          type="button"
           onClick={filterByVocals}
           value="instrumental"
           className={vocalistFilter === "instrumental" ? "active" : ""}
@@ -140,6 +152,7 @@ const Filter = ({
       <div className="filterSort">
         <h3>Sort</h3>
         <button
+          type="button"
           value="newest"
           onClick={onSort}
           className={sortType === "newest" ? "active" : ""}
@@ -147,6 +160,7 @@ const Filter = ({
           New
         </button>
         <button
+          type="button"
           value="oldest"
           onClick={onSort}
           className={sortType === "oldest" ? "active" : ""}
@@ -154,12 +168,18 @@ const Filter = ({
           Old
         </button>
         <h3>HIDE</h3>
-        <button id="covers" onClick={handleCoverFilter} className={isCover ? "" : "active"}>
+        <button
+          id="covers"
+          onClick={handleCoverFilter}
+          className={isCover ? "" : "active"}
+          type="button"
+        >
           Covers
         </button>
       </div>
 
       <button
+        type="button"
         onClick={onToggleFilter}
         className={isOpen ? 'filterHide' : 'filterHide flipRotate'}
       >
