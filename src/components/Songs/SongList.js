@@ -7,7 +7,7 @@ class SongList extends React.Component {
   state = {
     displayedSongs: [],
     statusFilter: '',
-    vocalistFilter: '',
+    vocalsFilter: '',
     sharksFilter: '',
     sortType: '',
     isCover: false,
@@ -31,9 +31,9 @@ class SongList extends React.Component {
     this.setState({ statusFilter }, this.displaySongs);
   }
   filterByVocals = e => {
-    const vocalistFilter = this.state.vocalistFilter === e.target.value ?
+    const vocalsFilter = this.state.vocalsFilter === e.target.value ?
       '' : e.target.value;
-    this.setState({ vocalistFilter }, this.displaySongs);
+    this.setState({ vocalsFilter }, this.displaySongs);
   }
 
   onSort = e => {
@@ -75,7 +75,7 @@ class SongList extends React.Component {
   }
 
   displaySongs = (songs = this.props.songs) => {
-    const { statusFilter, vocalistFilter, sharksFilter, sortType, isCover } = this.state;
+    const { statusFilter, vocalsFilter, sharksFilter, sortType, isCover } = this.state;
     let displayedSongs = Object.values(songs);
     // no covers is default
     if (!isCover) {
@@ -99,8 +99,8 @@ class SongList extends React.Component {
     if (statusFilter) {
       displayedSongs = displayedSongs.filter(song => song.status === statusFilter);
     }
-    if (vocalistFilter) {
-      const test = new RegExp(vocalistFilter);
+    if (vocalsFilter) {
+      const test = new RegExp(vocalsFilter);
       displayedSongs = displayedSongs.filter(song => test.test(song.vox));
     }
     if (sortType) {
@@ -145,7 +145,7 @@ class SongList extends React.Component {
           filterByVocals={this.filterByVocals}
           statusFilter={this.state.statusFilter}
           handleSharksFilter={this.handleSharksFilter}
-          vocalistFilter={this.state.vocalistFilter}
+          vocalsFilter={this.state.vocalsFilter}
           sharksFilter={this.state.sharksFilter}
           onSort={this.onSort}
           sortType={this.state.sortType}

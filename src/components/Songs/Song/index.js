@@ -24,7 +24,7 @@ class Song extends React.Component {
 
   componentDidMount() {
     this.setState({
-      audio: this.props.song.audio,
+      audio: this.props.song.audio || '',
       dob: this.props.song.dob,
       name: this.props.song.name,
       vox: this.props.song.vox,

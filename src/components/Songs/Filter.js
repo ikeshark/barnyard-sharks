@@ -8,7 +8,7 @@ const Filter = ({
   filterByVocals,
   onToggleFilter,
   statusFilter,
-  vocalistFilter,
+  vocalsFilter,
   sharksFilter,
   handleSharksFilter,
   handleCoverFilter,
@@ -29,126 +29,140 @@ const Filter = ({
     }
   }
 
+  const className = (name, filter) => {
+    if (filterView === name) {
+      return 'active';
+    } else if (filter) {
+      return 'semiActive';
+    } else return '';
+  }
+
   return (
     <div className={isOpen ? "filterWrapper" : "filterWrapper hideFilter"}>
       <div className="filterSelectorWrapper">
         <h3>FILTER</h3>
-        <button
-          type="button"
-          id="status"
-          onClick={flipState}
-          className={filterView === 'status' ? "active" : ""}
-          value="status"
-        >
-          Status
-        </button>
-        <button
-          type="button"
-          id="vocals"
-          onClick={flipState}
-          className={filterView === 'vocals' ? "active" : ""}
-          value="vocals"
-        >
-          Vocals
-        </button>
-        <button
-          type="button"
-          id="covers"
-          onClick={flipState}
-          className={filterView === 'sharks' ? "active" : ""}
-          value="sharks"
-        >
-          Sharks
-        </button>
+        <nav>
+          <button
+            type="button"
+            id="status"
+            onClick={flipState}
+            className={className('status', statusFilter)}
+            value="status"
+          >
+            Status
+          </button>
+          <button
+            type="button"
+            id="vocals"
+            onClick={flipState}
+            className={className('vocals', vocalsFilter)}
+            value="vocals"
+          >
+            Vox
+          </button>
+          <button
+            type="button"
+            id="covers"
+            onClick={flipState}
+            className={className('sharks', sharksFilter)}
+            value="sharks"
+          >
+            Sharks
+          </button>
+        </nav>
+        <div id="statusWrapper" className={filterView === 'status' ? "" : "hide"}>
+          <button
+            type="button"
+            onClick={filterByStatus}
+            className={statusFilter === "solid" ? "active" : ""}
+            value="solid"
+          >
+            Solid
+          </button>
+          <button
+            type="button"
+            onClick={filterByStatus}
+            className={statusFilter === "shakey" ? "active" : ""}
+            value="shakey"
+          >
+            Shakey
+          </button>
+          <button
+            type="button"
+            onClick={filterByStatus}
+            className={statusFilter === "inactive" ? "active" : ""}
+            value="inactive"
+          >
+            Inactive
+          </button>
+          <button
+            type="button"
+            onClick={filterByStatus}
+            className={statusFilter === "retired" ? "active" : ""}
+            value="retired"
+          >
+            Retired
+          </button>
+          <button
+            type="button"
+            onClick={filterByStatus}
+            className={statusFilter === "idea" ? "active" : ""}
+            value="idea"
+          >
+            Ideas
+          </button>
+        </div>
+        <div id="sharksWrapper" className={filterView === 'sharks' ? "sharkSort" : "hide"}>
+          <h4>Who is <i>not</i> here?</h4>
+          <SharkSelect
+            sharks={sharks}
+            handleChange={handleSharksFilter}
+            checkedCondition={sharksFilter}
+          />
+        </div>
+        <div id="vocalsWrapper" className={filterView === 'vocals' ? "" : "hide"}>
+          <button
+            type="button"
+            onClick={filterByVocals}
+            value="05x2qzOXABfcDkMGTClzDZxzBBt2"
+            className={vocalsFilter === "05x2qzOXABfcDkMGTClzDZxzBBt2" ? "active" : ""}
+          >
+            {getName('05x2qzOXABfcDkMGTClzDZxzBBt2')}
+          </button>
+          <button
+            type="button"
+            onClick={filterByVocals}
+            value="r6hSiQpBaNfqiPgKatywDJCDRL13"
+            className={vocalsFilter === "r6hSiQpBaNfqiPgKatywDJCDRL13" ? "active" : ""}
+          >
+            {getName('r6hSiQpBaNfqiPgKatywDJCDRL13')}
+          </button>
+          <button
+            type="button"
+            onClick={filterByVocals}
+            value="fUek7qwanvg3Sp8BJlp0NLswllO2"
+            className={vocalsFilter === "fUek7qwanvg3Sp8BJlp0NLswllO2" ? "active" : ""}
+          >
+            {getName('fUek7qwanvg3Sp8BJlp0NLswllO2')}
+          </button>
+          <button
+            type="button"
+            onClick={filterByVocals}
+            value="gang"
+            className={vocalsFilter === "gang" ? "active" : ""}
+          >
+            Gang
+          </button>
+          <button
+            type="button"
+            onClick={filterByVocals}
+            value="instrumental"
+            className={vocalsFilter === "instrumental" ? "active" : ""}
+          >
+            Instrumental
+          </button>
+        </div>
       </div>
-
-      <div id="statusWrapper" className={filterView === 'status' ? "" : "hide"}>
-        <button
-          type="button"
-          onClick={filterByStatus}
-          className={statusFilter === "solid" ? "active" : ""}
-          value="solid"
-        >
-          Solid
-        </button>
-        <button
-          type="button"
-          onClick={filterByStatus}
-          className={statusFilter === "shakey" ? "active" : ""}
-          value="shakey"
-        >
-          Shakey
-        </button>
-        <button
-          type="button"
-          onClick={filterByStatus}
-          className={statusFilter === "inactive" ? "active" : ""}
-          value="inactive"
-        >
-          Inactive
-        </button>
-        <button
-          type="button"
-          onClick={filterByStatus}
-          className={statusFilter === "retired" ? "active" : ""}
-          value="retired"
-        >
-          Retired
-        </button>
-      </div>
-
-      <div id="sharksWrapper" className={filterView === 'sharks' ? "sharkSort" : "hide"}>
-        <h3>Who is <i>not</i> here?</h3>
-        <SharkSelect
-          sharks={sharks}
-          handleChange={handleSharksFilter}
-          checkedCondition={sharksFilter}
-        />
-      </div>
-
-      <div id="vocalsWrapper" className={filterView === 'vocals' ? "" : "hide"}>
-        <button
-          type="button"
-          onClick={filterByVocals}
-          value="05x2qzOXABfcDkMGTClzDZxzBBt2"
-          className={vocalistFilter === "05x2qzOXABfcDkMGTClzDZxzBBt2" ? "active" : ""}
-        >
-          {getName('05x2qzOXABfcDkMGTClzDZxzBBt2')}
-        </button>
-        <button
-          type="button"
-          onClick={filterByVocals}
-          value="r6hSiQpBaNfqiPgKatywDJCDRL13"
-          className={vocalistFilter === "r6hSiQpBaNfqiPgKatywDJCDRL13" ? "active" : ""}
-        >
-          {getName('r6hSiQpBaNfqiPgKatywDJCDRL13')}
-        </button>
-        <button
-          type="button"
-          onClick={filterByVocals}
-          value="fUek7qwanvg3Sp8BJlp0NLswllO2"
-          className={vocalistFilter === "fUek7qwanvg3Sp8BJlp0NLswllO2" ? "active" : ""}
-        >
-          {getName('fUek7qwanvg3Sp8BJlp0NLswllO2')}
-        </button>
-        <button
-          type="button"
-          onClick={filterByVocals}
-          value="gang"
-          className={vocalistFilter === "gang" ? "active" : ""}
-        >
-          Gang
-        </button>
-        <button
-          type="button"
-          onClick={filterByVocals}
-          value="instrumental"
-          className={vocalistFilter === "instrumental" ? "active" : ""}
-        >
-          Instrumental
-        </button>
-      </div>
-
       <div className="filterSort">
         <h3>Sort</h3>
         <button

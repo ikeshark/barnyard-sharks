@@ -19,7 +19,7 @@ body {
 }
 
 
-nav, #status, #vocals, #covers {
+nav.fontMetal {
   font-family: 'Metal Mania';
   -webkit-text-stroke: 0.01em black;
 }
@@ -27,13 +27,13 @@ nav, #status, #vocals, #covers {
 
 /* NAV */
 
-nav {
+nav.fontMetal {
   box-shadow: 0 3px 1px slategrey;
   background-color: #484143;
 }
 
 
-nav button, h1 {
+nav.fontMetal button, h1 {
   padding: 5px 10px;
   text-transform: uppercase;
   color: white;
@@ -45,7 +45,7 @@ h1 {
   color: white;
   font-size: 1.25em;
 }
-nav button:hover {
+nav.fontMetal button:hover {
   color: pink;
 }
 
@@ -62,7 +62,7 @@ nav button:hover {
 .filterWrapper button {
   padding: 5px 10px;
   border: 1px solid black;
-  border-radius: 5px;
+  border-radius: 10px;
 }
 .filterWrapper button:hover {
   box-shadow: 0 0 10px 5px pink;
@@ -168,6 +168,9 @@ nav button:hover {
   text-shadow: 2px 2px black;
   box-shadow: 1px 1px 0px black;
 }
+.semiActive {
+  background: lightpink;
+}
 .active:hover {
   color: white;
 }
@@ -252,17 +255,30 @@ button.submit:disabled {
 #statusWrapper, #vocalsWrapper {
   overflow: hidden;
 }
-#status, #vocals, #covers {
-  font-size: 1.65rem;
-  border-radius: 5px;
+.filterWrapper nav button {
+  font-family: 'Futura';
+  text-transform: uppercase;
+  font-size: 1rem;
+  padding: 5px;
+  border-radius: 0;
+  border-width: 2px;
 }
+
 .filterSort {
   padding-left: 5px;
 }
 
-h3 {
+h3, h4 {
   text-decoration: underline;
 }
+h4 {
+  font-family: 'futura';
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 1rem;
+  margin: 0 0 5px 0;
+}
+
 
 .mainWrapper {
   overflow-y: hidden;
@@ -278,4 +294,9 @@ h3 {
 .songLyricsModal textarea {
   border: 1px solid black;
   padding: 5px 10px;
+}
+
+.songVocalistOption input:checked {
+  background: pink;
+  color: white;
 }
