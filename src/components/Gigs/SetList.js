@@ -29,8 +29,9 @@ const SetList = ({ authUser, songs, setList, onDelete, onMoveUp, onMoveDown }) =
     <ol className="gigList">
       {setList.map((song, i) => (
         <li key={song}>
-          <button>{i + 1}) {renderName(song)}</button>
+          <button type="button">{i + 1}) {renderName(song)}</button>
           <button
+            type="button"
             disabled={!authUser}
             value={i}
             onClick={onDelete}
@@ -38,6 +39,7 @@ const SetList = ({ authUser, songs, setList, onDelete, onMoveUp, onMoveDown }) =
             x
           </button>
           <button
+            type="button"
             value={i}
             onClick={onMoveUp}
             disabled={isDisabledUP(i)}
@@ -45,6 +47,7 @@ const SetList = ({ authUser, songs, setList, onDelete, onMoveUp, onMoveDown }) =
             &uarr;
           </button>
           <button
+            type="button"
             value={i}
             onClick={onMoveDown}
             disabled={authUser === null || i === setList.length - 1}

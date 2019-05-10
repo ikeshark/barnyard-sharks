@@ -3,17 +3,18 @@ import React, { Component } from 'react';
 import Firebase from './firebase';
 import Modal from './Modal';
 import Nav from './Nav';
+import Loader from './Loader';
 import Songs from './Songs';
 import Gigs from './Gigs';
 import Sharks from './Sharks';
 import { SignInForm, SignOutButton } from './User';
 
 const INITIAL_STATE = {
-  songs: [],
-  gigs: [],
-  sharks: [],
+  songs: {},
+  gigs: {},
+  sharks: {},
 
-  loading: false,
+  isLoadAnimation: true,
   tab: 'songs',
   isAuthDisplay: false,
   authUser: null,
@@ -27,22 +28,15 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.setState({ loading: true });
+    setTimeout(() => this.endAnimation(), 2500);
     this.firebase.db.ref('songs').on('value', snapshot => {
-      this.setState({
-        songs: snapshot.val(),
-      });
+      this.setState({ songs: snapshot.val() });
     });
     this.firebase.db.ref('gigs').on('value', snapshot => {
-      this.setState({
-        gigs: snapshot.val(),
-      });
+      this.setState({ gigs: snapshot.val() });
     });
     this.firebase.db.ref('sharks').on('value', snapshot => {
-      this.setState({
-        sharks: snapshot.val(),
-        loading: false
-      });
+      this.setState({ sharks: snapshot.val() });
     });
     this.firebase.auth.onAuthStateChanged(
       authUser => {
@@ -51,6 +45,10 @@ class App extends Component {
           this.setState({ authUser: null });
       }
     );
+  }
+
+  endAnimation = () => {
+    this.setState({ isLoadAnimation: false })
   }
 
   onClickNav = e => {
@@ -89,10 +87,6 @@ class App extends Component {
 
 
   renderMain = () => {
-    // this is because i'm not getting loading to work right
-    if (this.state.sharks.length === 0) {
-      return false;
-    }
     switch (this.state.tab) {
       case 'songs':
         return (
@@ -134,12 +128,18 @@ class App extends Component {
   }
 
   render() {
+    const { sharks, songs, gigs, isLoadAnimation } = this.state;
+    const loading = (
+      sharks.hasOwnProperty('active') &&
+      songs.hasOwnProperty('aynrand') &&
+      typeof gigs === 'object'
+    ) ? false : true;
     return (
       <div className="App">
-        {this.state.loading && <p>loading...</p>}
-        {!this.state.loading &&
+        {(isLoadAnimation || loading) && <Loader />}
+        {!loading &&
           <div>
-            <Nav onClickNav={this.onClickNav} tab={this.state.tab}/>
+            <Nav onClickNav={this.onClickNav} tab={this.state.tab} />
 
             {this.renderMain()}
 
