@@ -56,10 +56,10 @@ class Song extends React.Component {
     if (this.state.audio) {
       if (this.state.audio.host === 'soundcloud') {
         const source = `https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/${this.state.audio.trackID}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=false&show_user=false&show_reposts=false&show_teaser=false`
-        return <iframe title="soundcloud" height="70" src={source}></iframe>
+        return <iframe title="soundcloud" src={source}></iframe>
       } else {
         const source = `https://bandcamp.com/EmbeddedPlayer/size=small/bgcol=ffffff/linkcol=0687f5/track=${this.state.audio.trackID}/transparent=true/`;
-        return <iframe title="bandcamp" height="45" src={source}><p>{this.state.name}</p></iframe>
+        return <iframe title="bandcamp" src={source}><p>{this.state.name}</p></iframe>
       }
     } else if (this.props.authUser) {
       return (

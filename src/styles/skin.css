@@ -75,7 +75,7 @@ nav.fontMetal button:hover {
   font-size: 1.35rem;
 }
 .filterWrapper button {
-  padding: 5px 10px;
+  padding: 10px;
   border: 1px solid black;
   border-radius: 10px;
 }
@@ -117,7 +117,7 @@ nav.fontMetal button:hover {
   font-size: 1.2rem;
   border: none;
   text-decoration: none !important;
-  padding: 8px 1px;
+  padding: 6px 1px;
   text-indent: 2px;
   color: black;
 }
