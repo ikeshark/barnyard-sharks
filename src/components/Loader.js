@@ -4,7 +4,9 @@ const Loader = () => {
   return (
     <main className="loaderWrapper fontMetal">
       <h1 className="loadingH1">Barnyard Sharks</h1>
-      <p className="loadingTag">Are Coming For You...</p>
+      <p className="loadingTag">
+        Are Coming For You<span className="blink">...</span>
+      </p>
     </main>
   )
 }

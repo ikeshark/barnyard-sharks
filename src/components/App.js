@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 
 import Firebase from './firebase';
-import Modal from './Modal';
 import Nav from './Nav';
 import Loader from './Loader';
+
 import Songs from './Songs';
 import Gigs from './Gigs';
 import Sharks from './Sharks';
+
+import Modal from './common/Modal';
 import { SignInForm, SignOutButton } from './User';
 
 const INITIAL_STATE = {
@@ -28,7 +30,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    setTimeout(() => this.endAnimation(), 2500);
+    setTimeout(() => this.endAnimation(), 3000);
     this.firebase.db.ref('songs').on('value', snapshot => {
       this.setState({ songs: snapshot.val() });
     });
@@ -146,8 +148,10 @@ class App extends Component {
             {this.renderSignInOrOut()}
 
             {this.state.isAuthDisplay &&
-              <Modal onClose={this.onModalClose}>
-                <SignInForm className="modalBox" firebase={this.firebase} />
+              <Modal>
+                <div className="modalBG" onClick={this.onModalClose}>
+                  <SignInForm className="modalBox" firebase={this.firebase} />
+                </div>
               </Modal>
             }
           </div>

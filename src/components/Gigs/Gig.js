@@ -1,7 +1,12 @@
 import React from 'react';
 
+import {
+  AllSongs,
+  Modal,
+  DetailWrapper,
+  EditOrCreate,
+} from '../common';
 import SetList from './SetList';
-import SongList from './../Songs/SongList';
 
 const INITIAL_STATE = {
   date: 0,
@@ -10,6 +15,7 @@ const INITIAL_STATE = {
   location: '',
   setList: [],
   isAddSong: false,
+  isEditLocation: false,
 }
 
 class Gig extends React.Component {
@@ -43,13 +49,13 @@ class Gig extends React.Component {
 
     setList = setList.join(',');
 
-    this.props.firebase.db.ref(`gigs/${this.props.id}`).update({
+    this.props.firebase.db.ref(`gigs/${this.props.gigId}`).update({
       date,
       location,
       setList,
     });
 
-    this.setState({ hasChanged: false });
+    this.setState({ hasChanged: false, isEditLocation: false });
   }
 
   onMoveUp = e => {
@@ -57,20 +63,20 @@ class Gig extends React.Component {
     let setList = this.state.setList;
     [setList[position], setList[position - 1]] =
       [setList[position - 1], setList[position]];
-    this.setState({ setList });
+    this.setState({ setList, hasChanged: true });
   }
   onMoveDown = e => {
     const position = parseInt(e.target.value);
     let setList = this.state.setList;
     [setList[position], setList[position + 1]] =
       [setList[position + 1], setList[position]];
-    this.setState({ setList });
+    this.setState({ setList, hasChanged: true });
   }
   onDelete = e => {
     const position = parseInt(e.target.value);
     let setList = this.state.setList;
     setList.splice(position, 1);
-    this.setState({ setList });
+    this.setState({ setList, hasChanged: true });
   }
   onAddSong = () => {
     this.setState({
@@ -88,7 +94,7 @@ class Gig extends React.Component {
     let setList = this.state.setList;
     setList.push(songID);
     this.setState({
-      setList: setList,
+      setList,
       isAddSong: false,
       hasChanged: true,
     });
@@ -136,40 +142,38 @@ class Gig extends React.Component {
       })
     }
   }
-
-  renderSaveOrCreate = () => {
-    if (this.props.id === '') {
-      return (
-        <button onClick={this.onCreate} disabled={!this.state.location}>
-          create new gig
-        </button>
-      );
+  toggleEditLocation = () => {
+    if (this.props.authUser) {
+      this.setState({ isEditLocation: true });
     }
-    return (
-      <button
-        className="button"
-        onClick={this.onEdit}
-        disabled={!this.state.hasChanged}
-      >
-        save edits
-      </button>
-    );
   }
 
   render() {
     return (
-      <div className="wrapper gigWrapper">
-        <label className="label">
-          location
-          <input
-            disabled={!this.props.authUser}
-            name="location"
-            onChange={this.onChange}
-            value={this.state.location}
-            className="input"
-          />
+      <DetailWrapper
+        handleExit={this.props.exit}
+        classNames="gigWrapper"
+        isUnmounting={this.props.isUnmounting}
+      >
+        <label
+          className="label gigLocation"
+
+          onClick={this.toggleEditLocation}
+        >
+          {this.state.location ? "" : "location"}
+          {(!this.state.location || this.state.isEditLocation) ?
+            <input
+              disabled={!this.props.authUser}
+              name="location"
+              onChange={this.onChange}
+              value={this.state.location}
+              className="input"
+            /> :
+            <p className="gigLocation">{this.state.location}</p>
+          }
+
         </label>
-        <label className="label">
+        <label className="label gigDate">
           date
           <input
             disabled={!this.props.authUser}
@@ -180,41 +184,58 @@ class Gig extends React.Component {
             placeholder="mm/dd/yyyy"
           />
         </label>
-
-        <SetList
-          songs={this.props.songs}
-          authUser={this.props.authUser}
-          setList={this.state.setList}
-          onMoveUp={this.onMoveUp}
-          onMoveDown={this.onMoveDown}
-          onDelete={this.onDelete}
-        />
+        <div className="setListWrapper">
+          <h3>setlist</h3>
+            <SetList
+              songs={this.props.songs}
+              authUser={this.props.authUser}
+              setList={this.state.setList}
+              onMoveUp={this.onMoveUp}
+              onMoveDown={this.onMoveDown}
+              onDelete={this.onDelete}
+            />
+          {this.props.authUser &&
+            <button
+              onClick={this.onAddSong}
+              type="button"
+              disabled={!this.props.authUser}
+              className="setListAddBtn"
+            >
+              Add Song
+            </button>
+          }
+        </div>
 
         {this.props.authUser &&
-          <button
-            onClick={this.onAddSong}
-            disabled={!this.props.authUser}
-          >
-            Add Song
-          </button>
+          <EditOrCreate
+            isEdit={!!this.props.gigId}
+            className="gigSubmit"
+            title="gig"
+            handleCreate={this.onCreate}
+            handleEdit={this.onEdit}
+            createValidation={this.state.location}
+            editValidation={this.state.hasChanged}
+          />
         }
 
-        {this.props.authUser && this.renderSaveOrCreate()}
-
-        {
-          this.state.isAddSong &&
-          <SongList
-            className="modalSongList"
-            onClick={this.onPushToSetList}
-            songs={Object.values(this.props.songs)}
-            sharks={this.props.sharks}
-          />
+        {this.state.isAddSong &&
+          <Modal>
+            <div className="modalBG">
+              <AllSongs
+                isFilterShowing={false}
+                className="modalAllSongs"
+                onClick={this.onPushToSetList}
+                songs={Object.values(this.props.songs)}
+                sharks={this.props.sharks}
+              />
+            </div>
+          </Modal>
         }
 
         <button onClick={this.props.exit} className="button exit">
           >
         </button>
-       </div>
+       </DetailWrapper>
     );
   }
 

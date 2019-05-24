@@ -2,7 +2,7 @@ import React from 'react';
 
 import Filter from './Filter';
 
-class SongList extends React.Component {
+class AllSongs extends React.Component {
 
   state = {
     displayedSongs: [],
@@ -16,6 +16,9 @@ class SongList extends React.Component {
 
   componentDidMount() {
     this.displaySongs();
+    if (!this.props.isFilterShowing) {
+      this.setState({ isFilterShowing: false });
+    }
   }
   componentWillUpdate(nextProps, nextState) {
     const newSongLength = Object.values(nextProps.songs).length;
@@ -123,7 +126,7 @@ class SongList extends React.Component {
   render() {
     return (
       <div className={this.props.className || "mainWrapper"}>
-        <ul className="songList">
+        <ul className="AllSongs">
           {this.state.displayedSongs.map(song => (
             <li key={song.name}>
               <button
@@ -157,4 +160,4 @@ class SongList extends React.Component {
 }
 
 
-export default SongList;
+export default AllSongs;

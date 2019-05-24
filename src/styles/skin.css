@@ -2,15 +2,23 @@
   --shadowColor: rgba(48,41,43,0.8);
 }
 
+*:focus {
+  outline-color: #3f0b14;
+}
+
 body {
   background-color: #e8d6cd;
 }
-
+.filterSelectorWrapper {
+  padding: 0 5px 0 0;
+}
 .fontFutura {
   font-family: 'Futura', sans-serif;
 }
 .fontMetal {
   font-family: 'Metal Mania', serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .red {
@@ -18,10 +26,16 @@ body {
   font-weight: bold;
 }
 
+.active::after {
+  border-color: white !important;
+}
+
 
 nav.fontMetal {
   font-family: 'Metal Mania';
   -webkit-text-stroke: 0.01em black;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 
@@ -53,6 +67,7 @@ nav.fontMetal button:hover {
 .filterWrapper {
   box-shadow: 0px -2px 33px 12px rgba(0,0,0,0.5);
   padding: 10px 5px 10px 5px;
+  transition: 0.3s all;
 }
 .filterWrapper h3 {
   text-align: center;
@@ -63,6 +78,12 @@ nav.fontMetal button:hover {
   padding: 5px 10px;
   border: 1px solid black;
   border-radius: 10px;
+}
+.filterWrapper button::after {
+  content: '';
+  border: 1px solid black;
+  border-radius: 8px;
+  box-shadow: 0px 4px 5px 2px deeppink;
 }
 .filterWrapper button:hover {
   box-shadow: 0 0 10px 5px pink;
@@ -80,7 +101,7 @@ nav.fontMetal button:hover {
   box-shadow: -5px 5px 0px var(--shadowColor);
 }
 .label {
-  padding: 12px 0 0 12px;
+  padding: 10px 0 0 10px;
 }
 .label {
   font-size: 1rem;
@@ -93,11 +114,12 @@ nav.fontMetal button:hover {
   background: #eee;
 }
 .input {
-  font-size: 1.1em;
+  font-size: 1.2rem;
   border: none;
   text-decoration: none !important;
-  padding: 6px 1px;
+  padding: 8px 1px;
   text-indent: 2px;
+  color: black;
 }
 [name=dob] {
   font-size:1.1rem !important;
@@ -111,7 +133,6 @@ nav.fontMetal button:hover {
 }
 .label.audio {
   line-height: 1em;
-  padding: 7px 0 0 7px;
 }
 .label.audio input {
   font-size: 1rem;
@@ -119,8 +140,12 @@ nav.fontMetal button:hover {
 .button {
   font-size: 1em;
 }
-.songLyrics, .songVocalist {
+.songLyrics, .songVocalist, .songRequired {
   text-align: left;
+}
+.songLyrics, .songRequired {
+  border-radius: 9px;
+  font-size: 1.1em;
 }
 /* song detail exit button */
 .exit {
@@ -134,15 +159,38 @@ nav.fontMetal button:hover {
   padding: 11px 0 0 11px;
   line-height: 10px;
 }
+.setListAddBtn {
+  font-size: 0.8em;
+  border-radius: 50%;
+  border: 1px solid black;
+  background: white;
+}
+.gigSubmit {
+  border: 2px solid black;
+  border-radius: 20px;
+}
+.gigSubmit:disabled {
+  border-color: lightgrey;
+}
+
+.setListWrapper, .sharksFavWrapper {
+  padding: 5px 0 0 0;
+}
 .gigList {
   overflow-y: scroll;
   padding: 0 5px 0 3px;
 }
-.gigList button {
-  padding: 2px 5px !important;
-}
-.gigList button:first-of-type {
+.setListWrapper .gigList button,
+.sharksFavWrapper .gigList button {
+  padding: 2px 7px !important;
+  border: 1px solid grey;
   text-align: left;
+}
+
+p.gigLocation {
+  font-size: 1.15em;
+  line-height: 1em;
+  padding: 0;
 }
 
 .gigWrapper input {
@@ -152,9 +200,30 @@ nav.fontMetal button:hover {
 .hideFilter {
   transform: rotate(180deg);
 }
+.filterHide {
+  transform: rotate(180deg);
+  transition: transform 0.3s;
+}
 
 /* SHARK */
+.sharkWrapper [name=date] {
+  font-size: 0.9em;
+}
+.sharksFavAddBtn {
+  background: white;
+  border: 1px solid black;
+  border-radius: 50%;
+  font-size: 0.9em;
+  padding: 4px;
+}
 
+.sharkSubmit {
+  border: 2px solid black;
+  border-radius: 20px;
+}
+.sharkSubmit:disabled {
+  border-color: grey;
+}
 /* STATE */
 .flipRotate {
   transform: rotate(0deg);
@@ -164,28 +233,37 @@ nav.fontMetal button:hover {
 }
 .active {
   background: deeppink;
-  color: white;
-  text-shadow: 2px 2px black;
-  box-shadow: 1px 1px 0px black;
+  color: white !important;
+  /* text-shadow: 2px 2px black; */
+  box-shadow: 1px 1px 0px black !important;
 }
+
 .semiActive {
   background: lightpink;
 }
 .active:hover {
   color: white;
 }
+
+.slideOut {
+  transform: translateX(100%);
+}
 @keyframes slideIn {
   from {transform: translateX(100%)},
   to {transform: translateX(0)}
 }
-.wrapper {
-  animation: slideIn .5s;
+
+.DetailWrapper {
+  transition: 0.3s transform;
+  transition-timing-function: cubic-bezier(.17,.67,.39,1.1);
+  animation-timing-function:  cubic-bezier(.17,.67,.39,1.1);
+  animation: 0.3s slideIn;
   background: white;
   box-shadow: -4px 4px 1px var(--shadowColor);
   font-size: 16px;
-  padding: 20px 10px 10px 10px;
+  padding: 15px;
 }
-.songEdit {
+.songSubmit {
   border: 1px solid darkslategrey;
   border-radius: 4px;
   padding: 7px;
@@ -193,22 +271,27 @@ nav.fontMetal button:hover {
 }
 .songCover input {visibility: hidden;}
 .songCover {color: darkslategrey}
-.songList {
-  padding: 10px 0 0 10px;
+.AllSongs {
+  padding: 10px 10px 0 10px;
   overflow-x: scroll;
+  box-shadow: inset 0 3px 10px 4px rgba(0,0,0,0.3);
 }
-.songList button {
+.AllSongs button {
   font-size: 1.25em;
   text-align: left;
-  border: 1px solid transparent;
+  border: 1px solid #a47171;
+  border-bottom-width: 3px;
+  padding: 5px;
+  background: #f8f5f5;
+  box-shadow: 0 0 15px 2px rgba(0,0,0,0.3);
 }
-.songList .active {
+.AllSongs .active {
   background: deeppink;
   color: white;
   border: 1px solid darkslategrey;
 }
 @media screen and (min-width: 700px) {
-  .songList button:hover {
+  .AllSongs button:hover {
     background: deeppink;
     color: white;
     border: 1px solid darkslategrey;
@@ -248,7 +331,7 @@ button.submit {
 button.submit:disabled {
   color: darkgrey;
 }
-.modalSongList {
+.modalAllSongs {
   background: white;
   padding: 0;
 }
@@ -263,6 +346,13 @@ button.submit:disabled {
   border-radius: 0;
   border-width: 2px;
 }
+.filterWrapper nav button::after, .filterHide::after {
+  box-shadow: none !important;
+  border-width: 0 !important;
+}
+.hasContent {
+  background: #f8d1d7;
+}
 
 .filterSort {
   padding-left: 5px;
@@ -276,15 +366,15 @@ h4 {
   text-transform: uppercase;
   text-align: center;
   font-size: 1rem;
-  margin: 0 0 5px 0;
 }
 
 
 .mainWrapper {
   overflow-y: hidden;
 }
-.modalBG {
+.modalBG, .halfModalBG {
   background: rgba(0,0,0,0.6);
+  animation: fadeIn 0.2s ease-in;
 }
 
 .songLyricsModal {
@@ -312,10 +402,23 @@ h4 {
   0% {opacity: 0}
   100% {opacity: 1}
 }
+@keyframes fadeOut {
+  from {opacity: 1}
+  to {opacity: 0}
+}
+.fadeOut {
+  animation: fadeOut .3s ease-out;
+  animation-fill-mode: forwards;
+}
+@keyframes blink {
+  0% {opacity: 0}
+  50% {opacity: 1}
+}
 .loaderWrapper {
   animation: shake 0.1s 5 linear;
   animation-delay: 1.8s;
   border: 10px double black;
+  background: #e8d6cd;
 }
 
 .loadingH1 {
@@ -324,14 +427,74 @@ h4 {
   text-align: center;
   font-weight: normal;
   text-shadow: 1px 1px 0px white, 4px 4px 0px crimson;
-  animation: rush 1.8s ease-in-out, shake 0.1s 5 ease-in;
-  animation-delay: 0s, 1.8s;
+  animation: rush 1.7s ease-in-out, shake 0.1s 5 ease-in;
+  animation-delay: 0s, 1.7s;
 }
 
 .loadingTag {
   font-size: 1.5em;
   opacity: 0;
   animation: fadeIn 0.5s ease-in-out;
-  animation-delay: 2.5s;
+  animation-delay: 2.2s;
   animation-fill-mode: forwards;
+}
+.blink {
+  animation: blink alternate infinite 0.33s ease-in-out;
+  animation-delay: 2.4s;
+}
+.gigDate {
+  padding-right: 5px;
+}
+
+@keyframes grow {
+  from {transform: scale(0.3)},
+  to {transform: scale(1)}
+}
+.modalBG > * {
+  animation: grow 0.3s cubic-bezier(.17,.67,.39,1.1);
+}
+.modalBox {
+  perspective: 600px;
+}
+.modalBoxInner {
+  transition: transform 1s;
+  transform-style: preserve-3d;
+}
+[class^="face"] {
+  backface-visibility: hidden;
+}
+.facePasswordSuccess {
+  transform: rotateY(180deg);
+}
+.facePasswordSuccess h2 {
+  font-family: 'Metal Mania';
+  text-align: center;
+  font-size: 6rem;
+}
+.passwordForget {
+  font-size: 0.9rem;
+  color: #0711a0;
+  text-align: center;
+  font-weight: bold;
+  text-decoration: underline;
+  font-family: 'Futura';
+  font-style: italic;
+  text-transform: uppercase;
+}
+.passwordForget:disabled {
+  opacity: 0.4;
+}
+.isFlipped {
+  transform: rotateY(180deg);
+}
+.modalBox p {
+  color: #b00;
+  font-weight: bold;
+  text-align: center;
+}
+
+.greyDisabled {
+  color: darkgrey;
+  box-shadow: -5px 5px 1px currentColor;
+  border-color: currentColor;
 }

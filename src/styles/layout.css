@@ -12,7 +12,9 @@
 .l-95w {
   width: 95% !important;
 }
-
+h4 {
+  margin: 0 0 5px 0;
+}
 #root {
   width: 100vw;
   height: 100vh;
@@ -24,7 +26,6 @@
   height: 100%;
 }
 /* NAV */
-
 nav.fontMetal {
   display: flex;
   align-items: center;
@@ -32,7 +33,7 @@ nav.fontMetal {
   position: fixed;
   width: 100vw;
   top: 0;
-  z-index: 3;
+  z-index: 8;
 }
 
 nav.fontMetal button, h1 {
@@ -54,7 +55,7 @@ nav.fontMetal button, h1 {
   margin: 0px auto 0 auto;
   position: fixed;
   width: 90%;
-  z-index:9;
+  z-index: 4;
 }
 .filterWrapper div {
   flex-grow: 1;
@@ -73,7 +74,6 @@ nav.fontMetal button, h1 {
 }
 .filterSelectorWrapper {
   width: 70%;
-  padding: 0 5px 0 0;
 }
 .filterWrapper h3, h4 {
   width: 100%;
@@ -84,8 +84,18 @@ nav.fontMetal button, h1 {
 .filterWrapper button {
   margin: 3px;
 }
-.filterHide {
+.filterWrapper button {
+  position: relative;
+}
+.filterWrapper button::after {
   position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+}
+.filterHide {
+  position: absolute !important;
   top: -35px;
 }
 
@@ -94,27 +104,28 @@ nav.fontMetal button, h1 {
 }
 
 /* SONG PAGE */
-
+.label input {
+  width: 100%;
+}
 .label, iframe {
   display: block;
-  margin: 0.7rem 0;
-  width: 50%;
+  /* margin: 0.7rem 0; */
+  /* width: 50%; */
 }
 .label {
-  width: 45%;
-  min-height: 78px;
+  /* width: 45%;
+  min-height: 78px; */
 }
 .label, iframe {
-  margin: 0 0 10px 0;
+  /* margin: 0 0 10px 0; */
 }
 .input {
   display: block;
-  margin: 0.3rem 0 0.3rem -4px;
-  width: 90%;
+  margin-left: -3px;
+  /* margin: 0.3rem 0 0.3rem -4px;
+  width: 90%; */
 }
-.songName, iframe, .audioForm, .songVocalist {
-  width: 96%;
-}
+
 .songVocalistOption {
   min-height: 20px;
   width: 45%;
@@ -128,7 +139,7 @@ nav.fontMetal button, h1 {
   position: absolute;
   top: 100%;
   left: 0px;
-  z-index: 5;
+  z-index: 3;
 }
 .modalSelectWrapper {
   width: 80%;
@@ -146,35 +157,29 @@ nav.fontMetal button, h1 {
 .modalSelectWrapper h3 {
   width: 100%;
 }
-.audioForm {
-  height: 60px;
-}
-.label.audio {
-  width: 100%;
-  min-height: 60px;
-  max-height: 60px;
-}
-.songEdit, .songCreate {
-  width: 96% !important;
-}
+
+
 .button {
   margin: 20px;
 }
-.songLyrics, .songRequired {
+/* .songLyrics, .songRequired {
   width: 44%;
   height: 10%;
-}
-.songLyrics, .songVocalist {
+} */
+.songLyrics, .songVocalist, .songRequired {
   position: relative;
 }
-.songLyrics span {
+.songLyrics span, .songRequired span, .songVocalist span {
   position: absolute;
   top: 10px;
 }
 .songCover {
   position: absolute;
-  top: 33px;
+  top: 30px;
   right: 25px;
+}
+.label.audio input {
+  width: 90%;
 }
 /* song detail exit button */
 .exit {
@@ -188,20 +193,53 @@ nav.fontMetal button, h1 {
 
 /* GIG PAGE */
 .gigWrapper {
-  flex-direction: row !important;
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: 50% 44%;
+  grid-template-rows: 60px 1fr 50px;
+  grid-template-areas:
+    'where when'
+    'what what'
+    'submit submit';
+}
+.gigDate {
+  grid-area: when;
+}
+.gigLocation {
+  grid-area: where;
+}
+p.gigLocation {
+  margin-left: -1px;
 }
 .gigWrapper label {
-  width: 96%;
-  min-height: 65px !important;
+}
+.setListWrapper {
+  grid-area: what;
+  position: relative;
+  overflow-y: scroll;
+}
+.setListWrapper h3 {
+  margin: 5px 0px 10px 0px;
+}
+.setListAddBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 50px;
+  height: 50px;
+}
+.gigSubmit {
+  grid-area: submit;
+  margin: 0;
 }
 .gigList {
   width: 100%;
-  height: calc(100vh - 300px);
 }
 .gigList li {
   display: flex;
 }
-.gigList button {
+.setListWrapper .gigList button,
+.sharksFavWrapper .gigList button {
   flex-grow: 0;
   width: auto !important;
   margin: 2px !important;
@@ -215,46 +253,139 @@ nav.fontMetal button, h1 {
 }
 
 /* SHARK */
+.sharkWrapper {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: 50% 44%;
+  grid-template-rows: 70px 1fr 50px;
+  grid-template-areas:
+  'who when'
+  'favs favs'
+  'submit submit';
+}
+.sharkName {
+  grid-area: who;
+}
+.sharkSince {
+  grid-area: when;
+}
+.sharksFavWrapper {
+  grid-area: favs;
+  position: relative;
+  overflow-y: scroll;
+}
+.sharksFavWrapper h3 {
+  margin: 5px 0px 10px 0px;
+}
+.sharkSubmit {
+  grid-area: submit;
+  width: 90%;
+  margin: 0 auto;
 
-
+}
 /* STATE */
 .hide {display: none!important;}
-.wrapper {
-  align-items: flex-start;
-  display: flex;
-  flex-wrap: wrap;
+.DetailWrapper {
   height: 90%;
-  justify-content: space-around;
   position: fixed;
   right: 0;
   top: 60px;
-  width: 80%;
-  z-index: 9;
+  width: 85%;
+  z-index: 5;
 }
+.sharksFavAddBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 50px;
+  height: 50px;
+}
+
+.songWrapper {
+  grid-gap: 16px;
+  display: grid;
+  grid-template-columns: 47% 47%;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 60px;
+  grid-template-areas:
+    'name name'
+    'date status'
+    'vocals vocals'
+    'audio audio'
+    'lyrics required'
+    'submit submit';
+}
+.songVocalist .input {
+  margin-top: 10px;
+}
+
+[name=dob] {
+  width: 97%;
+}
+.songName {
+  grid-area: name;
+  width: 100%;
+  height: 100%;
+}
+.songDate {
+  grid-area: date;
+  width: 100%;
+  height: 100%;
+}
+.songStatus {
+  grid-area: status;
+  width: 100%;
+  height: 100%;
+}
+.songVocalist {
+  grid-area: vocals;
+  width: 100%;
+  height: 100%;
+}
+.audioForm, iframe {
+  grid-area: audio;
+  width: 100%;
+  height: 100%;
+}
+.songLyrics {
+  grid-area: lyrics;
+  width: 100%;
+  height: 100%;
+}
+.songRequired {
+  width: 100%;
+  height: 100%;
+}
+.songSubmit {
+  grid-area: submit;
+  place-items: center;
+  margin: 0;
+}
+
 @media screen and (max-width: 420px) {
   .hideForS {
     display: none!important;
   }
 }
-.songList {
+.AllSongs {
   height: 100%;
   width: 100%;
 }
-.songList button {
+.AllSongs button {
   margin: 3px 0;
-  width: 90%;
+  width: 100%;
 }
-.songList li:last-of-type {
+.AllSongs.gigList button {
+  margin: 2px 0;
+}
+.AllSongs li:last-of-type {
   margin-bottom: 45vh;
 }
 
 .audio {
-  height: 66px;
+  height: 100%;
   width: 100%;
 }
-.audioForm {
-  width: 96%;
-}
+
 .newSongBtn, .userBtn {
   position: absolute;
   right: 10px;
@@ -284,13 +415,13 @@ button.submit {
 
 .modalBox label {
   width: 96%;
+  margin: 20px auto;
 }
 
-
-.modalSongList {
+.modalAllSongs {
   position: absolute;
-  left: -18vw;
-  top: 0;
+  left: 2vw;
+  top: 2vh;
   height: 96vh;
   width: 96vw;
   z-index: 2;
@@ -298,10 +429,10 @@ button.submit {
   flex-wrap: wrap;
   flex-direction: row;
 }
-.modalSongList li {
+.modalAllSongs li {
   width: 100%;
 }
-.modalSongList li button {
+.modalAllSongs li button {
   width: 100% !important;
   margin: 0 !important;
 }
@@ -341,13 +472,31 @@ button.submit {
   height: 100%;
   width: 100vw;
 }
+.modalBoxInner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.modalBox {
+  height: 400px;
+}
 main {
   margin-top: 60px;
   height: calc(100vh - 60px);
 }
+[class^="face"] {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+.facePasswordSuccess h2 {
+  margin-top: 4%;
+}
+.passwordForget {
+  width: 100%;
+}
 
-
-.modalBG {
+.modalBG, .halfModalBG {
   position: fixed;
   top: 0;
   left: 0;
@@ -356,16 +505,26 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9;
+  z-index: 999;
 }
-
+.modalBG {
+  z-index: 999;
+}
+.halfModalBG {
+  z-index: 7;
+}
 .songLyricsModal {
   height: 80vh;
   width: 90vw;
 }
+.modalBox p {
+  width: 100%;
+  margin: 15px 0 0 0;
+}
 .songLyricsModal textarea {
-  width: 103%;
+  width: 100%;
   height: 95%;
+  margin: 7px auto;
 }
 
 .loadingTag {
@@ -380,5 +539,23 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  position: relative;
   z-index: 99999999999999999999;
+}
+
+.gigList button {
+  display: flex;
+  align-items: center;
+}
+
+@media screen and (min-width: 666px) {
+  .modalAllSongs {
+    left: -14vw;
+  }
+  .songCover {
+    right: 75px;
+  }
+  .sharksFavAddBtn {
+    top: 0;
+  }
 }

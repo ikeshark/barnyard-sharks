@@ -2,13 +2,15 @@ import React from 'react';
 
 import Shark from './Shark';
 import SharkList from './SharkList';
+import delayUnmounting from '../common/delayUnmounting';
+
+const SharkDelayUnmount = delayUnmounting(Shark);
 
 const INITIAL_STATE = {
-
   detailedShark: {},
   detailedSharkID: '',
-  isDetail: false
 
+  isDetail: false
 }
 
 class Sharks extends React.Component {
@@ -27,8 +29,12 @@ class Sharks extends React.Component {
     })
   }
 
-  exitDetail = () => {
-    this.setState({ ...INITIAL_STATE });
+  exitDetail = e => {
+    const halfModalBG = document.querySelector('.halfModalBG');
+    const exitBtn = document.querySelector('.exit');
+    if (e.target === halfModalBG || e.target === exitBtn) {
+      this.setState({ ...INITIAL_STATE });
+    }
   }
 
   render() {
@@ -39,18 +45,18 @@ class Sharks extends React.Component {
           showDetail={this.showDetail}
           detailedShark={this.state.detailedShark}
         />
-        {
-          this.state.isDetail &&
-          <Shark
-            id={this.state.detailedSharkID}
-            firebase={this.props.firebase}
-            songs={this.props.songs}
-            sharks={this.props.sharks}
-            shark={this.state.detailedShark}
-            exit={this.exitDetail}
-            authUser={this.props.authUser}
-          />
-        }
+        <SharkDelayUnmount
+          delayTime={300}
+          isMounted={this.state.isDetail}
+
+          sharkId={this.state.detailedSharkID}
+          firebase={this.props.firebase}
+          songs={this.props.songs}
+          sharks={this.props.sharks}
+          shark={this.state.detailedShark}
+          exit={this.exitDetail}
+          authUser={this.props.authUser}
+        />
       </main>
     );
   }

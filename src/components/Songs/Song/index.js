@@ -1,7 +1,6 @@
 import React from 'react';
 
-import Modal from '../../Modal';
-import SharkSelect from '../../common/SharkSelect';
+import { Modal, SharkSelect, DetailWrapper, EditOrCreate } from '../../common';
 
 const INITIAL_STATE = {
   audio: '',
@@ -95,13 +94,13 @@ class Song extends React.Component {
     // see if any songs share the same name as edited song
     // (excluding the song iteslf i.e. the name was not edited)
     songs.forEach(song => {
-      if (song[1].name === name && song[0] !== this.props.id) {
+      if (song[1].name === name && song[0] !== this.props.songId) {
         this.setState({ error: 'song names must be unique' });
         validation = false;
       }
     });
     if (validation) {
-      this.props.firebase.db.ref(`songs/${this.props.id}`).update({
+      this.props.firebase.db.ref(`songs/${this.props.songId}`).update({
         audio,
         dob,
         name,
@@ -175,6 +174,7 @@ class Song extends React.Component {
   }
 
   closeModal = e => {
+    console.log(e.target)
     if (e) {
       if (e.target === document.querySelector('.modalBG')) {
         this.setState({
@@ -218,10 +218,17 @@ class Song extends React.Component {
     if (value === 'instrumental' && e.target.checked) {
       this.setState({ vox: 'instrumental', hasChanged: true });
     } else if (e.target.checked) {
-      this.setState({
-        vox: vox ? `${vox}, ${value}` : value,
-        hasChanged: true
-      });
+      if (vox === 'instrumental') {
+        this.setState({
+          vox: value,
+          hasChanged: true
+        });
+      } else {
+        this.setState({
+          vox: vox ? `${vox}, ${value}` : value,
+          hasChanged: true
+        });
+      }
     } else if (!e.target.checked) {
       const test = new RegExp(',');
       // if there is a comma, ie multiple values
@@ -255,33 +262,13 @@ class Song extends React.Component {
     return outputArray.join(', ');
   }
 
-  renderSaveOrCreate = () => {
-    if (this.props.id === '') {
-      return (
-        <button
-          className="button songCreate"
-          onClick={this.onCreate}
-          disabled={!this.state.name}
-        >
-          create new song
-        </button>
-      );
-    }
-    return (
-      <button
-        className="button songEdit"
-        onClick={this.onEdit}
-        disabled={!this.state.hasChanged}
-      >
-        save edits
-      </button>
-    );
-  }
-
-
   render() {
     return (
-      <div className="wrapper">
+      <DetailWrapper
+        handleExit={this.props.exit}
+        classNames="songWrapper"
+        isUnmounting={this.props.isUnmounting}
+      >
         {this.state.error && <p className="red">{this.state.error}</p>}
         <label className="label songName">
           name
@@ -326,48 +313,64 @@ class Song extends React.Component {
           disabled={!this.props.authUser}
           onClick={() => this.setState({ isVocalEdit: true })}
         >
-          vocalist
+          <span>vocalist</span>
           <p className="input">
             {this.processVox()}
           </p>
         </button>
         {this.state.isVocalEdit &&
-          <Modal onClose={this.closeModal}>
-            <div className="modalSelectWrapper">
-              <SharkSelect
-                checkedCondition={this.state.vox}
-                handleChange={this.handleVoxChange}
-                sharks={this.props.sharks}
-              >
-                <>
-                  <label key="gang" className="label songVocalistOption">
-                    gang
-                    <input
-                      type="checkbox"
-                      value="gang"
-                      checked={/gang/.test(this.state.vox)}
-                      className="input"
-                      onChange={this.handleVoxChange}
-                    />
-                  </label>
-                  <label key="instrumental" className="label songVocalistOption">
-                    instrumental
-                    <input
-                      type="checkbox"
-                      checked={/instrumental/.test(this.state.vox)}
-                      value="instrumental"
-                      className="input"
-                      onChange={this.handleVoxChange}
-                    />
-                  </label>
-                </>
-              </SharkSelect>
+          <Modal>
+            <div className="modalBG" onClick={this.closeModal}>
+              <div className="modalSelectWrapper">
+                <SharkSelect
+                  checkedCondition={this.state.vox}
+                  handleChange={this.handleVoxChange}
+                  sharks={this.props.sharks}
+                >
+                  <>
+                    <label
+                      key="gang"
+                      className={
+                        /gang/.test(this.state.vox) ?
+                        "label songVocalistOption active" :
+                        "label songVocalistOption"
+                      }
+                    >
+                      gang
+                      <input
+                        type="checkbox"
+                        value="gang"
+                        checked={/gang/.test(this.state.vox)}
+                        className="input"
+                        onChange={this.handleVoxChange}
+                      />
+                    </label>
+                    <label
+                      key="instrumental"
+                      className={
+                        /instrumental/.test(this.state.vox) ?
+                        "label songVocalistOption active" :
+                        "label songVocalistOption"
+                      }
+                    >
+                      instrumental
+                      <input
+                        type="checkbox"
+                        checked={/instrumental/.test(this.state.vox)}
+                        value="instrumental"
+                        className="input"
+                        onChange={this.handleVoxChange}
+                      />
+                    </label>
+                  </>
+                </SharkSelect>
+              </div>
             </div>
           </Modal>
         }
         {this.renderAudio()}
         <button
-          className="label songLyrics"
+          className={this.state.lyrics ? "label songLyrics hasContent" : "label songLyrics"}
           onClick={() => this.setState({ isLyricDisplay: true })}
         >
           <span>{this.state.lyrics ? "" : "Add "} Lyrics</span>
@@ -383,49 +386,63 @@ class Song extends React.Component {
           />
         </label>
         <button
-          className="label songRequired"
+          className={this.state.reqSharks ? "label songRequired hasContent" : "label songRequired"}
           disabled={!this.props.authUser}
           onClick={() => this.setState(prevState => ({ isReqSharksEdit: !prevState.isReqSharksEdit }))}
         >
-          Required Sharks
+          <span>Required Sharks</span>
         </button>
 
         {this.state.isReqSharksEdit &&
-          <Modal onClose={this.closeModal}>
-            <div className="modalSelectWrapper">
-              <h3>WHO IS REQUIRED</h3>
-              <SharkSelect
-                checkedCondition={this.state.reqSharks}
-                handleChange={this.handleReqSharksChange}
-                sharks={this.props.sharks}
-              />
+          <Modal>
+            <div className="modalBG" onClick={this.closeModal}>
+              <div className="modalSelectWrapper">
+                <h3>WHO IS REQUIRED</h3>
+                <SharkSelect
+                  checkedCondition={this.state.reqSharks}
+                  handleChange={this.handleReqSharksChange}
+                  sharks={this.props.sharks}
+                />
+              </div>
             </div>
           </Modal>
         }
-        {this.props.authUser && this.renderSaveOrCreate()}
 
-        {
-          this.state.isLyricDisplay &&
-          <Modal onClose={this.closeModal}>
-            <label className="label songLyricsModal">
-              lyrics
-              <textarea
-                disabled={!this.props.authUser}
-                readOnly={!this.props.authUser}
-                name="lyrics"
-                className="input"
-                onChange={this.onChange}
-                value={this.state.lyrics}
-              >
-              </textarea>
-            </label>
+        {this.props.authUser &&
+          <EditOrCreate
+            isEdit={!!this.props.songId}
+            className="songSubmit"
+            title="song"
+            handleCreate={this.onCreate}
+            handleEdit={this.onEdit}
+            createValidation={this.state.name}
+            editValidation={this.state.hasChanged}
+          />
+        }
+
+        {this.state.isLyricDisplay &&
+          <Modal>
+            <div className="modalBG" onClick={this.closeModal}>
+              <label className="label songLyricsModal">
+                lyrics
+                <textarea
+                  disabled={!this.props.authUser}
+                  readOnly={!this.props.authUser}
+                  name="lyrics"
+                  className="input"
+                  onChange={this.onChange}
+                  value={this.state.lyrics}
+                >
+                </textarea>
+              </label>
+            </div>
           </Modal>
         }
 
         <button onClick={this.props.exit} className="button exit">
           >
         </button>
-       </div>
+       </DetailWrapper>
     );
   }
 

@@ -5,7 +5,7 @@ const SharkList = ({ sharks, detailedShark, showDetail }) => {
   const retiredSharks = Object.entries(sharks.retired);
   return (
 
-    <ul className="songList">
+    <ul className="AllSongs">
       <h3>ACTIVE</h3>
       {activeSharks.map(shark => (
         <li key={shark[0]}>

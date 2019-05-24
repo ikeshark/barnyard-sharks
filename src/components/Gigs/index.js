@@ -2,6 +2,9 @@ import React from 'react';
 
 import Gig from './Gig';
 import GigList from './GigList';
+import delayUnmounting from '../common/delayUnmounting';
+
+const DelayedGig = delayUnmounting(Gig);
 
 const INITIAL_STATE = {
   sortType: '',
@@ -18,7 +21,7 @@ class Gigs extends React.Component {
   state = { ...INITIAL_STATE };
 
   showDetail = e => {
-    const detailedGigID = e.target.value;
+    const detailedGigID = e.target.value ? e.target.value : e.target.parentNode.value;
     const detailedGig = Object.entries(this.props.gigs)
       .filter(gig => gig[0] === detailedGigID)[0][1];
     this.setState({ isDetail: false }, () => {
@@ -29,8 +32,16 @@ class Gigs extends React.Component {
       });
     })
   }
-  exitDetail = () => {
-    this.setState({ isDetail: false });
+  exitDetail = e => {
+    const halfModal = document.querySelector('.halfModalBG');
+    const exitBtn = document.querySelector('.exit');
+    if (e.target === halfModal || e.target === exitBtn) {
+      this.setState({
+        isDetail: false,
+        detailedGig: {},
+        detailedGigID: '',
+      });
+    }
   }
   addNewGig = () => {
     this.setState({
@@ -58,18 +69,18 @@ class Gigs extends React.Component {
           </button>
         }
 
-        {
-          this.state.isDetail &&
-          <Gig
-            id={this.state.detailedGigID}
-            firebase={this.props.firebase}
-            songs={this.props.songs}
-            gig={this.state.detailedGig}
-            exit={this.exitDetail}
-            authUser={this.props.authUser}
-            sharks={this.props.sharks}
-          />
-        }
+        <DelayedGig
+          delayTime={300}
+          isMounted={this.state.isDetail}
+          gigId={this.state.detailedGigID}
+          firebase={this.props.firebase}
+          songs={this.props.songs}
+          gig={this.state.detailedGig}
+          exit={this.exitDetail}
+          authUser={this.props.authUser}
+          sharks={this.props.sharks}
+        />
+
       </main>
     );
   }

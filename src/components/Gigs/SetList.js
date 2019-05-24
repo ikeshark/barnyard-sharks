@@ -42,6 +42,7 @@ const SetList = ({ authUser, songs, setList, onDelete, onMoveUp, onMoveDown }) =
             type="button"
             value={i}
             onClick={onMoveUp}
+            className="hideForS"
             disabled={isDisabledUP(i)}
           >
             &uarr;
@@ -50,6 +51,7 @@ const SetList = ({ authUser, songs, setList, onDelete, onMoveUp, onMoveDown }) =
             type="button"
             value={i}
             onClick={onMoveDown}
+            className="hideForS"
             disabled={authUser === null || i === setList.length - 1}
           >
             &darr;

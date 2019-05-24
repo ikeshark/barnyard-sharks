@@ -1,7 +1,7 @@
 import React from 'react';
 
 import SetList from '../Gigs/SetList';
-import SongList from './../Songs/SongList';
+import { AllSongs, DetailWrapper, Modal } from '../common/';
 
 const INITIAL_STATE = {
   name: '',
@@ -41,7 +41,7 @@ class Shark extends React.Component {
     let favSongs = this.state.favSongs;
 
     favSongs = favSongs.join(',');
-    this.props.firebase.db.ref(`sharks/active/${this.props.id}`).update({
+    this.props.firebase.db.ref(`sharks/active/${this.props.sharkId}`).update({
       name: this.state.name,
       sharkSince: this.state.sharkSince,
       favSongs,
@@ -82,55 +82,58 @@ class Shark extends React.Component {
   }
 
 
-    onMoveUp = e => {
-      const position = parseInt(e.target.value);
-      let favSongs = this.state.favSongs;
-      [favSongs[position], favSongs[position - 1]] =
-        [favSongs[position - 1], favSongs[position]];
-      this.setState({ favSongs });
-    }
-    onMoveDown = e => {
-      const position = parseInt(e.target.value);
-      let favSongs = this.state.favSongs;
-      [favSongs[position], favSongs[position + 1]] =
-        [favSongs[position + 1], favSongs[position]];
-      this.setState({ favSongs });
-    }
-    onDelete = e => {
-      const position = parseInt(e.target.value);
-      let favSongs = this.state.favSongs;
-      favSongs.splice(position, 1);
-      this.setState({ favSongs });
-    }
-    onAddSong = () => {
-      this.setState({
-        isAddSong: true
-      });
-    }
-    onPushToFavSongs = e => {
-      const songName = e.target.innerText;
-      let songID;
-      Object.entries(this.props.songs).forEach(entry => {
-        if (entry[1].name === songName) {
-          songID = entry[0];
-        }
-      });
-      let favSongs = this.state.favSongs;
-      favSongs.push(songID);
-      this.setState({
-        favSongs: favSongs,
-        isAddSong: false,
-        hasChanged: true,
-      });
-    }
-
+  onMoveUp = e => {
+    const position = parseInt(e.target.value);
+    let favSongs = this.state.favSongs;
+    [favSongs[position], favSongs[position - 1]] =
+      [favSongs[position - 1], favSongs[position]];
+    this.setState({ favSongs, hasChanged: true, });
+  }
+  onMoveDown = e => {
+    const position = parseInt(e.target.value);
+    let favSongs = this.state.favSongs;
+    [favSongs[position], favSongs[position + 1]] =
+      [favSongs[position + 1], favSongs[position]];
+    this.setState({ favSongs, hasChanged: true, });
+  }
+  onDelete = e => {
+    const position = parseInt(e.target.value);
+    let favSongs = this.state.favSongs;
+    favSongs.splice(position, 1);
+    this.setState({ favSongs, hasChanged: true, });
+  }
+  onAddSong = () => {
+    this.setState({
+      isAddSong: true
+    });
+  }
+  onPushToFavSongs = e => {
+    const songName = e.target.innerText;
+    let songID;
+    Object.entries(this.props.songs).forEach(entry => {
+      if (entry[1].name === songName) {
+        songID = entry[0];
+      }
+    });
+    let favSongs = this.state.favSongs;
+    favSongs.push(songID);
+    this.setState({
+      favSongs: favSongs,
+      isAddSong: false,
+      hasChanged: true,
+    });
+  }
 
   render() {
     // if current user is the detailed shark, you are valid
-    const validated = this.props.authUser && this.props.authUser.uid === this.props.id;
+    const validated = this.props.authUser && this.props.authUser.uid === this.props.sharkId;
     return (
-      <form className="wrapper">
-        <label className="label l-95w">
+      <DetailWrapper
+        handleExit={this.props.exit}
+        classNames="sharkWrapper"
+        isUnmounting={this.props.isUnmounting}
+      >
+        <label className="label l-95w sharkName">
           Name
           <input
             name="name"
@@ -140,7 +143,7 @@ class Shark extends React.Component {
             className="input"
           />
         </label>
-        <label className="label l-95w">
+        <label className="label l-95w sharkSince">
           Shark Since
           <input
             name="date"
@@ -151,43 +154,51 @@ class Shark extends React.Component {
             className="input"
           />
         </label>
-
-        <SetList
-          songs={this.props.songs}
-          authUser={this.props.authUser}
-          setList={this.state.favSongs}
-          onMoveUp={this.onMoveUp}
-          onMoveDown={this.onMoveDown}
-          onDelete={this.onDelete}
-        />
-
-        {validated &&
-          <>
+        <div className="sharksFavWrapper">
+          <h3>A Shark’s <br />Dozen</h3>
+          <SetList
+            songs={this.props.songs}
+            authUser={this.props.authUser}
+            setList={this.state.favSongs}
+            onMoveUp={this.onMoveUp}
+            onMoveDown={this.onMoveDown}
+            onDelete={this.onDelete}
+          />
+          {validated &&
             <button
+              className="sharksFavAddBtn"
               onClick={this.onAddSong}
               disabled={!this.props.authUser}
               type="button"
             >
               Add Song
             </button>
-            <button
-              type="submit"
-              onClick={this.handleEdit}
-              disabled={!this.state.hasChanged || !validated}
-            >
-              save edits
-            </button>
-          </>
+          }
+        </div>
+        {validated &&
+          <button
+            className="sharkSubmit"
+            type="submit"
+            onClick={this.handleEdit}
+            disabled={!this.state.hasChanged || !validated}
+          >
+            save edits
+          </button>
         }
 
         {
           this.state.isAddSong &&
-          <SongList
-            className="modalSongList"
-            onClick={this.onPushToFavSongs}
-            songs={Object.values(this.props.songs)}
-            sharks={this.props.sharks}
-          />
+          <Modal>
+            <div className="modalBG">
+              <AllSongs
+                isFilterShowing={false}
+                className="modalAllSongs"
+                onClick={this.onPushToFavSongs}
+                songs={Object.values(this.props.songs)}
+                sharks={this.props.sharks}
+              />
+            </div>
+          </Modal>
         }
         <button
           type="button"
@@ -197,7 +208,7 @@ class Shark extends React.Component {
           >
         </button>
 
-      </form>
+    </DetailWrapper>
     );
   }
 }

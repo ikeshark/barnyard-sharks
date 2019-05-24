@@ -1,7 +1,9 @@
 import React from 'react';
 
 import Song from './Song';
-import SongList from './SongList';
+import { AllSongs, delayUnmounting} from '../common';
+
+const DelayedSong = delayUnmounting(Song);
 
 const INITIAL_STATE = {
   displayedSongs: [],
@@ -21,7 +23,7 @@ class Songs extends React.Component {
     const name = e.target.innerText;
     const song = Object.entries(this.props.songs)
       .filter(song => song[1].name === name)[0];
-    this.setState({ isDetail: false, isFilterShowing: false }, () => {
+    this.setState({ isDetail: false }, () => {
       this.setState({
         detailedSong: song[1],
         detailedSongID: song[0],
@@ -29,8 +31,13 @@ class Songs extends React.Component {
       });
     })
   }
-  exitDetail = () => {
-    this.setState({ isDetail: false, detailedSong: '' });
+  exitDetail = e => {
+    const modalBG = document.querySelector('.halfModalBG');
+    const exitBtn = document.querySelector('.exit');
+
+    if (e.target === modalBG || e.target === exitBtn) {
+      this.setState({ isDetail: false, detailedSong: '' });
+    }
   }
   addNewSong = () => {
     this.setState({
@@ -47,11 +54,12 @@ class Songs extends React.Component {
     } = this.state;
     return (
       <main>
-        <SongList
+        <AllSongs
           onClick={this.showDetail}
           songs={this.props.songs}
           detailedSong={detailedSong}
           sharks={this.props.sharks}
+          isFilterShowing={true}
         />
 
 
@@ -62,18 +70,18 @@ class Songs extends React.Component {
           </button>
         }
 
-        {
-          isDetail &&
-          <Song
-            id={this.state.detailedSongID}
-            firebase={this.props.firebase}
-            songs={this.props.songs}
-            song={detailedSong}
-            exit={this.exitDetail}
-            sharks={this.props.sharks}
-            authUser={this.props.authUser}
-          />
-        }
+        <DelayedSong
+          delayTime={300}
+          isMounted={isDetail}
+          songId={this.state.detailedSongID}
+          firebase={this.props.firebase}
+          songs={this.props.songs}
+          song={detailedSong}
+          exit={this.exitDetail}
+          sharks={this.props.sharks}
+          authUser={this.props.authUser}
+        />
+
       </main>
     );
   }

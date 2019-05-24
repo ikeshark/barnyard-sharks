@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import SharkSelect from '../common/SharkSelect';
+import SharkSelect from './SharkSelect';
 
 const Filter = ({
   isOpen,
