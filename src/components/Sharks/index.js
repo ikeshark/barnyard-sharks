@@ -30,21 +30,23 @@ class Sharks extends React.Component {
   }
 
   exitDetail = e => {
-    const halfModalBG = document.querySelector('.halfModalBG');
-    const exitBtn = document.querySelector('.exit');
-    if (e.target === halfModalBG || e.target === exitBtn) {
+    const modalBG = document.querySelector('#halfModalBG');
+    const exitBtn = document.querySelector('#detailExit');
+    if (e.target === modalBG || e.target === exitBtn) {
       this.setState({ ...INITIAL_STATE });
     }
   }
 
   render() {
     return (
-      <main>
-        <SharkList
-          sharks={this.props.sharks}
-          showDetail={this.showDetail}
-          detailedShark={this.state.detailedShark}
-        />
+      <main className="h-mainWrapper flex bg-tan shadow-inset">
+        <div className="relative w-full md:w-1/2">
+          <SharkList
+            sharks={this.props.sharks}
+            showDetail={this.showDetail}
+            detailedShark={this.state.detailedShark}
+          />
+        </div>
         <SharkDelayUnmount
           delayTime={300}
           isMounted={this.state.isDetail}

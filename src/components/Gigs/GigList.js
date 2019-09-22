@@ -11,7 +11,17 @@ const renderDate = date => {
   year = year - 2000;
   let day = dateObj.getDate();
   day = (day.toString().length === 1) ? '0' + day : day;
-  return `${month}.${day}.${year} -`
+  return `${month}.${day}.${year} - `
+}
+
+const styles = {
+  btn: `
+    w-full mb-1 p-1
+    border-gray border border-b-3
+    bg-offwhite shadow-spread
+    text-left text-xl leading-tight
+    hover:bg-deeppink hover:text-white hover:border-transparent
+  `,
 }
 
 const GigList = ({ gigs, detailedGig, showDetail }) => {
@@ -19,12 +29,12 @@ const GigList = ({ gigs, detailedGig, showDetail }) => {
     return b[1].date - a[1].date;
   });
   return (
-    <ul className="AllSongs gigList">
+    <ul className="p-3 overflow-y-scroll h-full lastItem-mb">
       {gigArray.map(gig => (
         <li key={gig[0]}>
           <button
             onClick={showDetail}
-            className={detailedGig === gig[1] ? "active" : ""}
+            className={styles.btn}
             value={gig[0]}
           >
             <span className="gigDate">{renderDate(gig[1].date)}</span>

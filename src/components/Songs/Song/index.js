@@ -18,6 +18,48 @@ const INITIAL_STATE = {
   error: '',
 };
 
+const styles = {
+  wrapper: 'grid-song overflow-y-scroll h-full w-full p-4',
+  label: 'border border-black shadow-card p-2 text-sm',
+  iframe: 'border border-black shadow-card p-2 text-sm w-full h-80px',
+  inputXL: 'block text-xl w-full mt-2 -mb-2',
+  inputLG: 'block text-lg w-full mt-2 -mb-2',
+  btnOuter: 'relative text-left text-sm border border-black rounded-lg shadow-card p-2',
+  btnLabel: 'absolute top-0 left-0 mt-2 ml-2',
+  btnValue: 'block text-xl mt-3 -mb-1',
+  audio: 'border border-black shadow-card p-2 text-sm m-0',
+  btnText: 'absolute top-0 left-0 ml-2 mt-2 text-lg text-left leading-none',
+  cover: 'absolute top-0 right-0 mt-6 mr-8 text-sm md:mr-10 lg:mr-20',
+  btnSubmit: `
+    block p-2 text-xl
+    border-4 border-double border-black rounded-lg
+    disabled:border-gray-500 disabled:text-gray-500
+    songSubmit
+  `,
+  btnClose: `
+    absolute bottom-0 left-0 mb-y-center -ml-6
+    border border-black rounded-sm
+    shadow-card p-2 bg-white leading-none
+  `,
+  modalBG: `
+    fixed top-0 left-0
+    w-full h-screen z-100
+    bg-black-opaque
+    flex items-center justify-center
+  `,
+  modalInner: `
+    w-10/12 h-10/12
+    bg-white shadow-inset
+    p-4 text-lg
+    flex flex-col
+  `,
+  btnToggle: `
+    relative m-1 p-3
+    border border-black rounded-10
+    btn-toggle
+  `
+}
+
 class Song extends React.Component {
   state = { ...INITIAL_STATE };
 
@@ -56,15 +98,19 @@ class Song extends React.Component {
     if (this.state.audio) {
       if (this.state.audio.host === 'soundcloud') {
         const source = `https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/${this.state.audio.trackID}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=false&show_user=false&show_reposts=false&show_teaser=false`
-        return <iframe title="soundcloud" src={source}></iframe>
+        return <iframe style={{ gridArea: 'audio' }} className={styles.iframe} title="soundcloud" src={source}></iframe>
       } else {
         const source = `https://bandcamp.com/EmbeddedPlayer/size=small/bgcol=ffffff/linkcol=0687f5/track=${this.state.audio.trackID}/transparent=true/`;
-        return <iframe title="bandcamp" src={source}><p>{this.state.name}</p></iframe>
+        return <iframe style={{ gridArea: 'audio' }} className={styles.iframe} title="bandcamp" src={source}><p>{this.state.name}</p></iframe>
       }
     } else if (this.props.authUser) {
       return (
-        <form className="audioForm" onSubmit={this.processAudioEmbed}>
-          <label className="label audio">
+        <form
+          className={styles.audio}
+          onSubmit={this.processAudioEmbed}
+          style={{ gridArea: 'audio' }}
+        >
+          <label>
             audio
             <input
               disabled={!this.props.authUser}
@@ -72,7 +118,7 @@ class Song extends React.Component {
               name="newAudio"
               onChange={this.onChange}
               value={this.state.newAudio}
-              className="input"
+              className={styles.inputLG}
             />
           </label>
         </form>
@@ -174,9 +220,8 @@ class Song extends React.Component {
   }
 
   closeModal = e => {
-    console.log(e.target)
     if (e) {
-      if (e.target === document.querySelector('.modalBG')) {
+      if (e.target === document.querySelector('#modalBG')) {
         this.setState({
           isLyricDisplay: false,
           isReqSharksEdit: false,
@@ -194,15 +239,16 @@ class Song extends React.Component {
   handleReqSharksChange = e => {
     const value = e.target.value;
     let reqSharks = this.state.reqSharks;
-    if (e.target.checked) {
-      this.setState({
-        reqSharks: reqSharks ? `${reqSharks}, ${value}` : value,
-        hasChanged: true
-      });
-    } else if (!e.target.checked) {
-      const test = new RegExp(',');
+
+    console.log(value, reqSharks)
+
+    const re = new RegExp(value);
+    // if reqSharks has value
+    if (re.test(reqSharks)) {
+      // take out value
+      const re = new RegExp(',');
       // if there is a comma, ie multiple values
-      if (test.test(reqSharks)) {
+      if (re.test(reqSharks)) {
         let reqSharksArray = reqSharks.split(', ');
         reqSharksArray.splice(reqSharksArray.indexOf(value), 1);
         reqSharks = reqSharksArray.join(', ');
@@ -210,37 +256,51 @@ class Song extends React.Component {
         reqSharks = '';
       }
       this.setState({ reqSharks, hasChanged: true });
+    } else {
+      // add value
+      this.setState({
+        reqSharks: reqSharks ? `${reqSharks}, ${value}` : value,
+        hasChanged: true
+      });
     }
+
   }
   handleVoxChange = e => {
     const value = e.target.value;
     let vox = this.state.vox;
-    if (value === 'instrumental' && e.target.checked) {
-      this.setState({ vox: 'instrumental', hasChanged: true });
-    } else if (e.target.checked) {
+
+    if (value === 'instrumental') {
       if (vox === 'instrumental') {
-        this.setState({
-          vox: value,
-          hasChanged: true
-        });
+        this.setState({ vox: '', hasChanged: true })
       } else {
+        this.setState({ vox: 'instrumental', hasChanged: true });
+      }
+    } else if (vox === 'instrumental') {
+      this.setState({ vox: value, hasChanged: true })
+    } else {
+      const re = new RegExp(value);
+      // if vox has value
+      if (re.test(vox)) {
+        // take out value
+        const re = new RegExp(',');
+        // if there is a comma, ie multiple values
+        if (re.test(vox)) {
+          let voxArray = vox.split(', ');
+          voxArray.splice(voxArray.indexOf(value), 1);
+          vox = voxArray.join(', ');
+        } else {
+          vox = '';
+        }
+        this.setState({ vox, hasChanged: true });
+      } else {
+        // add value
         this.setState({
           vox: vox ? `${vox}, ${value}` : value,
           hasChanged: true
         });
       }
-    } else if (!e.target.checked) {
-      const test = new RegExp(',');
-      // if there is a comma, ie multiple values
-      if (test.test(vox)) {
-        let voxArray = vox.split(', ');
-        voxArray.splice(voxArray.indexOf(value), 1);
-        vox = voxArray.join(', ');
-      } else {
-        vox = '';
-      }
-      this.setState({ vox, hasChanged: true });
     }
+
   }
 
   processVox = () => {
@@ -269,135 +329,146 @@ class Song extends React.Component {
         classNames="songWrapper"
         isUnmounting={this.props.isUnmounting}
       >
-        {this.state.error && <p className="red">{this.state.error}</p>}
-        <label className="label songName">
-          name
-          <input
-            disabled={!this.props.authUser}
-            name="name"
-            onChange={this.onChange}
-            value={this.state.name}
-            className="input"
-          />
-        </label>
-        <label className="label songDate">
-          date of birth
-          <input
-            disabled={!this.props.authUser}
-            name="dob"
-            onChange={this.onDateChange}
-            value={this.processDate(this.state.dob) || this.state.dobInput}
-            className="input"
-            placeholder="mm/dd/yyyy"
-          />
-        </label>
-        <label className="label songStatus">
-          status
-          <select
-            disabled={!this.props.authUser}
-            name="status"
-            onChange={this.onChange}
-            value={this.state.status}
-            className="input"
-          >
-            <option value="solid">solid</option>
-            <option value="shakey">shakey</option>
-            <option value="inactive">inactive</option>
-            <option value="retired">retired</option>
-            <option value="idea">idea</option>
-          </select>
-        </label>
+        <div className={styles.wrapper}>
+          {this.state.error && <p className="text-red-700 font-bold">{this.state.error}</p>}
+          <label className={styles.label} style={{ gridArea: 'name' }}>
+            name
+            <input
+              disabled={!this.props.authUser}
+              name="name"
+              onChange={this.onChange}
+              value={this.state.name}
+              className={styles.inputXL}
+            />
+          </label>
+          <label className={styles.label} style={{ gridArea: 'date' }}>
+            date of birth
+            <input
+              disabled={!this.props.authUser}
+              name="dob"
+              onChange={this.onDateChange}
+              value={this.processDate(this.state.dob) || this.state.dobInput}
+              className={styles.inputLG}
+              placeholder="mm/dd/yyyy"
+            />
+          </label>
+          <label className={styles.label} style={{ gridArea: 'status' }}>
+            status
+            <select
+              disabled={!this.props.authUser}
+              name="status"
+              onChange={this.onChange}
+              value={this.state.status}
+              className={styles.inputXL}
+            >
+              <option value="solid">solid</option>
+              <option value="shakey">shakey</option>
+              <option value="inactive">inactive</option>
+              <option value="retired">retired</option>
+              <option value="idea">idea</option>
+            </select>
+          </label>
 
-        <button
-          className="label songVocalist"
-          disabled={!this.props.authUser}
-          onClick={() => this.setState({ isVocalEdit: true })}
-        >
-          <span>vocalist</span>
-          <p className="input">
-            {this.processVox()}
-          </p>
-        </button>
-        {this.state.isVocalEdit &&
+          <button
+            className={styles.btnOuter}
+            style={{ gridArea: 'vocals' }}
+            disabled={!this.props.authUser}
+            onClick={() => this.setState({ isVocalEdit: true })}
+          >
+            <span className={styles.btnLabel}>vocalist</span>
+            <span className={styles.btnValue}>
+              {this.processVox()}
+            </span>
+          </button>
+
+          {this.renderAudio()}
+          <button
+            style={{ gridArea: 'lyrics' }}
+            className={
+              this.state.lyrics ?
+              styles.btnOuter + " bg-pink" :
+              styles.btnOuter
+            }
+            onClick={() => this.setState({ isLyricDisplay: true })}
+          >
+            <span className={styles.btnText}>
+              {this.state.lyrics ? "" : "Add "} Lyrics
+            </span>
+          </button>
+
+          <button
+            className={
+              this.state.reqSharks ?
+              styles.btnOuter + " bg-pink" :
+              styles.btnOuter
+            }
+            style={{ gridArea: 'required' }}
+            disabled={!this.props.authUser}
+            onClick={() => this.setState(prevState => ({ isReqSharksEdit: !prevState.isReqSharksEdit }))}
+          >
+            <span className={styles.btnText}>Required Sharks</span>
+          </button>
+
+          {this.props.authUser &&
+            <EditOrCreate
+              isEdit={!!this.props.songId}
+              className={styles.btnSubmit}
+              title="song"
+              handleCreate={this.onCreate}
+              handleEdit={this.onEdit}
+              createValidation={this.state.name}
+              editValidation={this.state.hasChanged}
+            />
+          }
+
+          <label className={styles.cover}>
+            {this.state.isCover ? "cover" : "original"}
+            <input
+              type="checkbox"
+              disabled={!this.props.authUser}
+              name="isCover"
+              className="invisible"
+              onChange={this.onBoolChange}
+              checked={this.state.isCover}
+            />
+          </label>
+
+        </div>
+
+        {this.state.isLyricDisplay &&
           <Modal>
-            <div className="modalBG" onClick={this.closeModal}>
-              <div className="modalSelectWrapper">
-                <SharkSelect
-                  checkedCondition={this.state.vox}
-                  handleChange={this.handleVoxChange}
-                  sharks={this.props.sharks}
+            <div
+              id="modalBG"
+              className={styles.modalBG}
+              onClick={this.closeModal}
+            >
+              <label className={styles.modalInner}>
+                lyrics
+                <textarea
+                  disabled={!this.props.authUser}
+                  readOnly={!this.props.authUser}
+                  name="lyrics"
+                  className="border border-black block w-full text-lg p-4 mt-2 h-11/12"
+                  onChange={this.handleVoxChange}
+                  value={this.state.lyrics}
                 >
-                  <>
-                    <label
-                      key="gang"
-                      className={
-                        /gang/.test(this.state.vox) ?
-                        "label songVocalistOption active" :
-                        "label songVocalistOption"
-                      }
-                    >
-                      gang
-                      <input
-                        type="checkbox"
-                        value="gang"
-                        checked={/gang/.test(this.state.vox)}
-                        className="input"
-                        onChange={this.handleVoxChange}
-                      />
-                    </label>
-                    <label
-                      key="instrumental"
-                      className={
-                        /instrumental/.test(this.state.vox) ?
-                        "label songVocalistOption active" :
-                        "label songVocalistOption"
-                      }
-                    >
-                      instrumental
-                      <input
-                        type="checkbox"
-                        checked={/instrumental/.test(this.state.vox)}
-                        value="instrumental"
-                        className="input"
-                        onChange={this.handleVoxChange}
-                      />
-                    </label>
-                  </>
-                </SharkSelect>
-              </div>
+                </textarea>
+              </label>
             </div>
           </Modal>
         }
-        {this.renderAudio()}
-        <button
-          className={this.state.lyrics ? "label songLyrics hasContent" : "label songLyrics"}
-          onClick={() => this.setState({ isLyricDisplay: true })}
-        >
-          <span>{this.state.lyrics ? "" : "Add "} Lyrics</span>
-        </button>
-        <label className="songCover">
-          {this.state.isCover ? "cover" : "original"}
-          <input
-            type="checkbox"
-            disabled={!this.props.authUser}
-            name="isCover"
-            onChange={this.onBoolChange}
-            checked={this.state.isCover}
-          />
-        </label>
-        <button
-          className={this.state.reqSharks ? "label songRequired hasContent" : "label songRequired"}
-          disabled={!this.props.authUser}
-          onClick={() => this.setState(prevState => ({ isReqSharksEdit: !prevState.isReqSharksEdit }))}
-        >
-          <span>Required Sharks</span>
-        </button>
 
         {this.state.isReqSharksEdit &&
           <Modal>
-            <div className="modalBG" onClick={this.closeModal}>
-              <div className="modalSelectWrapper">
-                <h3>WHO IS REQUIRED</h3>
+            <div
+              id="modalBG"
+              className={styles.modalBG}
+              onClick={this.closeModal}
+            >
+              <div className={styles.modalInner}>
+                <h3 className="font-futura font-bold w-full text-2xl text-center">
+                  WHO IS REQUIRED?
+                </h3>
                 <SharkSelect
                   checkedCondition={this.state.reqSharks}
                   handleChange={this.handleReqSharksChange}
@@ -408,38 +479,54 @@ class Song extends React.Component {
           </Modal>
         }
 
-        {this.props.authUser &&
-          <EditOrCreate
-            isEdit={!!this.props.songId}
-            className="songSubmit"
-            title="song"
-            handleCreate={this.onCreate}
-            handleEdit={this.onEdit}
-            createValidation={this.state.name}
-            editValidation={this.state.hasChanged}
-          />
-        }
-
-        {this.state.isLyricDisplay &&
+        {this.state.isVocalEdit &&
           <Modal>
-            <div className="modalBG" onClick={this.closeModal}>
-              <label className="label songLyricsModal">
-                lyrics
-                <textarea
-                  disabled={!this.props.authUser}
-                  readOnly={!this.props.authUser}
-                  name="lyrics"
-                  className="input"
-                  onChange={this.onChange}
-                  value={this.state.lyrics}
+            <div
+              id="modalBG"
+              className={styles.modalBG}
+              onClick={this.closeModal}
+            >
+              <div className={styles.modalInner}>
+                <SharkSelect
+                  checkedCondition={this.state.vox}
+                  handleChange={this.handleVoxChange}
+                  sharks={this.props.sharks}
                 >
-                </textarea>
-              </label>
+                  <>
+                    <button
+                      type="button"
+                      onClick={this.handleVoxChange}
+                      className={
+                        /gang/.test(this.state.vox) ?
+                        styles.btnToggle + " bg-deeppink text-white shadow-sm" :
+                        styles.btnToggle
+                      }
+                      value="gang"
+                      key="gang"
+                    >
+                      Gang
+                    </button>
+                    <button
+                      type="button"
+                      onClick={this.handleVoxChange}
+                      className={
+                        /instrumental/.test(this.state.vox) ?
+                        styles.btnToggle + " bg-deeppink text-white shadow-sm" :
+                        styles.btnToggle
+                      }
+                      value="instrumental"
+                      key="instrumental"
+                    >
+                      Instrumental
+                    </button>
+                  </>
+                </SharkSelect>
+              </div>
             </div>
           </Modal>
         }
 
-        <button onClick={this.props.exit} className="button exit">
+        <button id="detailExit" onClick={this.props.exit} className={styles.btnClose}>
           >
         </button>
        </DetailWrapper>

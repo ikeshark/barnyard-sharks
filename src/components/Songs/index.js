@@ -32,8 +32,8 @@ class Songs extends React.Component {
     })
   }
   exitDetail = e => {
-    const modalBG = document.querySelector('.halfModalBG');
-    const exitBtn = document.querySelector('.exit');
+    const modalBG = document.querySelector('#halfModalBG');
+    const exitBtn = document.querySelector('#detailExit');
 
     if (e.target === modalBG || e.target === exitBtn) {
       this.setState({ isDetail: false, detailedSong: '' });
@@ -53,22 +53,24 @@ class Songs extends React.Component {
       detailedSong
     } = this.state;
     return (
-      <main>
+      <main className="h-mainWrapper flex bg-tan shadow-inset">
         <AllSongs
           onClick={this.showDetail}
           songs={this.props.songs}
           detailedSong={detailedSong}
           sharks={this.props.sharks}
           isFilterShowing={true}
-        />
-
-
-        {
-          this.props.authUser &&
-          <button className="newSongBtn" onClick={this.addNewSong}>
-            new song
-          </button>
-        }
+        >
+          {
+            this.props.authUser &&
+            <button
+              className="absolute top-0 right-0 mt-2 mr-2 h-16 w-16 rounded-full p-1 bg-tan border border-black leading-none shadow-slategray"
+              onClick={this.addNewSong}
+            >
+              new song
+            </button>
+          }
+        </AllSongs>
 
         <DelayedSong
           delayTime={300}

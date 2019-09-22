@@ -14,6 +14,41 @@ const INITIAL_STATE = {
   hasChanged: false,
 }
 
+const styles = {
+  wrapper: 'grid-shark overflow-y-scroll h-full w-full p-4',
+  label: 'border border-black shadow-card p-2 text-sm',
+  addSong: `
+    absolute top-0 right-0 mr-2
+    h-12 w-12 p-1
+    text-sm leading-none
+    bg-tan shadow-slategray
+    border border-black rounded-full
+  `,
+  btnSubmit: `
+    block p-2 text-xl
+    border-4 border-double border-black rounded-lg
+    disabled:border-gray-500 disabled:text-gray-500
+    songSubmit
+  `,
+  btnClose: `
+    absolute bottom-0 left-0 mb-y-center -ml-6
+    border border-black rounded-sm
+    shadow-card p-2 bg-white leading-none
+  `,
+  modalBG: `
+    fixed top-0 left-0
+    w-full h-screen z-100
+    bg-black-opaque
+    flex
+  `,
+  modalInner: `
+    w-full h-full
+    bg-white shadow-inset
+    p-2 text-lg
+    flex flex-col
+  `,
+}
+
 class Shark extends React.Component {
   state = { ...INITIAL_STATE };
 
@@ -133,66 +168,74 @@ class Shark extends React.Component {
         classNames="sharkWrapper"
         isUnmounting={this.props.isUnmounting}
       >
-        <label className="label l-95w sharkName">
-          Name
-          <input
-            name="name"
-            onChange={this.handleChange}
-            value={this.state.name}
-            disabled={!validated}
-            className="input"
-          />
-        </label>
-        <label className="label l-95w sharkSince">
-          Shark Since
-          <input
-            name="date"
-            onChange={this.handleDateChange}
-            value={this.processDate(this.state.sharkSince) || this.state.dateInput}
-            disabled={!validated}
-            placeholder="mm/dd/yyyy"
-            className="input"
-          />
-        </label>
-        <div className="sharksFavWrapper">
-          <h3>A Shark’s <br />Dozen</h3>
-          <SetList
-            songs={this.props.songs}
-            authUser={this.props.authUser}
-            setList={this.state.favSongs}
-            onMoveUp={this.onMoveUp}
-            onMoveDown={this.onMoveDown}
-            onDelete={this.onDelete}
-          />
+        <div className={styles.wrapper}>
+          <label className={styles.label}>
+            Name
+            <input
+              name="name"
+              onChange={this.handleChange}
+              value={this.state.name}
+              disabled={!validated}
+              className="block text-lg w-full"
+            />
+          </label>
+          <label className={styles.label}>
+            Shark Since
+            <input
+              name="date"
+              onChange={this.handleDateChange}
+              value={this.processDate(this.state.sharkSince) || this.state.dateInput}
+              disabled={!validated}
+              placeholder="mm/dd/yyyy"
+              className="block text-lg w-full"
+            />
+          </label>
+          <div className="overflow-y-scroll relative" style={{ gridArea: 'favs' }}>
+            <h3 className="font-futura font-bold text-center text-2xl underline">
+              A SHARK’S <br />DOZEN
+            </h3>
+            <SetList
+              songs={this.props.songs}
+              authUser={this.props.authUser}
+              setList={this.state.favSongs}
+              onMoveUp={this.onMoveUp}
+              onMoveDown={this.onMoveDown}
+              onDelete={this.onDelete}
+            />
+            {validated &&
+              <button
+                className={styles.addSong}
+                onClick={this.onAddSong}
+                disabled={!this.props.authUser}
+                type="button"
+              >
+                Add Song
+              </button>
+            }
+          </div>
           {validated &&
             <button
-              className="sharksFavAddBtn"
-              onClick={this.onAddSong}
-              disabled={!this.props.authUser}
-              type="button"
+              className={styles.btnSubmit}
+              type="submit"
+              style={{ gridArea: 'submit' }}
+              onClick={this.handleEdit}
+              disabled={!this.state.hasChanged || !validated}
             >
-              Add Song
+              save edits
             </button>
           }
         </div>
-        {validated &&
-          <button
-            className="sharkSubmit"
-            type="submit"
-            onClick={this.handleEdit}
-            disabled={!this.state.hasChanged || !validated}
-          >
-            save edits
-          </button>
-        }
-
         {
           this.state.isAddSong &&
           <Modal>
-            <div className="modalBG">
+            <div
+              id="modalBG"
+              className={styles.modalBG}
+              onClick={this.closeModal}
+            >
               <AllSongs
                 isFilterShowing={false}
-                className="modalAllSongs"
+                className={styles.modalInner}
                 onClick={this.onPushToFavSongs}
                 songs={Object.values(this.props.songs)}
                 sharks={this.props.sharks}
@@ -201,9 +244,10 @@ class Shark extends React.Component {
           </Modal>
         }
         <button
+          id="detailExit"
           type="button"
           onClick={this.props.exit}
-          className="button exit"
+          className={styles.btnClose}
         >
           >
         </button>

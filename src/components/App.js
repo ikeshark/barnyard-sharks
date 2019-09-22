@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import Firebase from './firebase';
-import Nav from './Nav';
+import Header from './Header';
 import Loader from './Loader';
 
 import Songs from './Songs';
@@ -9,7 +9,7 @@ import Gigs from './Gigs';
 import Sharks from './Sharks';
 
 import Modal from './common/Modal';
-import { SignInForm, SignOutButton } from './User';
+import { SignInForm } from './User';
 
 const INITIAL_STATE = {
   songs: {},
@@ -20,6 +20,21 @@ const INITIAL_STATE = {
   tab: 'songs',
   isAuthDisplay: false,
   authUser: null,
+}
+
+const styles = {
+  modalBG: `
+    fixed top-0 left-0
+    w-full h-screen z-100
+    bg-black-opaque
+    flex items-center justify-center
+  `,
+  modalInner: `
+    w-10/12 h-10/12
+    bg-white shadow-inset
+    p-4 text-lg
+    flex flex-col
+  `,
 }
 
 class App extends Component {
@@ -58,35 +73,15 @@ class App extends Component {
   }
 
   onShowSignIn = () => {
+    console.log('trigger')
     this.setState({ isAuthDisplay: true });
   }
 
-  renderSignInOrOut = () => {
-    if (this.state.authUser) {
-      return (
-        <SignOutButton
-          className="userBtn"
-          firebase={this.firebase}
-        />
-      );
-    } else {
-      return (
-        <button
-          onClick={this.onShowSignIn}
-          className="userBtn"
-        >
-          Sign In
-        </button>
-      );
-    }
-  }
-
   onModalClose = e => {
-    if (e.target === document.querySelector('.modalBG')) {
+    if (e.target === document.querySelector('#modalBG')) {
       this.setState({ isAuthDisplay: false });
     };
   }
-
 
   renderMain = () => {
     switch (this.state.tab) {
@@ -137,24 +132,35 @@ class App extends Component {
       typeof gigs === 'object'
     ) ? false : true;
     return (
-      <div className="App">
+      <div className="h-screen overflow-hidden">
         {(isLoadAnimation || loading) && <Loader />}
         {!loading &&
-          <div>
-            <Nav onClickNav={this.onClickNav} tab={this.state.tab} />
+          <>
+            <Header
+              onClickNav={this.onClickNav}
+              tab={this.state.tab}
+              authUser={this.state.authUser}
+              firebase={this.firebase}
+              onShowSignIn={this.onShowSignIn}
+            />
 
             {this.renderMain()}
 
-            {this.renderSignInOrOut()}
-
             {this.state.isAuthDisplay &&
               <Modal>
-                <div className="modalBG" onClick={this.onModalClose}>
-                  <SignInForm className="modalBox" firebase={this.firebase} />
+                <div
+                  id="modalBG"
+                  className={styles.modalBG}
+                  onClick={this.onModalClose}
+                >
+                  <SignInForm
+                    className={styles.modalInner}
+                    firebase={this.firebase}
+                  />
                 </div>
               </Modal>
             }
-          </div>
+          </>
         }
       </div>
     );

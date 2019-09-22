@@ -33,9 +33,9 @@ class Gigs extends React.Component {
     })
   }
   exitDetail = e => {
-    const halfModal = document.querySelector('.halfModalBG');
-    const exitBtn = document.querySelector('.exit');
-    if (e.target === halfModal || e.target === exitBtn) {
+    const modalBG = document.querySelector('#halfModalBG');
+    const exitBtn = document.querySelector('#detailExit');
+    if (e.target === modalBG || e.target === exitBtn) {
       this.setState({
         isDetail: false,
         detailedGig: {},
@@ -53,21 +53,25 @@ class Gigs extends React.Component {
 
   render() {
     return (
-      <main>
-        <div className="mainWrapper">
+      <main className="h-mainWrapper flex bg-tan shadow-inset">
+        <div className="relative w-full md:w-1/2">
           <GigList
             showDetail={this.showDetail}
             gigs={this.props.gigs}
             detailedGig={this.state.detailedGig}
           />
+          {
+            this.props.authUser &&
+            <button
+              className="absolute top-0 right-0 mt-2 mr-2 h-16 w-16 rounded-full p-1 bg-tan border border-black leading-none shadow-slategray"
+              onClick={this.addNewGig}
+            >
+              new gig
+            </button>
+          }
         </div>
 
-        {
-          this.props.authUser &&
-          <button className="newSongBtn" onClick={this.addNewGig}>
-            new gig
-          </button>
-        }
+
 
         <DelayedGig
           delayTime={300}

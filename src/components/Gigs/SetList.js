@@ -1,5 +1,11 @@
 import React from 'react';
 
+const styles = {
+  base: 'border border-gray-700 px-2 mb-1 ml-1 text-left',
+  grow: ' flex-grow',
+  hide: ' hidden sm:block'
+}
+
 const SetList = ({ authUser, songs, setList, onDelete, onMoveUp, onMoveDown }) => {
   const renderName = songID => {
     let name;
@@ -26,15 +32,18 @@ const SetList = ({ authUser, songs, setList, onDelete, onMoveUp, onMoveDown }) =
   }
 
   return (
-    <ol className="gigList">
+    <ol>
       {setList.map((song, i) => (
-        <li key={song}>
-          <button type="button">{i + 1}) {renderName(song)}</button>
+        <li key={song} className="flex">
+          <button type="button" className={styles.base + styles.grow}>
+            {i + 1}) {renderName(song)}
+          </button>
           <button
             type="button"
             disabled={!authUser}
             value={i}
             onClick={onDelete}
+            className={styles.base}
           >
             x
           </button>
@@ -42,7 +51,7 @@ const SetList = ({ authUser, songs, setList, onDelete, onMoveUp, onMoveDown }) =
             type="button"
             value={i}
             onClick={onMoveUp}
-            className="hideForS"
+            className={styles.base + styles.hide}
             disabled={isDisabledUP(i)}
           >
             &uarr;
@@ -51,7 +60,7 @@ const SetList = ({ authUser, songs, setList, onDelete, onMoveUp, onMoveDown }) =
             type="button"
             value={i}
             onClick={onMoveDown}
-            className="hideForS"
+            className={styles.base + styles.hide}
             disabled={authUser === null || i === setList.length - 1}
           >
             &darr;

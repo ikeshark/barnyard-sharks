@@ -1,8 +1,8 @@
 
 import SignInForm from './SignInForm';
-import SignOutButton from './SignOutButton';
+import SignInOrOutButton from './SignInOrOutButton';
 
-export { SignInForm, SignOutButton };
+export { SignInForm, SignInOrOutButton };
 
 // change password
 // sign out

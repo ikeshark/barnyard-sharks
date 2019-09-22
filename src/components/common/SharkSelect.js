@@ -1,30 +1,35 @@
 import React from 'react';
 
+const styles = `
+  relative m-1 p-3 flex-grow
+  border border-black rounded-10
+  btn-toggle
+`;
+
 const SharkSelect = ({ sharks, checkedCondition, handleChange, children }) => {
-  let sharkArray = Object.entries(sharks.active);
-  let options = sharkArray.map(shark => {
+  const sharkArray = Object.entries(sharks.active);
+  const btns = sharkArray.map(shark => {
     const test = new RegExp(shark[0]);
-    let className = test.test(checkedCondition) ? "active " : "";
-    className += 'label songVocalistOption'
+    const className = test.test(checkedCondition) ?
+      styles + " bg-deeppink text-white shadow-sm" :
+      styles;
     return (
-      <label key={shark[0]} className={className}>
+      <button
+        type="button"
+        onClick={handleChange}
+        className={className}
+        value={shark[0]}
+        key={shark[0]}
+      >
         {shark[1].name}
-        <input
-          key={shark[0]}
-          type="checkbox"
-          checked={test.test(checkedCondition)}
-          value={shark[0]}
-          className="input"
-          onChange={handleChange}
-        />
-      </label>
+      </button>
     )}
   );
   if (children) {
-    options.push(children);
+    btns.push(children);
   }
 
-  return options;
+  return btns;
 }
 
 export default SharkSelect;

@@ -20,6 +20,7 @@ const EditOrCreate = ({
           className={`button ${className}`}
           onClick={handleEdit}
           disabled={!editValidation}
+          style={{ gridArea: 'submit' }}
         >
           save edits
         </button>
@@ -28,6 +29,7 @@ const EditOrCreate = ({
           className={`button ${className}`}
           onClick={handleCreate}
           disabled={!createValidation}
+          style={{ gridArea: 'submit' }}
         >
           create new {title}
         </button>

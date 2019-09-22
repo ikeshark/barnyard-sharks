@@ -2,6 +2,14 @@ import React from 'react';
 
 import Filter from './Filter';
 
+const buttonClassName = `
+  w-full mb-1 p-1
+  bg-offwhite shadow-spread
+  border border-gray border-b-3
+  leading-tight text-left text-xl
+  hover:bg-deeppink hover:text-white hover:border-transparent
+`;
+
 class AllSongs extends React.Component {
 
   state = {
@@ -59,11 +67,13 @@ class AllSongs extends React.Component {
   handleSharksFilter = e => {
     const value = e.target.value;
     let sharksFilter = this.state.sharksFilter;
-    if (e.target.checked) {
+
+    const re = new RegExp(value);
+    if (!re.test(sharksFilter)) {
       this.setState({
         sharksFilter: sharksFilter ? `${sharksFilter}, ${value}` : value
       }, this.displaySongs);
-    } else if (!e.target.checked) {
+    } else {
       const test = new RegExp(',');
       // if there is a comma, ie multiple values
       if (test.test(sharksFilter)) {
@@ -125,20 +135,27 @@ class AllSongs extends React.Component {
   }
   render() {
     return (
-      <div className={this.props.className || "mainWrapper"}>
-        <ul className="AllSongs">
+      <>
+      <div className={this.props.className || "relative w-full md:w-1/2"}>
+        <ul className="p-3 overflow-y-scroll h-full lastItem-mb">
           {this.state.displayedSongs.map(song => (
             <li key={song.name}>
               <button
                 type="button"
                 onClick={this.props.onClick}
-                className={this.props.detailedSong === song ? "active" : ""}
+                className={
+                  this.props.detailedSong === song ?
+                  `active ${buttonClassName}` : buttonClassName
+                }
               >
                 {song.name}
               </button>
             </li>
           ))}
         </ul>
+        {this.props.children}
+
+      </div>
         <Filter
           handleCoverFilter={this.handleCoverFilter}
           isCover={this.state.isCover}
@@ -154,7 +171,7 @@ class AllSongs extends React.Component {
           sortType={this.state.sortType}
           sharks={this.props.sharks}
         />
-      </div>
+      </>
     );
   }
 }
