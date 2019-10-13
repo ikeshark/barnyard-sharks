@@ -1,4 +1,6 @@
 import React from 'react';
+import { DragDropContext } from "react-beautiful-dnd";
+
 
 import {
   AllSongs,
@@ -18,8 +20,16 @@ const INITIAL_STATE = {
   isEditLocation: false,
 }
 
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
+
 const styles = {
-  wrapper: 'grid-gig overflow-y-scroll h-full w-full p-4',
+  wrapper: 'grid-gig h-full w-full p-4',
   label: 'border border-black shadow-card p-2 text-sm',
   addSong: `
     absolute top-0 right-0 mr-2
@@ -91,6 +101,21 @@ class Gig extends React.Component {
     });
 
     this.setState({ hasChanged: false, isEditLocation: false });
+  }
+
+  onDragEnd = result => {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+
+    const setList = reorder(
+      this.state.setList,
+      result.source.index,
+      result.destination.index
+    );
+
+    this.setState({ setList, hasChanged: true });
   }
 
   onMoveUp = e => {
@@ -185,99 +210,101 @@ class Gig extends React.Component {
 
   render() {
     return (
-      <DetailWrapper
-        handleExit={this.props.exit}
-        classNames="gigWrapper"
-        isUnmounting={this.props.isUnmounting}
-      >
-        <div className={styles.wrapper}>
-          <label
-            className={styles.label}
-            style={{ gridArea: 'where' }}
-            onClick={this.toggleEditLocation}
-          >
-            {this.state.location ? "" : "location"}
-            {(!this.state.location || this.state.isEditLocation) ?
+      <DragDropContext onDragEnd={this.onDragEnd}>
+        <DetailWrapper
+          handleExit={this.props.exit}
+          classNames="gigWrapper"
+          isUnmounting={this.props.isUnmounting}
+        >
+          <div className={styles.wrapper}>
+            <label
+              className={styles.label}
+              style={{ gridArea: 'where' }}
+              onClick={this.toggleEditLocation}
+            >
+              {this.state.location ? "" : "location"}
+              {(!this.state.location || this.state.isEditLocation) ?
+                <input
+                  disabled={!this.props.authUser}
+                  name="location"
+                  onChange={this.onChange}
+                  value={this.state.location}
+                  className="block text-lg w-full"
+                /> :
+                <span className="text-xl">{this.state.location}</span>
+              }
+
+            </label>
+            <label className={styles.label} style={{ gridArea: 'when' }}>
+              date
               <input
                 disabled={!this.props.authUser}
-                name="location"
-                onChange={this.onChange}
-                value={this.state.location}
+                name="date"
+                onChange={this.onDateChange}
+                value={this.processDate(this.state.date) || this.state.dateInput}
                 className="block text-lg w-full"
-              /> :
-              <span className="text-xl">{this.state.location}</span>
-            }
-
-          </label>
-          <label className={styles.label} style={{ gridArea: 'when' }}>
-            date
-            <input
-              disabled={!this.props.authUser}
-              name="date"
-              onChange={this.onDateChange}
-              value={this.processDate(this.state.date) || this.state.dateInput}
-              className="block text-lg w-full"
-              placeholder="mm/dd/yyyy"
-            />
-          </label>
-          <div className="overflow-y-scroll relative" style={{ gridArea: 'what' }}>
-            <h3 className="font-futura font-bold text-center text-2xl underline">
-              SETLIST
-            </h3>
-              <SetList
-                songs={this.props.songs}
-                authUser={this.props.authUser}
-                setList={this.state.setList}
-                onMoveUp={this.onMoveUp}
-                onMoveDown={this.onMoveDown}
-                onDelete={this.onDelete}
+                placeholder="mm/dd/yyyy"
               />
+            </label>
+            <div className="relative" style={{ gridArea: 'what' }}>
+              <h3 className="font-futura font-bold text-center text-2xl underline">
+                SETLIST
+              </h3>
+                <SetList
+                  songs={this.props.songs}
+                  authUser={this.props.authUser}
+                  setList={this.state.setList}
+                  onMoveUp={this.onMoveUp}
+                  onMoveDown={this.onMoveDown}
+                  onDelete={this.onDelete}
+                />
+              {this.props.authUser &&
+                <button
+                  onClick={this.onAddSong}
+                  type="button"
+                  disabled={!this.props.authUser}
+                  className={styles.addSong}
+                >
+                  Add Song
+                </button>
+              }
+            </div>
+
             {this.props.authUser &&
-              <button
-                onClick={this.onAddSong}
-                type="button"
-                disabled={!this.props.authUser}
-                className={styles.addSong}
-              >
-                Add Song
-              </button>
+              <EditOrCreate
+                isEdit={!!this.props.gigId}
+                className={styles.btnSubmit}
+                title="gig"
+                handleCreate={this.onCreate}
+                handleEdit={this.onEdit}
+                createValidation={this.state.location}
+                editValidation={this.state.hasChanged}
+              />
             }
           </div>
-
-          {this.props.authUser &&
-            <EditOrCreate
-              isEdit={!!this.props.gigId}
-              className={styles.btnSubmit}
-              title="gig"
-              handleCreate={this.onCreate}
-              handleEdit={this.onEdit}
-              createValidation={this.state.location}
-              editValidation={this.state.hasChanged}
-            />
+          {this.state.isAddSong &&
+            <Modal>
+              <div
+                id="modalBG"
+                className={styles.modalBG}
+                onClick={this.closeModal}
+              >
+                <AllSongs
+                  isFilterShowing={false}
+                  className={styles.modalInner}
+                  onClick={this.onPushToSetList}
+                  songs={Object.values(this.props.songs)}
+                  sharks={this.props.sharks}
+                />
+              </div>
+            </Modal>
           }
-        </div>
-        {this.state.isAddSong &&
-          <Modal>
-            <div
-              id="modalBG"
-              className={styles.modalBG}
-              onClick={this.closeModal}
-            >
-              <AllSongs
-                isFilterShowing={false}
-                className={styles.modalInner}
-                onClick={this.onPushToSetList}
-                songs={Object.values(this.props.songs)}
-                sharks={this.props.sharks}
-              />
-            </div>
-          </Modal>
-        }
 
-        <button id="detailExit" onClick={this.props.exit} className={styles.btnClose}>
-          >
-        </button>
-       </DetailWrapper>
+          <button id="detailExit" onClick={this.props.exit} className={styles.btnClose}>
+            >
+          </button>
+         </DetailWrapper>
+        </DragDropContext>
     );
   }
 
