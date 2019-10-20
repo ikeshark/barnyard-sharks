@@ -16,7 +16,7 @@ self.__precacheManifest = [
     "url": "/barnyard-sharks/static/css/main.212ae08a.chunk.css"
   },
   {
-    "revision": "d7c4bc35b88cc699c49a656726f7208d",
+    "revision": "ece60f1ded8b2ed2d868a30dbd9b6764",
     "url": "/barnyard-sharks/index.html"
   }
 ];

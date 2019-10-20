@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/barnyard-sharks/precache-manifest.3ed8fa2c733f7deb1791c168fbf85eae.js"
+  "/barnyard-sharks/precache-manifest.9e609e29bd422f2e6aad434afe9cb756.js"
 );
 
 workbox.clientsClaim();
