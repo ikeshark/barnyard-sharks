@@ -55,6 +55,12 @@ class App extends Component {
     this.firebase.db.ref('sharks').on('value', snapshot => {
       this.setState({ sharks: snapshot.val() });
     });
+    if (localStorage.getItem('tab')) {
+      this.setState({ tab: localStorage.getItem('tab') });
+    }
+    window.addEventListener('unload', () => {
+      localStorage.setItem('tab', this.state.tab)
+    });
     this.firebase.auth.onAuthStateChanged(
       authUser => {
         authUser ?
