@@ -3,6 +3,8 @@ import React from 'react';
 import SetList from '../Gigs/SetList';
 import { AllSongs, DetailWrapper, Modal } from '../common/';
 
+import { DragDropContext } from "react-beautiful-dnd";
+
 const INITIAL_STATE = {
   name: '',
   sharkSince: 0,
@@ -13,6 +15,14 @@ const INITIAL_STATE = {
   isAddSong: false,
   hasChanged: false,
 }
+
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
 
 const styles = {
   wrapper: 'grid-shark overflow-y-scroll h-full w-full p-4',
@@ -131,6 +141,22 @@ class Shark extends React.Component {
       [favSongs[position + 1], favSongs[position]];
     this.setState({ favSongs, hasChanged: true, });
   }
+
+  onDragEnd = result => {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+
+    const favSongs = reorder(
+      this.state.favSongs,
+      result.source.index,
+      result.destination.index
+    );
+
+    this.setState({ favSongs, hasChanged: true });
+  }
+
   onDelete = e => {
     const position = parseInt(e.target.value);
     let favSongs = this.state.favSongs;
@@ -163,96 +189,97 @@ class Shark extends React.Component {
     // if current user is the detailed shark, you are valid
     const validated = this.props.authUser && this.props.authUser.uid === this.props.sharkId;
     return (
-      <DetailWrapper
-        handleExit={this.props.exit}
-        classNames="sharkWrapper"
-        isUnmounting={this.props.isUnmounting}
-      >
-        <div className={styles.wrapper}>
-          <label className={styles.label}>
-            Name
-            <input
-              name="name"
-              onChange={this.handleChange}
-              value={this.state.name}
-              disabled={!validated}
-              className="block text-lg w-full"
-            />
-          </label>
-          <label className={styles.label}>
-            Shark Since
-            <input
-              name="date"
-              onChange={this.handleDateChange}
-              value={this.processDate(this.state.sharkSince) || this.state.dateInput}
-              disabled={!validated}
-              placeholder="mm/dd/yyyy"
-              className="block text-lg w-full"
-            />
-          </label>
-          <div className="overflow-y-scroll relative" style={{ gridArea: 'favs' }}>
-            <h3 className="font-futura font-bold text-center text-2xl underline">
-              A SHARK’S <br />DOZEN
-            </h3>
-            <SetList
-              songs={this.props.songs}
-              authUser={this.props.authUser}
-              setList={this.state.favSongs}
-              onMoveUp={this.onMoveUp}
-              onMoveDown={this.onMoveDown}
-              onDelete={this.onDelete}
-            />
+      <DragDropContext onDragEnd={this.onDragEnd}>
+        <DetailWrapper
+          handleExit={this.props.exit}
+          classNames="sharkWrapper"
+          isUnmounting={this.props.isUnmounting}
+        >
+          <div className={styles.wrapper}>
+            <label className={styles.label}>
+              Name
+              <input
+                name="name"
+                onChange={this.handleChange}
+                value={this.state.name}
+                disabled={!validated}
+                className="block text-lg w-full"
+              />
+            </label>
+            <label className={styles.label}>
+              Shark Since
+              <input
+                name="date"
+                onChange={this.handleDateChange}
+                value={this.processDate(this.state.sharkSince) || this.state.dateInput}
+                disabled={!validated}
+                placeholder="mm/dd/yyyy"
+                className="block text-lg w-full"
+              />
+            </label>
+            <div className="overflow-y-scroll relative" style={{ gridArea: 'favs' }}>
+              <h3 className="font-futura font-bold text-center text-2xl underline">
+                A SHARK’S <br />DOZEN
+              </h3>
+              <SetList
+                songs={this.props.songs}
+                authUser={this.props.authUser}
+                setList={this.state.favSongs}
+                onMoveUp={this.onMoveUp}
+                onMoveDown={this.onMoveDown}
+                onDelete={this.onDelete}
+              />
+              {validated &&
+                <button
+                  className={styles.addSong}
+                  onClick={this.onAddSong}
+                  disabled={!this.props.authUser}
+                  type="button"
+                >
+                  Add Song
+                </button>
+              }
+            </div>
             {validated &&
               <button
-                className={styles.addSong}
-                onClick={this.onAddSong}
-                disabled={!this.props.authUser}
-                type="button"
+                className={styles.btnSubmit}
+                type="submit"
+                style={{ gridArea: 'submit' }}
+                onClick={this.handleEdit}
+                disabled={!this.state.hasChanged || !validated}
               >
-                Add Song
+                save edits
               </button>
             }
           </div>
-          {validated &&
-            <button
-              className={styles.btnSubmit}
-              type="submit"
-              style={{ gridArea: 'submit' }}
-              onClick={this.handleEdit}
-              disabled={!this.state.hasChanged || !validated}
-            >
-              save edits
-            </button>
+          {
+            this.state.isAddSong &&
+            <Modal>
+              <div
+                id="modalBG"
+                className={styles.modalBG}
+                onClick={this.closeModal}
+              >
+                <AllSongs
+                  isFilterShowing={false}
+                  className={styles.modalInner}
+                  onClick={this.onPushToFavSongs}
+                  songs={Object.values(this.props.songs)}
+                  sharks={this.props.sharks}
+                />
+              </div>
+            </Modal>
           }
-        </div>
-        {
-          this.state.isAddSong &&
-          <Modal>
-            <div
-              id="modalBG"
-              className={styles.modalBG}
-              onClick={this.closeModal}
-            >
-              <AllSongs
-                isFilterShowing={false}
-                className={styles.modalInner}
-                onClick={this.onPushToFavSongs}
-                songs={Object.values(this.props.songs)}
-                sharks={this.props.sharks}
-              />
-            </div>
-          </Modal>
-        }
-        <button
-          id="detailExit"
-          type="button"
-          onClick={this.props.exit}
-          className={styles.btnClose}
-        >
+          <button
+            id="detailExit"
+            type="button"
+            onClick={this.props.exit}
+            className={styles.btnClose}
           >
-        </button>
-
-    </DetailWrapper>
+            >
+          </button>
+        </DetailWrapper>
+      </DragDropContext>
     );
   }
 }
