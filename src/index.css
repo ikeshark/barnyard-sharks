@@ -127,9 +127,7 @@ button, input, select {
 .bg-deeppink {
   background-color: deeppink;
 }
-.hover\:bg-deeppink:hover {
-  background-image: linear-gradient(#cf0c75 35%, #aa0c61 65%, #aa0c61 95%, grey)
-}
+
 
 .border-black {
   border-color: #000
@@ -142,9 +140,6 @@ button, input, select {
 }
 .border-currentColor {
   border-color: currentColor;
-}
-.hover\:border-transparent:hover {
-  border-color: transparent
 }
 .rounded-sm {
   border-radius: .125rem
@@ -461,11 +456,9 @@ button, input, select {
 .text-deeppink {
   color: #ff1493
 }
-.hover\:text-white:hover, .text-white {
+
+.text-white {
   color: #fff
-}
-.hover\:text-pink-300:hover {
-  color: #fbb6ce
 }
 .disabled\:text-gray-500:disabled {
   color: #a0aec0
@@ -853,4 +846,19 @@ label:focus-within {
 }
 .isFlipped {
   transform: rotateY(180deg);
+}
+
+@media (hover: hover) {
+  .hover\:bg-deeppink:hover {
+    background-image: linear-gradient(#cf0c75 35%, #aa0c61 65%, #aa0c61 95%, grey)
+  }
+  .hover\:border-transparent:hover {
+    border-color: transparent
+  }
+  .hover\:text-white:hover {
+    color: #fff
+  }
+  .hover\:text-pink-300:hover {
+    color: #fbb6ce
+  }
 }
