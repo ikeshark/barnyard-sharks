@@ -37,11 +37,14 @@ class Firebase {
   }
 
   doCreateSong = song => {
-    this.db.ref().child('songs').push(song);
+    const ref = this.db.ref().child('songs').push(song);
+    return ref.key;
   }
 
-  doCreateGig = gig =>
-    this.db.ref().child('gigs').push(gig);
+  doCreateGig = gig => {
+    const ref = this.db.ref().child('gigs').push(gig);
+    return ref.key
+  }
 
 
   // USER API //

@@ -10,24 +10,6 @@ import {
 } from '../common';
 import SetList from './SetList';
 
-const INITIAL_STATE = {
-  date: 0,
-  dateInput: '',
-  hasChanged: false,
-  location: '',
-  setList: [],
-  isAddSong: false,
-  isEditLocation: false,
-}
-
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
-};
-
 const styles = {
   wrapper: 'grid-gig h-full w-full p-4',
   label: 'border border-black shadow-card p-2 text-sm',
@@ -63,6 +45,26 @@ const styles = {
   `,
 }
 
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
+
+const INITIAL_STATE = {
+  date: 0,
+  dateInput: '',
+  gigId: '',
+  hasChanged: false,
+  location: '',
+  setList: [],
+  isAddSong: false,
+  isEditLocation: false,
+  isEdit: false
+}
+
 class Gig extends React.Component {
   state = { ...INITIAL_STATE };
 
@@ -73,6 +75,8 @@ class Gig extends React.Component {
     }
 
     this.setState({
+      isEdit: !!this.props.gigId,
+      gigId: this.props.gigId,
       date: this.props.gig.date,
       location: this.props.gig.location,
       setList: setList || [],
@@ -94,7 +98,7 @@ class Gig extends React.Component {
 
     setList = setList.join(',');
 
-    this.props.firebase.db.ref(`gigs/${this.props.gigId}`).update({
+    this.props.firebase.db.ref(`gigs/${this.state.gigId}`).update({
       date,
       location,
       setList,
@@ -150,14 +154,15 @@ class Gig extends React.Component {
   }
 
   onCreate = () => {
+    this.setState({ hasChanged: false })
     const setList = this.state.setList.join(',');
     const newGig = {
       date: this.state.date,
       location: this.state.location,
       setList
     };
-    this.props.firebase.doCreateGig(newGig);
-    this.props.exit();
+    const key = this.props.firebase.doCreateGig(newGig);
+    this.setState({ isEdit: true, gigId: key })
   }
 
   processDate = date => {
@@ -272,7 +277,7 @@ class Gig extends React.Component {
 
             {this.props.authUser &&
               <EditOrCreate
-                isEdit={!!this.props.gigId}
+                isEdit={this.state.isEdit}
                 className={styles.btnSubmit}
                 title="gig"
                 handleCreate={this.onCreate}

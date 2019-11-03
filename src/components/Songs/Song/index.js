@@ -2,22 +2,6 @@ import React from 'react';
 
 import { Modal, SharkSelect, DetailWrapper, EditOrCreate } from '../../common';
 
-const INITIAL_STATE = {
-  audio: '',
-  dob: 0,
-  dobInput: '',
-  hasChanged: false,
-  name: '',
-  status: '',
-  vox: '',
-  lyrics: '',
-  reqSharks: '',
-  isCover: false,
-  isVocalEdit: false,
-  isReqSharksEdit: false,
-  error: '',
-};
-
 const styles = {
   wrapper: 'grid-song overflow-y-scroll h-full w-full p-4',
   label: 'border border-black shadow-card p-2 text-sm',
@@ -60,6 +44,25 @@ const styles = {
   `
 }
 
+const INITIAL_STATE = {
+  audio: '',
+  dob: 0,
+  dobInput: '',
+  songId: '',
+  hasChanged: false,
+  name: '',
+  status: '',
+  vox: '',
+  lyrics: '',
+  reqSharks: '',
+  isEdit: false,
+  isCover: false,
+  isVocalEdit: false,
+  isReqSharksEdit: false,
+  error: '',
+};
+
+
 class Song extends React.Component {
   state = { ...INITIAL_STATE };
 
@@ -67,12 +70,14 @@ class Song extends React.Component {
     this.setState({
       audio: this.props.song.audio || '',
       dob: this.props.song.dob,
+      songId: this.props.songId,
       name: this.props.song.name,
       vox: this.props.song.vox,
       status: this.props.song.status,
       isCover: this.props.song.isCover || false,
       lyrics: this.props.song.lyrics || '',
       reqSharks: this.props.song.reqSharks || '',
+      isEdit: !!this.props.songId,
     });
   }
 
@@ -140,13 +145,13 @@ class Song extends React.Component {
     // see if any songs share the same name as edited song
     // (excluding the song iteslf i.e. the name was not edited)
     songs.forEach(song => {
-      if (song[1].name === name && song[0] !== this.props.songId) {
+      if (song[1].name === name && song[0] !== this.state.songId) {
         this.setState({ error: 'song names must be unique' });
         validation = false;
       }
     });
     if (validation) {
-      this.props.firebase.db.ref(`songs/${this.props.songId}`).update({
+      this.props.firebase.db.ref(`songs/${this.state.songId}`).update({
         audio,
         dob,
         name,
@@ -160,6 +165,7 @@ class Song extends React.Component {
     }
   }
   onCreate = () => {
+    this.setState({ hasChanged: false })
     const newSong = {
       audio: this.state.audio || '',
       vox: this.state.vox,
@@ -173,8 +179,8 @@ class Song extends React.Component {
 
     const titles = Object.values(this.props.songs).map(song => song.name);
     if (titles.filter(title => title === newSong.name)[0] === undefined) {
-      this.props.firebase.doCreateSong(newSong)
-      this.props.exit();
+      const key = this.props.firebase.doCreateSong(newSong);
+      this.setState({ isEdit: true, songId: key });
     } else {
       this.setState({ error: 'song names must be unique' });
     }
@@ -411,7 +417,7 @@ class Song extends React.Component {
 
           {this.props.authUser &&
             <EditOrCreate
-              isEdit={!!this.props.songId}
+              isEdit={this.state.isEdit}
               className={styles.btnSubmit}
               title="song"
               handleCreate={this.onCreate}

@@ -14,27 +14,14 @@ const EditOrCreate = ({
 }) => {
 
   return (
-    <>
-      {isEdit ?
-        <button
-          className={`button ${className}`}
-          onClick={handleEdit}
-          disabled={!editValidation}
-          style={{ gridArea: 'submit' }}
-        >
-          save edits
-        </button>
-        :
-        <button
-          className={`button ${className}`}
-          onClick={handleCreate}
-          disabled={!createValidation}
-          style={{ gridArea: 'submit' }}
-        >
-          create new {title}
-        </button>
-      }
-    </>
+    <button
+      className={className}
+      onClick={isEdit ? handleEdit : handleCreate}
+      disabled={isEdit ? !editValidation : !createValidation}
+      style={{ gridArea: 'submit' }}
+    >
+      {isEdit ? 'save edits' : 'create new ' + title}
+    </button>
   )
 }
 
