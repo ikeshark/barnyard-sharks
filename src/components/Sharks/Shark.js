@@ -127,21 +127,6 @@ class Shark extends React.Component {
   }
 
 
-  onMoveUp = e => {
-    const position = parseInt(e.target.value);
-    let favSongs = this.state.favSongs;
-    [favSongs[position], favSongs[position - 1]] =
-      [favSongs[position - 1], favSongs[position]];
-    this.setState({ favSongs, hasChanged: true, });
-  }
-  onMoveDown = e => {
-    const position = parseInt(e.target.value);
-    let favSongs = this.state.favSongs;
-    [favSongs[position], favSongs[position + 1]] =
-      [favSongs[position + 1], favSongs[position]];
-    this.setState({ favSongs, hasChanged: true, });
-  }
-
   onDragEnd = result => {
     // dropped outside the list
     if (!result.destination) {
@@ -185,6 +170,19 @@ class Shark extends React.Component {
     });
   }
 
+  translateSetList = setList => (
+    setList.map(songID => {
+      let name;
+      Object.entries(this.props.songs).forEach(song => {
+        if (song[0] === songID) {
+          name = song[1].name;
+        }
+      });
+      return name;
+    })
+  );
+
+
   render() {
     // if current user is the detailed shark, you are valid
     const validated = this.props.authUser && this.props.authUser.uid === this.props.sharkId;
@@ -224,7 +222,7 @@ class Shark extends React.Component {
               <SetList
                 songs={this.props.songs}
                 authUser={this.props.authUser}
-                setList={this.state.favSongs}
+                setList={this.translateSetList(this.state.favSongs)}
                 onMoveUp={this.onMoveUp}
                 onMoveDown={this.onMoveDown}
                 onDelete={this.onDelete}
@@ -266,6 +264,7 @@ class Shark extends React.Component {
                   onClick={this.onPushToFavSongs}
                   songs={Object.values(this.props.songs)}
                   sharks={this.props.sharks}
+                  setList={this.translateSetList(this.state.favSongs)}
                 />
               </div>
             </Modal>

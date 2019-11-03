@@ -89,10 +89,16 @@ class AllSongs extends React.Component {
 
   displaySongs = (songs = this.props.songs) => {
     const { statusFilter, vocalsFilter, sharksFilter, sortType, isCover } = this.state;
+    const setList = this.props.setList;
+
     let displayedSongs = Object.values(songs);
     // no covers is default
     if (!isCover) {
       displayedSongs = displayedSongs.filter(song => song.isCover === undefined || song.isCover === false);
+    }
+    // duplicates in setLists aren't allowed
+    if (setList) {
+      displayedSongs = displayedSongs.filter(song => setList.indexOf(song.name) === -1 );
     }
     if (sharksFilter) {
       const sharksFilterArray = sharksFilter.split(', ');

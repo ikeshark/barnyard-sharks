@@ -841,6 +841,9 @@ label:focus-within {
 .lastItem-mb li:last-child {
   margin-bottom: 400px;
 }
+.lastItem-mb-sm li:last-child {
+  margin-bottom: 100px;
+}
 .slideOut {
   transform: translateX(100%);
 }

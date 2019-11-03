@@ -118,20 +118,6 @@ class Gig extends React.Component {
     this.setState({ setList, hasChanged: true });
   }
 
-  onMoveUp = e => {
-    const position = parseInt(e.target.value);
-    let setList = this.state.setList;
-    [setList[position], setList[position - 1]] =
-      [setList[position - 1], setList[position]];
-    this.setState({ setList, hasChanged: true });
-  }
-  onMoveDown = e => {
-    const position = parseInt(e.target.value);
-    let setList = this.state.setList;
-    [setList[position], setList[position + 1]] =
-      [setList[position + 1], setList[position]];
-    this.setState({ setList, hasChanged: true });
-  }
   onDelete = e => {
     const position = parseInt(e.target.value);
     let setList = this.state.setList;
@@ -145,13 +131,16 @@ class Gig extends React.Component {
   }
   onPushToSetList = e => {
     const songName = e.target.innerText;
+    let setList = this.state.setList;
+    if (setList.indexOf(songName) !== -1 ) {
+      return;
+    }
     let songID;
     Object.entries(this.props.songs).forEach(entry => {
       if (entry[1].name === songName) {
         songID = entry[0];
       }
     });
-    let setList = this.state.setList;
     setList.push(songID);
     this.setState({
       setList,
@@ -207,6 +196,17 @@ class Gig extends React.Component {
       this.setState({ isEditLocation: true });
     }
   }
+  translateSetList = setList => (
+    setList.map(songID => {
+      let name;
+      Object.entries(this.props.songs).forEach(song => {
+        if (song[0] === songID) {
+          name = song[1].name;
+        }
+      });
+      return name;
+    })
+  );
 
   render() {
     return (
@@ -246,14 +246,14 @@ class Gig extends React.Component {
                 placeholder="mm/dd/yyyy"
               />
             </label>
-            <div className="relative" style={{ gridArea: 'what' }}>
+            <div className="relative overflow-hidden" style={{ gridArea: 'what' }}>
               <h3 className="font-futura font-bold text-center text-2xl underline">
                 SETLIST
               </h3>
                 <SetList
                   songs={this.props.songs}
                   authUser={this.props.authUser}
-                  setList={this.state.setList}
+                  setList={this.translateSetList(this.state.setList)}
                   onMoveUp={this.onMoveUp}
                   onMoveDown={this.onMoveDown}
                   onDelete={this.onDelete}
@@ -295,6 +295,7 @@ class Gig extends React.Component {
                   onClick={this.onPushToSetList}
                   songs={Object.values(this.props.songs)}
                   sharks={this.props.sharks}
+                  setList={this.translateSetList(this.state.setList)}
                 />
               </div>
             </Modal>
