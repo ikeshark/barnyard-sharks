@@ -35,7 +35,11 @@ class Songs extends React.Component {
     const modalBG = document.querySelector('#halfModalBG');
     const exitBtn = document.querySelector('#detailExit');
 
-    if (e.target === modalBG || e.target === exitBtn) {
+    if (
+      !e ||
+      e.target === modalBG ||
+      e.target === exitBtn
+    ) {
       this.setState({ isDetail: false, detailedSong: '' });
     }
   }

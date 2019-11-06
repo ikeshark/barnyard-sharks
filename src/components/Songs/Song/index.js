@@ -1,6 +1,12 @@
 import React from 'react';
 
-import { Modal, SharkSelect, DetailWrapper, EditOrCreate } from '../../common';
+import {
+  Modal,
+  SharkSelect,
+  DetailWrapper,
+  EditOrCreate,
+  Confirm,
+} from '../../common';
 
 const styles = {
   wrapper: 'grid-song overflow-y-scroll h-full w-full p-4',
@@ -59,6 +65,8 @@ const INITIAL_STATE = {
   isCover: false,
   isVocalEdit: false,
   isReqSharksEdit: false,
+  isConfirm: false,
+  isDisabled: false,
   error: '',
 };
 
@@ -225,13 +233,21 @@ class Song extends React.Component {
     });
   }
 
+  onDelete = e => {
+    this.setState({ isDisabled: true })
+    this.props.firebase.db.ref(`songs/${this.state.songId}`).remove()
+      .then(() => this.props.exit());
+  }
+
   closeModal = e => {
     if (e) {
-      if (e.target === document.querySelector('#modalBG')) {
+      if (e.target === document.querySelector('#modalBG') ||
+        e.target === document.querySelector('#cancelBtn')) {
         this.setState({
           isLyricDisplay: false,
           isReqSharksEdit: false,
           isVocalEdit: false,
+          isConfirm: false,
         });
       }
     } else {
@@ -239,6 +255,7 @@ class Song extends React.Component {
         isLyricDisplay: false,
         isReqSharksEdit: false,
         isVocalEdit: false,
+        isConfirm: false,
       });
     }
   }
@@ -416,15 +433,22 @@ class Song extends React.Component {
           </button>
 
           {this.props.authUser &&
-            <EditOrCreate
-              isEdit={this.state.isEdit}
-              className={styles.btnSubmit}
-              title="song"
-              handleCreate={this.onCreate}
-              handleEdit={this.onEdit}
-              createValidation={this.state.name}
-              editValidation={this.state.hasChanged}
-            />
+            <>
+              <EditOrCreate
+                isEdit={this.state.isEdit}
+                className={styles.btnSubmit}
+                handleCreate={this.onCreate}
+                handleEdit={this.onEdit}
+                createValidation={this.state.name}
+                editValidation={this.state.hasChanged}
+              />
+              <button
+                style={{ gridArea: 'delete' }}
+                onClick={() => this.setState({ isConfirm: true })}
+              >
+                Delete Song
+              </button>
+            </>
           }
 
           <label className={styles.cover}>
@@ -527,6 +551,24 @@ class Song extends React.Component {
                     </button>
                   </>
                 </SharkSelect>
+              </div>
+            </div>
+          </Modal>
+        }
+        {this.state.isConfirm &&
+          <Modal>
+            <div
+              id="modalBG"
+              className={styles.modalBG}
+              onClick={this.closeModal}
+            >
+              <div className={styles.modalInner}>
+                <Confirm
+                  onYes={this.onDelete}
+                  onNo={this.closeModal}
+                  message="Are you sure you want to delete this song?"
+                  disabled={this.state.isDisabled}
+                />
               </div>
             </div>
           </Modal>
