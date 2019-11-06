@@ -1,10 +1,10 @@
 import React from 'react';
 import { DragDropContext } from "react-beautiful-dnd";
 
-
 import {
   AllSongs,
   Modal,
+  Confirm,
   DetailWrapper,
   EditOrCreate,
 } from '../common';
@@ -35,9 +35,15 @@ const styles = {
     fixed top-0 left-0
     w-full h-screen z-100
     bg-black-opaque
-    flex
+    flex items-center justify-center
   `,
-  modalInner: `
+  modalInnerSm: `
+    w-10/12 h-10/12
+    bg-white shadow-inset
+    p-2 text-lg
+    flex flex-col
+  `,
+  modalInnerLg: `
     w-full h-full
     bg-white shadow-inset
     p-2 text-lg
@@ -62,7 +68,9 @@ const INITIAL_STATE = {
   setList: [],
   isAddSong: false,
   isEditLocation: false,
-  isEdit: false
+  isEdit: false,
+  isConfirm: false,
+  isDisabled: false,
 }
 
 class Gig extends React.Component {
@@ -107,6 +115,12 @@ class Gig extends React.Component {
     this.setState({ hasChanged: false, isEditLocation: false });
   }
 
+  onDeleteGig = e => {
+    this.setState({ isDisabled: true });
+    this.props.firebase.db.ref(`gigs/${this.state.gigId}`).remove()
+      .then(() => this.props.exit());
+  }
+
   onDragEnd = result => {
     // dropped outside the list
     if (!result.destination) {
@@ -122,7 +136,7 @@ class Gig extends React.Component {
     this.setState({ setList, hasChanged: true });
   }
 
-  onDelete = e => {
+  onDeleteSong = e => {
     const position = parseInt(e.target.value);
     let setList = this.state.setList;
     setList.splice(position, 1);
@@ -212,6 +226,22 @@ class Gig extends React.Component {
       return name;
     })
   );
+  closeModal = e => {
+    if (e) {
+      if (e.target === document.querySelector('#modalBG') ||
+        e.target === document.querySelector('#cancelBtn')) {
+        this.setState({
+          isAddSong: false,
+          isConfirm: false,
+        });
+      }
+    } else {
+      this.setState({
+        isAddSong: false,
+        isConfirm: false,
+      });
+    }
+  }
 
   render() {
     return (
@@ -261,7 +291,7 @@ class Gig extends React.Component {
                   setList={this.translateSetList(this.state.setList)}
                   onMoveUp={this.onMoveUp}
                   onMoveDown={this.onMoveDown}
-                  onDelete={this.onDelete}
+                  onDelete={this.onDeleteSong}
                 />
               {this.props.authUser &&
                 <button
@@ -276,15 +306,22 @@ class Gig extends React.Component {
             </div>
 
             {this.props.authUser &&
-              <EditOrCreate
-                isEdit={this.state.isEdit}
-                className={styles.btnSubmit}
-                title="gig"
-                handleCreate={this.onCreate}
-                handleEdit={this.onEdit}
-                createValidation={this.state.location}
-                editValidation={this.state.hasChanged}
-              />
+              <>
+                <EditOrCreate
+                  isEdit={this.state.isEdit}
+                  className={styles.btnSubmit}
+                  handleCreate={this.onCreate}
+                  handleEdit={this.onEdit}
+                  createValidation={this.state.location}
+                  editValidation={this.state.hasChanged}
+                />
+                <button
+                  style={{ gridArea: 'delete' }}
+                  onClick={() => this.setState({ isConfirm: true })}
+                >
+                  Delete Gig
+                </button>
+              </>
             }
           </div>
           {this.state.isAddSong &&
@@ -296,7 +333,7 @@ class Gig extends React.Component {
               >
                 <AllSongs
                   isFilterShowing={false}
-                  className={styles.modalInner}
+                  className={styles.modalInnerLg}
                   onClick={this.onPushToSetList}
                   songs={Object.values(this.props.songs)}
                   sharks={this.props.sharks}
@@ -305,7 +342,24 @@ class Gig extends React.Component {
               </div>
             </Modal>
           }
-
+          {this.state.isConfirm &&
+            <Modal>
+              <div
+                id="modalBG"
+                className={styles.modalBG}
+                onClick={this.closeModal}
+              >
+                <div className={styles.modalInnerSm}>
+                  <Confirm
+                    onYes={this.onDeleteGig}
+                    onNo={this.closeModal}
+                    message="Are you sure you want to delete this gig?"
+                    disabled={this.state.isDisabled}
+                  />
+                </div>
+              </div>
+            </Modal>
+          }
           <button id="detailExit" onClick={this.props.exit} className={styles.btnClose}>
             >
           </button>

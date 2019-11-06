@@ -35,7 +35,7 @@ class Gigs extends React.Component {
   exitDetail = e => {
     const modalBG = document.querySelector('#halfModalBG');
     const exitBtn = document.querySelector('#detailExit');
-    if (e.target === modalBG || e.target === exitBtn) {
+    if (!e || e.target === modalBG || e.target === exitBtn) {
       this.setState({
         isDetail: false,
         detailedGig: {},
