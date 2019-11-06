@@ -554,7 +554,7 @@ button, input, select {
     "vocals vocals"
     "audio audio"
     "lyrics required"
-    "submit submit"
+    "submit delete"
 }
 
 .grid-gig {
@@ -565,7 +565,7 @@ button, input, select {
   grid-template-areas:
     "where   when"
     "what    what"
-    "submit  submit"
+    "submit  delete"
 }
 .grid-shark {
   display: grid;
