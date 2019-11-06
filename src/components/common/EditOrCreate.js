@@ -20,7 +20,7 @@ const EditOrCreate = ({
       disabled={isEdit ? !editValidation : !createValidation}
       style={{ gridArea: 'submit' }}
     >
-      {isEdit ? 'save edits' : 'create new ' + title}
+      {isEdit ? 'save edits' : 'create'}
     </button>
   )
 }

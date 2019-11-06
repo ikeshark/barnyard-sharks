@@ -5,6 +5,7 @@ import Modal from './Modal';
 import SharkSelect from './SharkSelect';
 import Filter from './Filter';
 import AllSongs from './AllSongs';
+import Confirm from './Confirm';
 
 export {
   delayUnmounting,
@@ -14,4 +15,5 @@ export {
   SharkSelect,
   Filter,
   AllSongs,
+  Confirm,
 };
