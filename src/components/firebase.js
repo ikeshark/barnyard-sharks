@@ -37,11 +37,15 @@ class Firebase {
   }
 
   doCreateSong = song => {
+    const time = new Date().getTime();
+    this.db.ref().update({ songsLastUpdate: time });
     const ref = this.db.ref().child('songs').push(song);
     return ref.key;
   }
 
   doCreateGig = gig => {
+    const time = new Date().getTime();
+    this.db.ref().update({ gigsLastUpdate: time });
     const ref = this.db.ref().child('gigs').push(gig);
     return ref.key
   }

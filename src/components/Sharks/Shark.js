@@ -83,6 +83,9 @@ class Shark extends React.Component {
   }
 
   handleEdit = () => {
+    const time = new Date().getTime();
+    this.props.firebase.db.ref().update({ sharksLastUpdate: time });
+
     let favSongs = this.state.favSongs;
 
     favSongs = favSongs.join(',');

@@ -159,6 +159,8 @@ class Song extends React.Component {
       }
     });
     if (validation) {
+      const time = new Date().getTime();
+      this.props.firebase.db.ref().update({ songsLastUpdate: time });
       this.props.firebase.db.ref(`songs/${this.state.songId}`).update({
         audio,
         dob,
@@ -234,6 +236,8 @@ class Song extends React.Component {
   }
 
   onDelete = e => {
+    const time = new Date().getTime();
+    this.props.firebase.db.ref().update({ songsLastUpdate: time });
     this.setState({ isDisabled: true })
     this.props.firebase.db.ref(`songs/${this.state.songId}`).remove()
       .then(() => this.props.exit());

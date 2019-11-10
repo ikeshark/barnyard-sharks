@@ -101,6 +101,9 @@ class Gig extends React.Component {
   }
 
   onEdit = () => {
+    const time = new Date().getTime();
+    this.props.firebase.db.ref().update({ gigsLastUpdate: time });
+
     const { date, location } = this.state;
     let setList = this.state.setList;
 
@@ -116,6 +119,8 @@ class Gig extends React.Component {
   }
 
   onDeleteGig = e => {
+    const time = new Date().getTime();
+    this.props.firebase.db.ref().update({ gigsLastUpdate: time });
     this.setState({ isDisabled: true });
     this.props.firebase.db.ref(`gigs/${this.state.gigId}`).remove()
       .then(() => this.props.exit());
