@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import localforage from 'localforage';
 
 import Firebase from './firebase';
 import Header from './Header';
@@ -46,21 +47,46 @@ class App extends Component {
 
   componentDidMount() {
     setTimeout(() => this.endAnimation(), 3000);
-    this.firebase.db.ref('songs').on('value', snapshot => {
-      this.setState({ songs: snapshot.val() });
-    });
-    this.firebase.db.ref('gigs').on('value', snapshot => {
-      this.setState({ gigs: snapshot.val() });
-    });
-    this.firebase.db.ref('sharks').on('value', snapshot => {
-      this.setState({ sharks: snapshot.val() });
-    });
-    if (localStorage.getItem('tab')) {
-      this.setState({ tab: localStorage.getItem('tab') });
+    localforage.getItem('tab').then(tab => {
+      if (tab) this.setState({ tab });
+    })
+
+    if (!navigator.onLine) {
+      localforage.getItem('songs').then(songs => {
+        if (songs) {
+          const songPromise = localforage.getItem('songs');
+          const gigPromise = localforage.getItem('gigs');
+          const sharkPromise = localforage.getItem('sharks');
+
+          Promise.all([songPromise, gigPromise, sharkPromise]).then(values => {
+            this.setState({
+              songs: values[0],
+              gigs: values[1],
+              sharks: values[2]
+            })
+          })
+        }
+      })
+    } else {
+      this.firebase.db.ref('songs').on('value', snapshot => {
+        this.setState({ songs: snapshot.val() });
+        localforage.setItem('songs', snapshot.val())
+      });
+      this.firebase.db.ref('gigs').on('value', snapshot => {
+        this.setState({ gigs: snapshot.val() });
+        localforage.setItem('gigs', snapshot.val())
+      });
+      this.firebase.db.ref('sharks').on('value', snapshot => {
+        this.setState({ sharks: snapshot.val() });
+        localforage.setItem('sharks', snapshot.val())
+      });
     }
-    window.addEventListener('unload', () => {
-      localStorage.setItem('tab', this.state.tab)
+
+    window.addEventListener('beforeunload', () => {
+      localforage.setItem('tab', this.state.tab);
+      localforage.setItem('hasVisited', true);
     });
+
     this.firebase.auth.onAuthStateChanged(
       authUser => {
         authUser ?
@@ -123,6 +149,7 @@ class App extends Component {
         return (
           <Songs
             songs={this.state.songs}
+            sharks={this.state.sharks}
             firebase={this.firebase}
             authUser={this.state.authUser}
           />
@@ -133,9 +160,9 @@ class App extends Component {
   render() {
     const { sharks, songs, gigs, isLoadAnimation } = this.state;
     const loading = (
-      sharks.hasOwnProperty('active') &&
-      songs.hasOwnProperty('aynrand') &&
-      typeof gigs === 'object'
+      Object.entries(sharks).length &&
+      Object.entries(songs).length &&
+      Object.entries(gigs).length
     ) ? false : true;
     return (
       <div className="h-screen overflow-hidden">
