@@ -46,11 +46,16 @@ class App extends Component {
   }
 
   componentDidMount() {
-    setTimeout(() => this.endAnimation(), 3000);
+    // if user is loading app for first time show entire animation
+    localforage.getItem('hasVisited').then(hasVisited => {
+      const timeOut = hasVisited ? 0 : 3000;
+      setTimeout(() => this.endAnimation(), timeOut);
+    })
+    // remember which tab the user was last on
     localforage.getItem('tab').then(tab => {
       if (tab) this.setState({ tab });
     })
-
+    // if online load from localforage
     if (!navigator.onLine) {
       localforage.getItem('songs').then(songs => {
         if (songs) {
