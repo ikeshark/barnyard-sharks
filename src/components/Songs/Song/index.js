@@ -460,7 +460,7 @@ class Song extends React.Component {
             <span className={styles.btnText}>Required Sharks</span>
           </button>
 
-          {this.props.authUser &&
+          {this.props.authUser && navigator.onLine &&
             <>
               <EditOrCreate
                 isEdit={this.state.isEdit}
@@ -597,10 +597,6 @@ class Song extends React.Component {
                   message="Are you sure you want to delete this song?"
                   disabled={this.state.isDisabled}
                 />
-                <p className="text-red-700 text-xl">
-                  This song is in {this.state.gigCount} set lists,
-                  and is found in {this.state.sharkFavCount} A Sharks’ Dozen lists.
-                </p>
               </div>
             </div>
           </Modal>

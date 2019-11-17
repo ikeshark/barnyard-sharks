@@ -66,7 +66,7 @@ class Songs extends React.Component {
           isFilterShowing={true}
         >
           {
-            this.props.authUser &&
+            this.props.authUser && navigator.onLine &&
             <button
               className="absolute top-0 right-0 mt-2 mr-2 h-16 w-16 rounded-full p-1 bg-tan border border-black leading-none shadow-slategray"
               onClick={this.addNewSong}

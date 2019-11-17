@@ -310,7 +310,7 @@ class Gig extends React.Component {
               }
             </div>
 
-            {this.props.authUser &&
+            {this.props.authUser && navigator.onLine &&
               <>
                 <EditOrCreate
                   isEdit={this.state.isEdit}

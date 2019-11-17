@@ -230,7 +230,7 @@ class Shark extends React.Component {
                 onMoveDown={this.onMoveDown}
                 onDelete={this.onDelete}
               />
-              {validated &&
+              {validated && navigator.onLine &&
                 <button
                   className={styles.addSong}
                   onClick={this.onAddSong}
@@ -241,7 +241,7 @@ class Shark extends React.Component {
                 </button>
               }
             </div>
-            {validated &&
+            {validated && navigator.onLine &&
               <button
                 className={styles.btnSubmit}
                 type="submit"
