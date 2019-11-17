@@ -82,6 +82,7 @@ class Songs extends React.Component {
           songId={this.state.detailedSongID}
           firebase={this.props.firebase}
           songs={this.props.songs}
+          gigs={this.props.gigs}
           song={detailedSong}
           exit={this.exitDetail}
           sharks={this.props.sharks}

@@ -126,27 +126,28 @@ class App extends Component {
         return (
           <Songs
             songs={this.state.songs}
-            firebase={this.firebase}
+            gigs={this.state.gigs}
             sharks={this.state.sharks}
+            firebase={this.firebase}
             authUser={this.state.authUser}
           />
         );
       case 'gigs':
         return (
           <Gigs
-            gigs={this.state.gigs}
             songs={this.state.songs}
+            gigs={this.state.gigs}
+            sharks={this.state.sharks}
             firebase={this.firebase}
             authUser={this.state.authUser}
-            sharks={this.state.sharks}
           />
         );
       case 'sharks':
         return (
           <Sharks
+            songs={this.state.songs}
             sharks={this.state.sharks}
             firebase={this.firebase}
-            songs={this.state.songs}
             authUser={this.state.authUser}
           />
         );
@@ -154,6 +155,7 @@ class App extends Component {
         return (
           <Songs
             songs={this.state.songs}
+            gigs={this.state.gigs}
             sharks={this.state.sharks}
             firebase={this.firebase}
             authUser={this.state.authUser}

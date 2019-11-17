@@ -57,6 +57,8 @@ const INITIAL_STATE = {
   songId: '',
   hasChanged: false,
   name: '',
+  sharkFavCount: 0,
+  gigCount: 0,
   status: '',
   vox: '',
   lyrics: '',
@@ -75,6 +77,7 @@ class Song extends React.Component {
   state = { ...INITIAL_STATE };
 
   componentDidMount() {
+    this.findSongInSetLists();
     this.setState({
       audio: this.props.song.audio || '',
       dob: this.props.song.dob,
@@ -263,11 +266,32 @@ class Song extends React.Component {
       });
     }
   }
+  findSongInSetLists = () => {
+    const gigs = Object.values(this.props.gigs);
+    const songId = this.props.songId || this.state.songId;
+    // if there isn't a songId no need to do the rest
+    if (!songId) return;
+    let gigCount = 0;
+    gigs.forEach(gig => {
+      if (gig.setList.indexOf(songId) !== -1) gigCount++;
+    })
+    const sharks = Object.values(this.props.sharks.active);
+    let sharkFavCount = 0;
+    sharks.forEach(shark => {
+      if (shark.favSongs && shark.favSongs.indexOf(songId) !== -1) sharkFavCount++;
+    })
+    this.setState({ gigCount, sharkFavCount })
+  }
+  handleDelete = () => {
+    if (!this.state.gigCount && !this.state.sharkFavCount) {
+      this.setState({ isConfirm: true })
+    } else {
+      this.setState({ error: 'You can not delete a song that is included in a setlist or A Sharks’ Dozen list'})
+    }
+  }
   handleReqSharksChange = e => {
     const value = e.target.value;
     let reqSharks = this.state.reqSharks;
-
-    console.log(value, reqSharks)
 
     const re = new RegExp(value);
     // if reqSharks has value
@@ -356,8 +380,8 @@ class Song extends React.Component {
         classNames="songWrapper"
         isUnmounting={this.props.isUnmounting}
       >
+        {this.state.error && <p className="text-red-700 font-bold">{this.state.error}</p>}
         <div className={styles.wrapper}>
-          {this.state.error && <p className="text-red-700 font-bold">{this.state.error}</p>}
           <label className={styles.label} style={{ gridArea: 'name' }}>
             name
             <input
@@ -448,7 +472,7 @@ class Song extends React.Component {
               />
               <button
                 style={{ gridArea: 'delete' }}
-                onClick={() => this.setState({ isConfirm: true })}
+                onClick={this.handleDelete}
               >
                 Delete Song
               </button>
@@ -573,6 +597,10 @@ class Song extends React.Component {
                   message="Are you sure you want to delete this song?"
                   disabled={this.state.isDisabled}
                 />
+                <p className="text-red-700 text-xl">
+                  This song is in {this.state.gigCount} set lists,
+                  and is found in {this.state.sharkFavCount} A Sharks’ Dozen lists.
+                </p>
               </div>
             </div>
           </Modal>
