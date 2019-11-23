@@ -594,6 +594,11 @@ label:focus-within {
   background: #eee
 }
 
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
 @media (min-width:640px) {
   .sm\:block {
     display: block

@@ -71,8 +71,7 @@ class SignInForm extends React.Component {
         >
           <form
             onSubmit={this.handleSubmit}
-            className="absolute w-full"
-            style={{ backfaceVisibility: 'hidden' }}
+            className="absolute w-full backface-hidden"
           >
             <h3 className="font-futura text-center font-bold text-2xl mb-1">
               SIGN IN
