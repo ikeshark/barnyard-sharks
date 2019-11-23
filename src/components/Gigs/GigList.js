@@ -37,7 +37,7 @@ const GigList = ({ gigs, detailedGig, showDetail }) => {
             className={styles.btn}
             value={gig[0]}
           >
-            <span className="gigDate">{renderDate(gig[1].date)}</span>
+            <span className="gigDate font-monospace">{renderDate(gig[1].date)}</span>
             <span className="gigLocation">{gig[1].location}</span>
           </button>
         </li>

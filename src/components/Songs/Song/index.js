@@ -392,6 +392,7 @@ class Song extends React.Component {
               className={styles.inputXL}
             />
           </label>
+          <p style={{ gridArea: 'stats' }}>This song is found in {this.state.gigCount} gigs</p>
           <label className={styles.label} style={{ gridArea: 'date' }}>
             date of birth
             <input
@@ -443,7 +444,7 @@ class Song extends React.Component {
             onClick={() => this.setState({ isLyricDisplay: true })}
           >
             <span className={styles.btnText}>
-              {this.state.lyrics ? "" : "Add "} Lyrics
+              Lyrics / <br/>Chords
             </span>
           </button>
 
@@ -501,12 +502,12 @@ class Song extends React.Component {
               onClick={this.closeModal}
             >
               <label className={styles.modalInner}>
-                lyrics
+                lyrics / chords
                 <textarea
                   disabled={!this.props.authUser}
                   readOnly={!this.props.authUser}
                   name="lyrics"
-                  className="border border-black block w-full text-lg p-4 mt-2 h-11/12"
+                  className="border border-black block w-full font-monospace text-lg p-4 mt-2 h-11/12"
                   onChange={this.handleVoxChange}
                   value={this.state.lyrics}
                 >

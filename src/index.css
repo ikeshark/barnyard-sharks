@@ -212,7 +212,9 @@ button, input, select {
 .font-bold {
   font-weight: 700
 }
-
+.font-monospace {
+  font-family: monospace;
+}
 .font-futura {
   font-family: Futura, Futura-Medium, Futura Medium, Century Gothic, CenturyGothic, Apple Gothic, AppleGothic, URW Gothic L, Avant Garde, sans-serif
 }
@@ -545,11 +547,12 @@ button, input, select {
 
 .grid-song {
   display: grid;
-  grid-gap: 1rem;
-  grid-template-columns: calc(50% - 1rem);
-  grid-template-rows: repeat(6, 1fr);
+  grid-gap: 0.8rem;
+  grid-template-columns: repeat(2, calc(50% - 0.4rem));
+  grid-template-rows: 1fr auto 1fr 1fr 1fr 1fr 1fr;
   grid-template-areas:
     "name name"
+    "stats stats"
     "date status"
     "vocals vocals"
     "audio audio"

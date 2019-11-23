@@ -50,7 +50,8 @@ class App extends Component {
     localforage.getItem('hasVisited').then(hasVisited => {
       const timeOut = hasVisited ? 0 : 3000;
       setTimeout(() => this.endAnimation(), timeOut);
-    })
+    }).then(() => localforage.setItem('hasVisited', true));
+
     // remember which tab the user was last on
     localforage.getItem('tab').then(tab => {
       if (tab) this.setState({ tab });
@@ -89,7 +90,6 @@ class App extends Component {
 
     window.addEventListener('beforeunload', () => {
       localforage.setItem('tab', this.state.tab);
-      localforage.setItem('hasVisited', true);
     });
 
     this.firebase.auth.onAuthStateChanged(
