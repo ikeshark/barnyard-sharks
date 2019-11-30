@@ -8,7 +8,7 @@ const styles = {
     bg-black-opaque
   `,
   inner: `
-    absolute top-0 right-0 w-10/12 h-full max-w-666
+    absolute top-0 right-0 w-11/12 md:w-10/12 h-full max-w-666
     bg-white shadow-card animation-slideIn transition-md
   `
 }
