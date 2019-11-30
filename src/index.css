@@ -24,6 +24,10 @@ button, select {
   text-transform: none
 }
 
+img {
+  max-width: 100%;
+}
+
 [type=button], [type=reset], [type=submit], button {
   -webkit-appearance: button
 }
@@ -562,13 +566,25 @@ button, input, select {
 
 .grid-gig {
   display: grid;
-  grid-gap: 1rem;
-  grid-template-columns: calc(50% - 1rem);
-  grid-template-rows: 4.25rem 1fr 3.5rem;
+  grid-gap: 0.8rem;
+  grid-template-columns: repeat(2, calc(50% - 0.4rem));
+  grid-template-rows: auto 1fr auto;
   grid-template-areas:
     "where   when"
     "what    what"
-    "submit  delete"
+    "submit  delete";
+}
+@media (min-width: 800px) {
+  .grid-gig {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto auto 1fr;
+    align-items: start;
+    grid-template-areas:
+     "where what"
+     "when  what"
+     "submit what"
+     "delete what";
+  }
 }
 .grid-shark {
   display: grid;
@@ -717,6 +733,10 @@ label:focus-within {
 
   .md\:w-1\/2 {
     width: 50%
+  }
+
+  .md\:w-10\/12 {
+    width: 83.333333%
   }
 
   .md\:w-full {

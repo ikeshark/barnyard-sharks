@@ -8,7 +8,7 @@ import {
   DetailWrapper,
   EditOrCreate,
 } from '../common';
-import SetList from './SetList';
+import What from './What';
 
 const styles = {
   wrapper: 'grid-gig h-full w-full p-4',
@@ -66,9 +66,14 @@ const INITIAL_STATE = {
   hasChanged: false,
   location: '',
   setList: [],
+  media: [],
+  mediaId: '',
+  src: '',
+  tab: 'media',
   isAddSong: false,
   isEditLocation: false,
   isEdit: false,
+  isMediaConfirm: false,
   isConfirm: false,
   isDisabled: false,
 }
@@ -86,17 +91,20 @@ class Gig extends React.Component {
       isEdit: !!this.props.gigId,
       gigId: this.props.gigId,
       date: this.props.gig.date,
+      media: this.props.gig.media ? Object.entries(this.props.gig.media) : [],
       location: this.props.gig.location,
       setList: setList || [],
+      tab: this.props.gig.media ? 'media' : 'setList',
     });
   }
-  // componentWillUpdate(nextProps, nextState) {
-  //   console.log(nextState.setList);
-  // }
+
   onChange = e => {
+    // hacky line because i don't want adding media to signal a change
+    const bool = e.target.name === 'src' ? false : true;
     this.setState({
       [e.target.name]: e.target.value,
-      hasChanged: true
+      hasChanged: bool,
+      error: '',
     });
   }
 
@@ -152,6 +160,54 @@ class Gig extends React.Component {
       isAddSong: true
     });
   }
+  onAddMedia = () => {
+    if (!this.state.gigId) {
+      this.setState({ error: 'You must create the gig first before adding media' });
+      return false;
+    } else {
+      this.setState({
+        isAddMedia: true
+      });
+    }
+  }
+  onPushToMedia = e => {
+    e.preventDefault();
+    const duplicate = this.state.media.filter(media => media.src === this.state.src);
+
+    if (duplicate.length) {
+      this.setState({
+        error: 'That media is already added',
+        isAddMedia: false
+      });
+      return false;
+    }
+
+    const time = new Date().getTime();
+    this.props.firebase.db.ref().update({ gigsLastUpdate: time });
+
+    const mediaObj = {
+      type: 'photo',
+      src: this.state.src
+    }
+
+    const dbRef = this.props.firebase.db.ref(`gigs/${this.state.gigId}/media`);
+
+    const newRef = dbRef.push(mediaObj, error => {if (error) console.log(error)});
+
+    const mediaArr = [...this.state.media, [newRef.key, mediaObj]];
+    this.setState({ src: '', media: mediaArr, isAddMedia: false })
+  }
+  onStartDeleteMedia = e => {
+    this.setState({ mediaId: e.target.value, isMediaConfirm: true });
+  }
+  onFinishDeleteMedia = () => {
+    this.props.firebase.db.ref(`gigs/${this.state.gigId}/media/${this.state.mediaId}`).remove();
+    const mediaArr = [...this.state.media];
+    if (mediaArr.indexOf(this.state.mediaId)) {
+      mediaArr.splice(mediaArr.indexOf(this.state.mediaId))
+    }
+    this.setState({ media: mediaArr, isMediaConfirm: false })
+  }
   onPushToSetList = e => {
     const songName = e.target.innerText;
     let setList = this.state.setList;
@@ -200,6 +256,9 @@ class Gig extends React.Component {
       return `${month}/${day}/${year}`
     }
   }
+  onChangeTab = e => {
+    this.setState({ tab: e.target.value })
+  }
   onDateChange = e => {
     const re = /^[0-1][0-9]\/[0-3][0-9]\/[1-2][0-9][0-9][0-9]$/;
     if (re.test(e.target.value)) {
@@ -238,12 +297,16 @@ class Gig extends React.Component {
         this.setState({
           isAddSong: false,
           isConfirm: false,
+          isAddMedia: false,
+          isMediaConfirm: false,
         });
       }
     } else {
       this.setState({
         isAddSong: false,
         isConfirm: false,
+        isAddMedia: false,
+        isMediaConfirm: false,
       });
     }
   }
@@ -256,6 +319,7 @@ class Gig extends React.Component {
           classNames="gigWrapper"
           isUnmounting={this.props.isUnmounting}
         >
+          {this.state.error && <p className="font-bold mb-1">{this.state.error}</p>}
           <div className={styles.wrapper}>
             <label
               className={styles.label}
@@ -286,29 +350,20 @@ class Gig extends React.Component {
                 placeholder="mm/dd/yyyy"
               />
             </label>
-            <div className="relative overflow-hidden" style={{ gridArea: 'what' }}>
-              <h3 className="font-futura font-bold text-center text-2xl underline">
-                SETLIST
-              </h3>
-                <SetList
-                  songs={this.props.songs}
-                  authUser={this.props.authUser}
-                  setList={this.translateSetList(this.state.setList)}
-                  onMoveUp={this.onMoveUp}
-                  onMoveDown={this.onMoveDown}
-                  onDelete={this.onDeleteSong}
-                />
-              {this.props.authUser &&
-                <button
-                  onClick={this.onAddSong}
-                  type="button"
-                  disabled={!this.props.authUser}
-                  className={styles.addSong}
-                >
-                  Add Song
-                </button>
-              }
-            </div>
+            <What
+              songs={this.props.songs}
+              authUser={this.props.authUser}
+              setList={this.translateSetList(this.state.setList)}
+              onMoveUp={this.onMoveUp}
+              onMoveDown={this.onMoveDown}
+              tab={this.state.tab}
+              onAddSong={this.onAddSong}
+              onAddMedia={this.onAddMedia}
+              onChangeTab={this.onChangeTab}
+              onDeleteMedia={this.onStartDeleteMedia}
+              onDeleteSong={this.onDeleteSong}
+              media={this.state.media}
+            />
 
             {this.props.authUser && navigator.onLine &&
               <>
@@ -347,6 +402,38 @@ class Gig extends React.Component {
               </div>
             </Modal>
           }
+          {this.state.isAddMedia &&
+            <Modal>
+              <div
+                id="modalBG"
+                className={styles.modalBG}
+                onClick={this.closeModal}
+              >
+                <div className={styles.modalInnerSm}>
+                  <h2 className="text-center mb-4 font-futura">Please enter the source of the photo</h2>
+                  <form
+                    className="p-2"
+                  >
+                    <input
+                      disabled={!this.props.authUser}
+                      name="src"
+                      onChange={this.onChange}
+                      value={this.state.src}
+                      className="block text-lg mb-4 p-2 w-full border-black border-2"
+                    />
+                    <button
+                      onClick={this.onPushToMedia}
+                      type="submit"
+                      // disabled={!this.props.authUser || this.state.src}
+                      className="border-black border-2 text-lg block mx-auto p-2 rounded-lg"
+                    >
+                      save picture
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </Modal>
+          }
           {this.state.isConfirm &&
             <Modal>
               <div
@@ -359,6 +446,24 @@ class Gig extends React.Component {
                     onYes={this.onDeleteGig}
                     onNo={this.closeModal}
                     message="Are you sure you want to delete this gig?"
+                    disabled={this.state.isDisabled}
+                  />
+                </div>
+              </div>
+            </Modal>
+          }
+          {this.state.isMediaConfirm &&
+            <Modal>
+              <div
+                id="modalBG"
+                className={styles.modalBG}
+                onClick={this.closeModal}
+              >
+                <div className={styles.modalInnerSm}>
+                  <Confirm
+                    onYes={this.onFinishDeleteMedia}
+                    onNo={this.closeModal}
+                    message="Are you sure you want to delete this media item?"
                     disabled={this.state.isDisabled}
                   />
                 </div>
