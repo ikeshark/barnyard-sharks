@@ -43,12 +43,6 @@ const styles = {
     p-2 text-lg
     flex flex-col
   `,
-  modalInnerLg: `
-    w-full h-full
-    bg-white shadow-inset
-    p-2 text-lg
-    flex flex-col
-  `,
 }
 
 const reorder = (list, startIndex, endIndex) => {
@@ -391,14 +385,15 @@ class Gig extends React.Component {
                 className={styles.modalBG}
                 onClick={this.closeModal}
               >
-                <AllSongs
-                  isFilterShowing={false}
-                  className={styles.modalInnerLg}
-                  onClick={this.onPushToSetList}
-                  songs={Object.values(this.props.songs)}
-                  sharks={this.props.sharks}
-                  setList={this.translateSetList(this.state.setList)}
-                />
+                <div className="flex bg-tan shadow-inset w-full h-full">
+                  <AllSongs
+                    isFilterShowing={false}
+                    onClick={this.onPushToSetList}
+                    songs={Object.values(this.props.songs)}
+                    sharks={this.props.sharks}
+                    setList={this.translateSetList(this.state.setList)}
+                  />
+                </div>
               </div>
             </Modal>
           }
