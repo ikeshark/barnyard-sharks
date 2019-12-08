@@ -22,6 +22,10 @@ const styles = {
     text-left text-xl leading-tight
     hover:bg-deeppink hover:text-white hover:border-transparent
   `,
+  icon: `
+    px-1 rounded-full font-monospace text-xl
+    text-shadow
+  `
 }
 
 const GigList = ({ gigs, detailedGig, showDetail }) => {
@@ -31,7 +35,7 @@ const GigList = ({ gigs, detailedGig, showDetail }) => {
   return (
     <ul className="p-3 overflow-y-scroll h-full lastItem-mb">
       {gigArray.map(gig => (
-        <li key={gig[0]}>
+        <li className="relative" key={gig[0]}>
           <button
             onClick={showDetail}
             className={styles.btn}
@@ -39,7 +43,16 @@ const GigList = ({ gigs, detailedGig, showDetail }) => {
           >
             <span className="gigDate font-monospace">{renderDate(gig[1].date)}</span>
             <span className="gigLocation">{gig[1].location}</span>
+
           </button>
+          <span className="absolute right-0 mr-2 mt-1">
+            {gig[1].media &&
+              <span className={styles.icon}>🖼️</span>
+            }
+            {!!gig[1].setList.length &&
+              <span className={styles.icon}>📄</span>
+            }
+          </span>
         </li>
       ))}
     </ul>
