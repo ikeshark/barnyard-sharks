@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import ReduxThunk from 'redux-thunk';
 import localforage from 'localforage';
 
+import reducers from '../reducers';
 import Firebase from './firebase';
 import Header from './Header';
 import Loader from './Loader';
@@ -165,6 +169,7 @@ class App extends Component {
   }
 
   render() {
+    const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
     const { sharks, songs, gigs, isLoadAnimation } = this.state;
     const loading = (
       Object.entries(sharks).length &&
@@ -172,6 +177,7 @@ class App extends Component {
       Object.entries(gigs).length
     ) ? false : true;
     return (
+      <Provider store={store}>
       <div className="h-screen overflow-hidden">
         {(isLoadAnimation || loading) && <Loader />}
         {!loading &&
@@ -203,6 +209,7 @@ class App extends Component {
           </>
         }
       </div>
+      </Provider>
     );
   }
 }
