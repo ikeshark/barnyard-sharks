@@ -12,11 +12,12 @@ const EditOrCreate = ({
   createValidation,
   editValidation,
 }) => {
+  const onClick = isEdit ? handleEdit : handleCreate;
 
   return (
     <button
       className={className}
-      onClick={isEdit ? handleEdit : handleCreate}
+      onClick={onClick}
       disabled={isEdit ? !editValidation : !createValidation}
       style={{ gridArea: 'submit' }}
     >

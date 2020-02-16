@@ -416,12 +416,13 @@ button, input, select {
 .fixed {
   position: fixed
 }
-.absolute {
-  position: absolute
-}
 .relative {
   position: relative
 }
+.absolute {
+  position: absolute
+}
+
 
 .top-0 {
   top: 0
@@ -471,6 +472,9 @@ button, input, select {
 }
 .disabled\:text-gray-500:disabled {
   color: #a0aec0
+}
+.text-red {
+  color: #a20101;
 }
 
 .text-sm {
@@ -560,7 +564,7 @@ button, input, select {
   grid-template-areas:
     "name name"
     "stats stats"
-    "date status"
+    "dob status"
     "vocals vocals"
     "audio audio"
     "lyrics required"
@@ -827,10 +831,7 @@ label:focus-within {
   animation: rush 1.7s ease-in-out, shake 0.1s 5 ease-in;
   animation-delay: 0s, 1.7s;
 }
-.fadeOut {
-  animation: fadeOut .3s ease-out;
-  animation-fill-mode: forwards;
-}
+
 
 .modalBG, .halfModalBG {
   animation: fadeIn 0.2s ease-in;
@@ -838,13 +839,25 @@ label:focus-within {
 .animation-fadeIn {
   opacity: 0;
   animation: fadeIn 0.5s ease-in-out;
-  animation-delay: 2.2s;
   animation-fill-mode: forwards;
+}
+.fadeOut {
+  animation: fadeOut .3s ease-out;
+  animation-fill-mode: forwards;
+}
+
+.animation-delay-md {
+  animation-delay: 2.2s;
 }
 
 .animation-blink {
   animation: blink alternate infinite 0.33s ease-in-out;
   animation-delay: 2.4s;
+}
+
+
+.animation-grow {
+  animation: grow .33s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .animation-slideIn {

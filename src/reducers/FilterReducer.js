@@ -7,6 +7,8 @@ import {
   COVER_FILTER_CHANGED
 } from '../actions/types';
 
+import toggleValue from '../utils/toggleValue';
+
 const INITIAL_STATE = {
   statusFilter: '',
   vocalsFilter: '',
@@ -17,39 +19,23 @@ const INITIAL_STATE = {
 };
 
 export default (state = INITIAL_STATE, action) => {
-  // console.log(action.type, action.payload)
   switch (action.type) {
     case STATUS_FILTER_CHANGED:
-      const statusFilter = state.statusFilter === action.payload ?
-        '' : action.payload;
+      const statusFilter = toggleValue(action.payload, state.statusFilter);
       return { ...state, statusFilter };
     case VOCALS_FILTER_CHANGED:
       const vocalsFilter = state.vocalsFilter === action.payload ?
         '' : action.payload;
       return { ...state, vocalsFilter };
     case SHARKS_FILTER_CHANGED:
-      const value = action.payload;
-      let sharksFilter;
-      const re = new RegExp(value);
-      if (!re.test(state.sharksFilter)) {
-        sharksFilter = state.sharksFilter ? `${state.sharksFilter}, ${value}` : value;
-      } else {
-        // if there is a comma, ie multiple values
-        if (/,/.test(state.sharksFilter)) {
-          let sharksFilterArray = state.sharksFilter.split(', ');
-          sharksFilterArray.splice(sharksFilterArray.indexOf(value), 1);
-          sharksFilter = sharksFilterArray.join(', ');
-        } else {
-          sharksFilter = '';
-        }
-      }
+      const sharksFilter = toggleValue(action.payload, state.sharksFilter);
       return { ...state, sharksFilter };
     case SORT_TYPE_CHANGED:
       const sortType = state.sortType === action.payload ?
         '' : action.payload;
       return { ...state, sortType };
     case FILTER_DISPLAY_CHANGED:
-      return { ...state, isFilterDisplay: !state.filterDisplay };
+      return { ...state, isFilterDisplay: !state.isFilterDisplay };
     case COVER_FILTER_CHANGED:
       return { ...state, isCoverFilter: !state.isCoverFilter };
 

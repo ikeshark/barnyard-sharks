@@ -1,13 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-const buttonClassName = `
-  w-full mb-1 p-1
-  bg-offwhite shadow-spread
-  border border-gray border-b-3
-  leading-tight text-left text-xl
-  hover:bg-deeppink hover:text-white hover:border-transparent
-`;
+import {
+  mainList as styles,
+} from '../../../classLists';
+
+
 
 const AllSongList = ({
   songs,
@@ -18,7 +16,6 @@ const AllSongList = ({
   sharksFilter,
   setList,
   onClick,
-  detailedSong
 }) => {
 
   const filterSongs = songs => {
@@ -30,9 +27,13 @@ const AllSongList = ({
     }
     // duplicates in setLists aren't allowed
     if (setList) {
-      filteredSongs = filteredSongs.filter(song => setList.indexOf(song.name) === -1 );
+      filteredSongs = filteredSongs.filter(song => setList.indexOf(song.id) === -1 );
+    }
+    if (statusFilter) {
+      filteredSongs = filteredSongs.filter(song => statusFilter.indexOf(song.status) !== -1);
     }
     if (sharksFilter) {
+      // to do: improve this
       const sharksFilterArray = sharksFilter.split(', ');
       filteredSongs = filteredSongs.filter(song => {
         let isKeeper = true;
@@ -47,12 +48,8 @@ const AllSongList = ({
         return isKeeper;
       });
     }
-    if (statusFilter) {
-      filteredSongs = filteredSongs.filter(song => song.status === statusFilter);
-    }
     if (vocalsFilter) {
-      const test = new RegExp(vocalsFilter);
-      filteredSongs = filteredSongs.filter(song => test.test(song.vox));
+      filteredSongs = filteredSongs.filter(song => song.vox.indexOf(vocalsFilter) !== -1);
     }
     if (sortType) {
       if (sortType === 'newest') {
@@ -73,16 +70,14 @@ const AllSongList = ({
   }
   const filteredSongs = filterSongs(songs);
   return (
-    <ul className="p-3 overflow-y-scroll h-full lastItem-mb">
+    <ul className={styles.wrapper}>
       {filteredSongs.map(song => (
         <li key={song.name}>
           <button
             type="button"
             onClick={onClick}
-            className={
-              detailedSong === song ?
-              `active ${buttonClassName}` : buttonClassName
-            }
+            value={song.id}
+            className={styles.btn}
           >
             {song.name}
           </button>
@@ -100,12 +95,14 @@ const mapStateToProps = (state) => {
     sortType,
     isCoverFilter,
   } = state.filter;
+  const { songs } = state.songs;
   return {
     vocalsFilter,
     sharksFilter,
     statusFilter,
     sortType,
     isCoverFilter,
+    songs,
   };
 };
 

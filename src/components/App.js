@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { createStore, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
-import ReduxThunk from 'redux-thunk';
+import { connect } from 'react-redux';
+
+import { songsFetch, gigsFetch, sharksFetch } from '../actions';
 import localforage from 'localforage';
 
-import reducers from '../reducers';
 import Firebase from './firebase';
 import Header from './Header';
 import Loader from './Loader';
@@ -17,10 +16,6 @@ import Modal from './common/Modal';
 import { SignInForm } from './User';
 
 const INITIAL_STATE = {
-  songs: {},
-  gigs: {},
-  sharks: {},
-
   isLoadAnimation: true,
   tab: 'songs',
   isAuthDisplay: false,
@@ -28,12 +23,6 @@ const INITIAL_STATE = {
 }
 
 const styles = {
-  modalBG: `
-    fixed top-0 left-0
-    w-full h-screen z-100
-    bg-black-opaque
-    flex items-center justify-center
-  `,
   modalInner: `
     w-10/12 h-10/12
     bg-white shadow-inset
@@ -78,18 +67,14 @@ class App extends Component {
         }
       })
     } else {
-      this.firebase.db.ref('songs').on('value', snapshot => {
-        this.setState({ songs: snapshot.val() });
-        localforage.setItem('songs', snapshot.val())
-      });
-      this.firebase.db.ref('gigs').on('value', snapshot => {
-        this.setState({ gigs: snapshot.val() });
-        localforage.setItem('gigs', snapshot.val())
-      });
-      this.firebase.db.ref('sharks').on('value', snapshot => {
-        this.setState({ sharks: snapshot.val() });
-        localforage.setItem('sharks', snapshot.val())
-      });
+      this.props.songsFetch();
+      this.props.gigsFetch();
+      this.props.sharksFetch();
+      // to do
+//      localforage.setItem('songs', snapshot.val())
+//      localforage.setItem('gigs', snapshot.val())
+//       localforage.setItem('sharks', snapshot.val())
+
     }
 
     window.addEventListener('beforeunload', () => {
@@ -114,34 +99,25 @@ class App extends Component {
   }
 
   onShowSignIn = () => {
-    console.log('trigger')
     this.setState({ isAuthDisplay: true });
   }
 
-  onModalClose = e => {
-    if (e.target === document.querySelector('#modalBG')) {
-      this.setState({ isAuthDisplay: false });
-    };
+  onModalClose = () => {
+    this.setState({ isAuthDisplay: false });
   }
 
   renderMain = () => {
     switch (this.state.tab) {
       case 'songs':
         return (
-          <Songs
-            songs={this.state.songs}
-            gigs={this.state.gigs}
-            sharks={this.state.sharks}
-            firebase={this.firebase}
-            authUser={this.state.authUser}
-          />
+          <Songs authUser={this.state.authUser} />
         );
       case 'gigs':
         return (
           <Gigs
-            songs={this.state.songs}
-            gigs={this.state.gigs}
-            sharks={this.state.sharks}
+            songs={this.props.songs}
+            gigs={this.props.gigs}
+            sharks={this.props.sharks}
             firebase={this.firebase}
             authUser={this.state.authUser}
           />
@@ -149,35 +125,28 @@ class App extends Component {
       case 'sharks':
         return (
           <Sharks
-            songs={this.state.songs}
-            sharks={this.state.sharks}
+            songs={this.props.songs}
+            sharks={this.props.sharks}
             firebase={this.firebase}
             authUser={this.state.authUser}
           />
         );
       default:
         return (
-          <Songs
-            songs={this.state.songs}
-            gigs={this.state.gigs}
-            sharks={this.state.sharks}
-            firebase={this.firebase}
-            authUser={this.state.authUser}
-          />
+          <Songs authUser={this.state.authUser} />
         );
     }
   }
 
   render() {
-    const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
-    const { sharks, songs, gigs, isLoadAnimation } = this.state;
+    const { isLoadAnimation } = this.state;
+    const { songs, gigs, sharks } = this.props;
     const loading = (
       Object.entries(sharks).length &&
       Object.entries(songs).length &&
       Object.entries(gigs).length
     ) ? false : true;
     return (
-      <Provider store={store}>
       <div className="h-screen overflow-hidden">
         {(isLoadAnimation || loading) && <Loader />}
         {!loading &&
@@ -193,25 +162,30 @@ class App extends Component {
             {this.renderMain()}
 
             {this.state.isAuthDisplay &&
-              <Modal>
-                <div
-                  id="modalBG"
-                  className={styles.modalBG}
-                  onClick={this.onModalClose}
-                >
-                  <SignInForm
-                    className={styles.modalInner}
-                    firebase={this.firebase}
-                  />
-                </div>
+              <Modal
+                innerStyles={styles.modalInner}
+                exit={this.onModalClose}
+              >
+                <SignInForm
+                  className=''
+                  firebase={this.firebase}
+                />
               </Modal>
             }
           </>
         }
       </div>
-      </Provider>
     );
   }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  const { songs } = state.songs;
+  const { gigs } = state.gigs;
+  const { sharks } = state.sharks;
+  return { songs, gigs, sharks };
+};
+
+export default connect(mapStateToProps,
+  { songsFetch, gigsFetch, sharksFetch }
+)(App);

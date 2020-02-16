@@ -4,46 +4,30 @@ import { connect } from 'react-redux';
 import { sharksFilterChanged } from '../../../../actions';
 import SharkSelect from '../../SharkSelect';
 
-console.log(sharksFilterChanged.toString())
+import { futuraHeading } from '../../../../classLists';
 
 const styles = {
-  wrapper: `
-    flex flex-wrap justify-center -mx-2 md:mx-0 md:flex
-  `,
-  btn: `
-    relative m-1 p-3 flex-grow
-    border border-black rounded-10
-    btn-toggle
-  `,
-  heading: `
-    w-full -mb-1
-    font-futura font-bold text-lg text-center
-  `,
+  wrapper: 'flex flex-wrap justify-center -mx-2 md:mx-0 md:flex',
+  heading: futuraHeading + ' w-full -mb-1 text-lg',
 }
 
-const SharkBtns = ({ sharks, filterView, sharksFilter, sharksFilterChanged }) => {
-  console.log(sharksFilterChanged.toString())
-
-  return (
-    <div
-      id="sharksWrapper"
-      className={filterView === 'sharks' ? styles.wrapper : styles.wrapper + " hidden"}
-    >
-      <h4 className={styles.heading}>
-        WHO IS <em>NOT</em> HERE?
-      </h4>
-      <SharkSelect
-        sharks={sharks}
-        handleChange={e => sharksFilterChanged(e.target.value)}
-        checkedCondition={sharksFilter}
-      />
-    </div>
-  );
-}
+const SharkBtns = ({ filterView, sharksFilter, sharksFilterChanged }) => (
+  <div className={filterView === 'sharks' ?
+      styles.wrapper : styles.wrapper + ' hidden'}>
+    <h4 className={styles.heading}>
+      WHO IS <em>NOT</em> HERE?
+    </h4>
+    <SharkSelect
+      handleChange={e => sharksFilterChanged(e.target.value)}
+      checkedCondition={sharksFilter}
+    />
+  </div>
+);
 
 const mapStateToProps = (state) => {
   const { sharksFilter } = state.filter;
-  return { sharksFilter };
+  const { sharks } = state.sharks;
+  return { sharksFilter, sharks };
 };
 
 

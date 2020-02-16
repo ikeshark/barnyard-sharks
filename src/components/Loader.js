@@ -17,7 +17,7 @@ const Loader = () => {
       <h1 className="text-6xl leading-none text-shadow-white-red animation-rushShake">
         Barnyard Sharks
       </h1>
-      <p className="mt-0 animation-fadeIn text-3xl">
+      <p className="mt-0 animation-fadeIn animation-delay-md text-3xl">
         Are Coming For You<span className="animation-blink">...</span>
       </p>
     </main>

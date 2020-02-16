@@ -1,416 +1,186 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+
+import {
+  songUpdate,
+  songCreate,
+  songDelete,
+  songDateChanged,
+  songLyricsChanged,
+  songVoxChanged,
+  songAudioChanged,
+  songReqSharksChanged,
+  songMessageChanged,
+} from '../../../actions';
 
 import {
   Modal,
-  SharkSelect,
   DetailWrapper,
   EditOrCreate,
   Confirm,
+  DateInput,
+  Message
 } from '../../common';
 
+import LyricInput from './Lyrics';
+import VoxInput from './VoxInput';
+import Audio from './Audio';
+import ReqSharkInput from './ReqSharkInput';
+
+import {
+  input,
+  floatingBtn,
+  submitBtn,
+  modalInner,
+  futuraHeading,
+} from '../../../classLists';
+
 const styles = {
-  wrapper: 'grid-song overflow-y-scroll h-full w-full p-4',
-  label: 'border border-black shadow-card p-2 text-sm',
-  iframe: 'border border-black shadow-card p-2 text-sm w-full h-80px',
-  inputXL: 'block text-xl w-full mt-2 -mb-2',
-  inputLG: 'block text-lg w-full mt-2 -mb-2',
-  btnOuter: 'relative text-left text-sm border border-black rounded-lg shadow-card p-2',
-  btnLabel: 'absolute top-0 left-0 mt-2 ml-2',
-  btnValue: 'block text-xl mt-3 -mb-1',
-  audio: 'border border-black shadow-card p-2 text-sm m-0',
-  btnText: 'absolute top-0 left-0 ml-2 mt-2 text-lg text-left leading-none',
+  wrapper: 'grid-song h-full w-full p-4',
+  label: input.label,
   cover: 'absolute top-0 right-0 mt-6 mr-8 text-sm md:mr-10 lg:mr-20',
-  btnSubmit: `
-    block p-2 text-xl
-    border-4 border-double border-black rounded-lg
-    disabled:border-gray-500 disabled:text-gray-500
-    songSubmit
-  `,
-  btnClose: `
-    absolute bottom-0 left-0 mb-y-center -ml-6
-    border border-black rounded-sm
-    shadow-card p-2 bg-white leading-none
-  `,
-  modalBG: `
-    fixed top-0 left-0
-    w-full h-screen z-100
-    bg-black-opaque
-    flex items-center justify-center
-  `,
-  modalInner: `
-    w-10/12 h-10/12
-    bg-white shadow-inset
-    p-4 text-lg
-    flex flex-col
-  `,
-  btnToggle: `
-    relative m-1 p-3
-    border border-black rounded-10
-    btn-toggle
-  `
+  addSong: floatingBtn.topSmall,
+  btnSubmit: submitBtn,
+  inputXL: input.input,
+  modalInnerSm: modalInner,
+  heading: futuraHeading + ' text-2xl my-1',
 }
 
-const INITIAL_STATE = {
-  audio: '',
-  dob: 0,
-  dobInput: '',
-  songId: '',
-  hasChanged: false,
-  name: '',
-  sharkFavCount: 0,
-  gigCount: 0,
-  status: '',
-  vox: '',
-  lyrics: '',
-  reqSharks: '',
-  isEdit: false,
-  isCover: false,
-  isVocalEdit: false,
-  isReqSharksEdit: false,
-  isConfirm: false,
-  isDisabled: false,
-  error: '',
-};
+const Song = ({
+  sharks,
+  songs,
+  gigs,
 
+  detailedSong,
 
-class Song extends React.Component {
-  state = { ...INITIAL_STATE };
+  songAudioChanged,
+  songCreate,
+  songDateChanged,
+  songDelete,
+  songLyricsChanged,
+  songMessageChanged,
+  songReqSharksChanged,
+  songUpdate,
+  songVoxChanged,
 
-  componentDidMount() {
-    this.findSongInSetLists();
-    this.setState({
-      audio: this.props.song.audio || '',
-      dob: this.props.song.dob,
-      songId: this.props.songId,
-      name: this.props.song.name,
-      vox: this.props.song.vox,
-      status: this.props.song.status,
-      isCover: this.props.song.isCover || false,
-      lyrics: this.props.song.lyrics || '',
-      reqSharks: this.props.song.reqSharks || '',
-      isEdit: !!this.props.songId,
-    });
-  }
+  error,
+  message,
 
-  processAudioEmbed = () => {
-    const embed = this.state.newAudio
-    const reSoundCloud = /soundcloud/i;
-    const reBandCamp = /bandcamp/i;
-    let host;
-    if (reBandCamp.test(embed)) {
-      host = 'bandcamp';
-    } else if (reSoundCloud.test(embed)) {
-      host = 'soundcloud';
-    } else {
-      return 'invalid embed';
-    }
-    // looks for the word track(s) followed by "=" or "/"
-    // then records the numbers
-    const reTrackID = /tracks?[=\/](\d+)/;
-    const trackID = reTrackID.exec(embed)[1];
-    this.setState({audio: { host: host, trackID: trackID }});
-  }
-  renderAudio = () => {
-    if (this.state.audio) {
-      if (this.state.audio.host === 'soundcloud') {
-        const source = `https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/${this.state.audio.trackID}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=false&show_user=false&show_reposts=false&show_teaser=false`
-        return <iframe style={{ gridArea: 'audio' }} className={styles.iframe} title="soundcloud" src={source}></iframe>
-      } else {
-        const source = `https://bandcamp.com/EmbeddedPlayer/size=small/bgcol=ffffff/linkcol=0687f5/track=${this.state.audio.trackID}/transparent=true/`;
-        return <iframe style={{ gridArea: 'audio' }} className={styles.iframe} title="bandcamp" src={source}><p>{this.state.name}</p></iframe>
-      }
-    } else if (this.props.authUser) {
-      return (
-        <form
-          className={styles.audio}
-          onSubmit={this.processAudioEmbed}
-          style={{ gridArea: 'audio' }}
-        >
-          <label>
-            audio
-            <input
-              disabled={!this.props.authUser}
-              placeholder="enter entire embed code"
-              name="newAudio"
-              onChange={this.onChange}
-              value={this.state.newAudio}
-              className={styles.inputLG}
-            />
-          </label>
-        </form>
-      );
-    } else {return}
-  }
+  isUnmounting,
+  exit
+}) => {
+  // local song attributes:
+  const [status, changeStatus] = useState('');
+  const [name, changeName] = useState(detailedSong.name);
+  const [isCover, toggleCover] = useState(detailedSong.isCover);
 
-  onChange = e => {
-    this.setState({
-      [e.target.name]: e.target.value,
-      hasChanged: true,
-      error: '',
-    });
-  }
-  onEdit = () => {
-    const { audio, dob, name, status, vox, isCover, lyrics, reqSharks } = this.state;
-    const songs = Object.entries(this.props.songs);
-    let validation = true;
-    // see if any songs share the same name as edited song
-    // (excluding the song iteslf i.e. the name was not edited)
-    songs.forEach(song => {
-      if (song[1].name === name && song[0] !== this.state.songId) {
-        this.setState({ error: 'song names must be unique' });
-        validation = false;
-      }
-    });
-    if (validation) {
-      const time = new Date().getTime();
-      this.props.firebase.db.ref().update({ songsLastUpdate: time });
-      this.props.firebase.db.ref(`songs/${this.state.songId}`).update({
-        audio,
-        dob,
-        name,
-        status,
-        vox,
-        isCover,
-        lyrics,
-        reqSharks,
-      });
-      this.setState({ hasChanged: false });
-    }
-  }
-  onCreate = () => {
-    this.setState({ hasChanged: false })
-    const newSong = {
-      audio: this.state.audio || '',
-      vox: this.state.vox,
-      dob: this.state.dob,
-      status: this.state.status,
-      name: this.state.name,
-      isCover: this.state.isCover,
-      lyrics: this.state.lyrics,
-      reqSharks: this.state.reqSharks,
+  // is edit or create?
+  const [isEdit, setIsEdit] = useState(!!detailedSong.id)
+
+  // confirm here is for deleting
+  const [isConfirm, toggleConfirm] = useState(false);
+
+  const onChangeName = e => changeName(e.target.value);
+
+  const onEdit = () => {
+    const { audio, dob, id, lyrics, reqSharks, vox } = detailedSong;
+    const song = {
+      audio,
+      dob,
+      id,
+      isCover,
+      lyrics,
+      name: name || detailedSong.name,
+      reqSharks,
+      status: status || detailedSong.status,
+      vox,
     };
-
-    const titles = Object.values(this.props.songs).map(song => song.name);
-    if (titles.filter(title => title === newSong.name)[0] === undefined) {
-      const key = this.props.firebase.doCreateSong(newSong);
-      this.setState({ isEdit: true, songId: key });
-    } else {
-      this.setState({ error: 'song names must be unique' });
-    }
+    songUpdate(songs, song);
   }
+  const onCreate = () => {
+    const { dob, lyrics, vox, reqSharks, audio, id } = detailedSong;
+    const song = { audio, dob, id, name, vox, status, isCover, lyrics, reqSharks };
 
-  processDate = date => {
-    if (date === '') {
-      return ''
-    }
-    else if (typeof date === 'string') {
-      return new Date(date).getTime()
-    } else if (typeof date === 'number') {
-      const dateObj = new Date(date);
-      let month = dateObj.getMonth() + 1;
-      month = (month.toString().length === 1) ? '0' + month : month;
-      const year = dateObj.getFullYear();
-      let day = dateObj.getDate();
-      day = (day.toString().length === 1) ? '0' + day : day;
-      return `${month}/${day}/${year}`
-    }
-  }
-  onDateChange = e => {
-    const re = /^[0-1][0-9]\/[0-3][0-9]\/[1-2][0-9][0-9][0-9]$/;
-    if (re.test(e.target.value)) {
-      const newDate = this.processDate(e.target.value);
-      this.setState({
-        dob: newDate,
-        hasChanged: true
-      });
-    } else {
-      this.setState({
-        dob: '',
-        dobInput: e.target.value
-      })
-    }
+    setIsEdit(true);
+    songCreate(songs, song);
   }
 
-  onBoolChange = e => {
-    this.setState({
-      hasChanged: true,
-      isCover: !!e.target.checked
-    });
-  }
-
-  onDelete = e => {
-    const time = new Date().getTime();
-    this.props.firebase.db.ref().update({ songsLastUpdate: time });
-    this.setState({ isDisabled: true })
-    this.props.firebase.db.ref(`songs/${this.state.songId}`).remove()
-      .then(() => this.props.exit());
-  }
-
-  closeModal = e => {
-    if (e) {
-      if (e.target === document.querySelector('#modalBG') ||
-        e.target === document.querySelector('#cancelBtn')) {
-        this.setState({
-          isLyricDisplay: false,
-          isReqSharksEdit: false,
-          isVocalEdit: false,
-          isConfirm: false,
-        });
-      }
-    } else {
-      this.setState({
-        isLyricDisplay: false,
-        isReqSharksEdit: false,
-        isVocalEdit: false,
-        isConfirm: false,
-      });
-    }
-  }
-  findSongInSetLists = () => {
-    const gigs = Object.values(this.props.gigs);
-    const songId = this.props.songId || this.state.songId;
-    // if there isn't a songId no need to do the rest
-    if (!songId) return;
+  const findSongInSetLists = () => {
+    const gigsValues = Object.values(gigs);
+    const id = detailedSong.id;
+    // if there isn't a id no need to do the rest
+    if (!id) return false;
     let gigCount = 0;
-    gigs.forEach(gig => {
-      if (gig.setList.indexOf(songId) !== -1) gigCount++;
+    gigsValues.forEach(gig => {
+      if (gig.setList.indexOf(id) !== -1) gigCount++;
     })
-    const sharks = Object.values(this.props.sharks.active);
+
+    const sharksValues = Object.values(sharks.active);
     let sharkFavCount = 0;
-    sharks.forEach(shark => {
-      if (shark.favSongs && shark.favSongs.indexOf(songId) !== -1) sharkFavCount++;
+    sharksValues.forEach(shark => {
+      if (shark.favSongs && shark.favSongs.indexOf(id) !== -1) sharkFavCount++;
     })
-    this.setState({ gigCount, sharkFavCount })
+
+    return { gig: gigCount, sharkFav: sharkFavCount }
   }
-  handleDelete = () => {
-    if (!this.state.gigCount && !this.state.sharkFavCount) {
-      this.setState({ isConfirm: true })
+
+  const count = findSongInSetLists();
+
+  const dismiss = () => {
+    songMessageChanged('')
+  }
+
+  const handleDelete = () => {
+    if (count.gig || count.sharkFav) {
+      songMessageChanged('You can not delete a song that is included in a setlist or A Sharks’ Dozen list')
+    } else if (!detailedSong.id) {
+      songMessageChanged('You can’t delete a song that hasn’t been made')
     } else {
-      this.setState({ error: 'You can not delete a song that is included in a setlist or A Sharks’ Dozen list'})
+      toggleConfirm(true)
     }
   }
-  handleReqSharksChange = e => {
-    const value = e.target.value;
-    let reqSharks = this.state.reqSharks;
 
-    const re = new RegExp(value);
-    // if reqSharks has value
-    if (re.test(reqSharks)) {
-      // take out value
-      const re = new RegExp(',');
-      // if there is a comma, ie multiple values
-      if (re.test(reqSharks)) {
-        let reqSharksArray = reqSharks.split(', ');
-        reqSharksArray.splice(reqSharksArray.indexOf(value), 1);
-        reqSharks = reqSharksArray.join(', ');
-      } else {
-        reqSharks = '';
-      }
-      this.setState({ reqSharks, hasChanged: true });
-    } else {
-      // add value
-      this.setState({
-        reqSharks: reqSharks ? `${reqSharks}, ${value}` : value,
-        hasChanged: true
-      });
-    }
-
-  }
-  handleVoxChange = e => {
-    const value = e.target.value;
-    let vox = this.state.vox;
-
-    if (value === 'instrumental') {
-      if (vox === 'instrumental') {
-        this.setState({ vox: '', hasChanged: true })
-      } else {
-        this.setState({ vox: 'instrumental', hasChanged: true });
-      }
-    } else if (vox === 'instrumental') {
-      this.setState({ vox: value, hasChanged: true })
-    } else {
-      const re = new RegExp(value);
-      // if vox has value
-      if (re.test(vox)) {
-        // take out value
-        const re = new RegExp(',');
-        // if there is a comma, ie multiple values
-        if (re.test(vox)) {
-          let voxArray = vox.split(', ');
-          voxArray.splice(voxArray.indexOf(value), 1);
-          vox = voxArray.join(', ');
-        } else {
-          vox = '';
-        }
-        this.setState({ vox, hasChanged: true });
-      } else {
-        // add value
-        this.setState({
-          vox: vox ? `${vox}, ${value}` : value,
-          hasChanged: true
-        });
-      }
-    }
-
+  const onDelete = () => {
+    exit();
+    songDelete(detailedSong.id)
   }
 
-  processVox = () => {
-    if (this.state.vox === '') {
-      return ''
-    }
-    const inputArray = this.state.vox.split(', ');
-    let outputArray = [];
-    inputArray.forEach(vox => {
-      if (vox !== 'instrumental' && vox !== 'gang') {
-        const sharks = Object.entries(this.props.sharks.active);
-        const sharkObj = sharks.filter(shark => shark[0] === vox)[0];
-        const name = sharkObj[1].name;
-        outputArray.push(name);
-      } else {
-        outputArray.push(vox)
-      }
-    });
-    return outputArray.join(', ');
-  }
-
-  render() {
     return (
       <DetailWrapper
-        handleExit={this.props.exit}
+        handleExit={exit}
         classNames="songWrapper"
-        isUnmounting={this.props.isUnmounting}
+        isUnmounting={isUnmounting}
       >
-        {this.state.error && <p className="text-red-700 font-bold">{this.state.error}</p>}
+        {message &&
+          <Message
+            text={message.text}
+            type={message.type}
+            dismiss={dismiss}
+          />}
         <div className={styles.wrapper}>
           <label className={styles.label} style={{ gridArea: 'name' }}>
             name
             <input
-              disabled={!this.props.authUser}
-              name="name"
-              onChange={this.onChange}
-              value={this.state.name}
+              onChange={onChangeName}
+              value={name}
               className={styles.inputXL}
             />
           </label>
-          <p style={{ gridArea: 'stats' }}>This song is found in {this.state.gigCount} gigs</p>
-          <label className={styles.label} style={{ gridArea: 'date' }}>
-            date of birth
-            <input
-              disabled={!this.props.authUser}
-              name="dob"
-              onChange={this.onDateChange}
-              value={this.processDate(this.state.dob) || this.state.dobInput}
-              className={styles.inputLG}
-              placeholder="mm/dd/yyyy"
-            />
-          </label>
+          {detailedSong.id && <p style={{ gridArea: 'stats' }}>This song is found in {count.gig} gigs</p>}
+
+          <DateInput
+            labelText="Date of birth"
+            name="dob"
+            storeDate={songDateChanged}
+            date={detailedSong ? detailedSong.dob : ''}
+          />
+
           <label className={styles.label} style={{ gridArea: 'status' }}>
             status
             <select
-              disabled={!this.props.authUser}
               name="status"
-              onChange={this.onChange}
-              value={this.state.status}
+              onChange={e => changeStatus(e.target.value)}
+              value={status || detailedSong.status}
               className={styles.inputXL}
             >
               <option value="solid">solid</option>
@@ -421,195 +191,87 @@ class Song extends React.Component {
             </select>
           </label>
 
-          <button
-            className={styles.btnOuter}
-            style={{ gridArea: 'vocals' }}
-            disabled={!this.props.authUser}
-            onClick={() => this.setState({ isVocalEdit: true })}
-          >
-            <span className={styles.btnLabel}>vocalist</span>
-            <span className={styles.btnValue}>
-              {this.processVox()}
-            </span>
-          </button>
+          <VoxInput
+            vox={detailedSong.vox}
+            sharks={sharks}
+            storeVox={songVoxChanged}
+          />
 
-          {this.renderAudio()}
-          <button
-            style={{ gridArea: 'lyrics' }}
-            className={
-              this.state.lyrics ?
-              styles.btnOuter + " bg-pink" :
-              styles.btnOuter
-            }
-            onClick={() => this.setState({ isLyricDisplay: true })}
-          >
-            <span className={styles.btnText}>
-              Lyrics / <br/>Chords
-            </span>
-          </button>
+          <Audio
+            audioObj={detailedSong.audio}
+            name={name}
+            storeAudio={songAudioChanged}
+          />
 
-          <button
-            className={
-              this.state.reqSharks ?
-              styles.btnOuter + " bg-pink" :
-              styles.btnOuter
-            }
-            style={{ gridArea: 'required' }}
-            disabled={!this.props.authUser}
-            onClick={() => this.setState(prevState => ({ isReqSharksEdit: !prevState.isReqSharksEdit }))}
-          >
-            <span className={styles.btnText}>Required Sharks</span>
-          </button>
+          <LyricInput
+            lyrics={detailedSong.lyrics}
+            storeLyrics={songLyricsChanged}
+          />
 
-          {this.props.authUser && navigator.onLine &&
-            <>
-              <EditOrCreate
-                isEdit={this.state.isEdit}
-                className={styles.btnSubmit}
-                handleCreate={this.onCreate}
-                handleEdit={this.onEdit}
-                createValidation={this.state.name}
-                editValidation={this.state.hasChanged}
-              />
-              <button
-                style={{ gridArea: 'delete' }}
-                onClick={this.handleDelete}
-              >
-                Delete Song
-              </button>
-            </>
-          }
+          <ReqSharkInput
+            reqSharks={detailedSong.reqSharks}
+            sharks={sharks}
+            storeReqSharks={songReqSharksChanged}
+          />
+
+          <EditOrCreate
+            isEdit={isEdit}
+            className={styles.btnSubmit}
+            handleCreate={onCreate}
+            handleEdit={onEdit}
+            createValidation={name}
+            editValidation={true}
+          />
+          <button
+            style={{ gridArea: 'delete' }}
+            onClick={handleDelete}
+          >
+            Delete Song
+          </button>
 
           <label className={styles.cover}>
-            {this.state.isCover ? "cover" : "original"}
+            {isCover ? "cover" : "original"}
             <input
               type="checkbox"
-              disabled={!this.props.authUser}
-              name="isCover"
               className="invisible"
-              onChange={this.onBoolChange}
-              checked={this.state.isCover}
+              onChange={() => toggleCover(!isCover)}
+              checked={isCover} // to do: this is a problem
             />
           </label>
 
         </div>
 
-        {this.state.isLyricDisplay &&
-          <Modal>
-            <div
-              id="modalBG"
-              className={styles.modalBG}
-              onClick={this.closeModal}
-            >
-              <label className={styles.modalInner}>
-                lyrics / chords
-                <textarea
-                  disabled={!this.props.authUser}
-                  readOnly={!this.props.authUser}
-                  name="lyrics"
-                  className="border border-black block w-full font-monospace text-lg p-4 mt-2 h-11/12"
-                  onChange={this.handleVoxChange}
-                  value={this.state.lyrics}
-                >
-                </textarea>
-              </label>
-            </div>
-          </Modal>
-        }
-
-        {this.state.isReqSharksEdit &&
-          <Modal>
-            <div
-              id="modalBG"
-              className={styles.modalBG}
-              onClick={this.closeModal}
-            >
-              <div className={styles.modalInner}>
-                <h3 className="font-futura font-bold w-full text-2xl text-center">
-                  WHO IS REQUIRED?
-                </h3>
-                <SharkSelect
-                  checkedCondition={this.state.reqSharks}
-                  handleChange={this.handleReqSharksChange}
-                  sharks={this.props.sharks}
-                />
-              </div>
-            </div>
-          </Modal>
-        }
-
-        {this.state.isVocalEdit &&
-          <Modal>
-            <div
-              id="modalBG"
-              className={styles.modalBG}
-              onClick={this.closeModal}
-            >
-              <div className={styles.modalInner}>
-                <SharkSelect
-                  checkedCondition={this.state.vox}
-                  handleChange={this.handleVoxChange}
-                  sharks={this.props.sharks}
-                >
-                  <>
-                    <button
-                      type="button"
-                      onClick={this.handleVoxChange}
-                      className={
-                        /gang/.test(this.state.vox) ?
-                        styles.btnToggle + " bg-deeppink text-white shadow-sm" :
-                        styles.btnToggle
-                      }
-                      value="gang"
-                      key="gang"
-                    >
-                      Gang
-                    </button>
-                    <button
-                      type="button"
-                      onClick={this.handleVoxChange}
-                      className={
-                        /instrumental/.test(this.state.vox) ?
-                        styles.btnToggle + " bg-deeppink text-white shadow-sm" :
-                        styles.btnToggle
-                      }
-                      value="instrumental"
-                      key="instrumental"
-                    >
-                      Instrumental
-                    </button>
-                  </>
-                </SharkSelect>
-              </div>
-            </div>
-          </Modal>
-        }
-        {this.state.isConfirm &&
-          <Modal>
-            <div
-              id="modalBG"
-              className={styles.modalBG}
-              onClick={this.closeModal}
-            >
-              <div className={styles.modalInner}>
-                <Confirm
-                  onYes={this.onDelete}
-                  onNo={this.closeModal}
-                  message="Are you sure you want to delete this song?"
-                  disabled={this.state.isDisabled}
-                />
-              </div>
-            </div>
-          </Modal>
-        }
-
-        <button id="detailExit" onClick={this.props.exit} className={styles.btnClose}>
+        {isConfirm &&
+          <Modal
+            innerStyles={styles.modalInner}
+            exit={toggleConfirm}
           >
-        </button>
+            <Confirm
+              onYes={onDelete}
+              onNo={() => toggleConfirm()}
+              message="Are you sure you want to delete this song?"
+            />
+          </Modal>
+        }
        </DetailWrapper>
     );
   }
 
+const mapStateToProps = state => {
+  const { songs, message, detailedSong } = state.songs;
+  const { gigs } = state.gigs;
+  const { sharks } = state.sharks;
+  return { songs, message, detailedSong, gigs, sharks };
 }
 
-export default Song;
+export default connect(mapStateToProps, {
+  songAudioChanged,
+  songCreate,
+  songDateChanged,
+  songDelete,
+  songLyricsChanged,
+  songMessageChanged,
+  songReqSharksChanged,
+  songUpdate,
+  songVoxChanged,
+})(Song);

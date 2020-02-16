@@ -1,12 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+const styles = {
+  modalInner: `
+    w-10/12 h-10/12
+    bg-white shadow-inset
+    p-4 text-lg
+    flex flex-col
+  `,
+  modalBG: `
+    fixed top-0 left-0
+    w-full h-screen z-100
+    bg-black-opaque
+    flex items-center justify-center
+  `,
+}
+
 const modalRoot = document.getElementById('modal');
 
 class Modal extends React.Component {
   constructor(props) {
     super(props);
     this.el = document.createElement('div');
+    this.el.classList = props.innerStyles || styles.modalInner
   }
 
   componentDidMount() {
@@ -19,10 +35,19 @@ class Modal extends React.Component {
     // state to Modal and only render the children when Modal
     // is inserted in the DOM tree.
     modalRoot.appendChild(this.el);
+
+    modalRoot.addEventListener('click', this.handleExit);
+    modalRoot.classList = styles.modalBG;
   }
 
   componentWillUnmount() {
     modalRoot.removeChild(this.el);
+    modalRoot.removeEventListener('click', this.handleExit);
+    modalRoot.classList = '';
+  }
+
+  handleExit = e => {
+    if (e.target.id === 'modal') this.props.exit();
   }
 
   render() {
