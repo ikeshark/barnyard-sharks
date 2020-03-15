@@ -12,23 +12,23 @@ self.__precacheManifest = [
     "url": "/barnyard-sharks/static/js/runtime~main.ad91d716.js"
   },
   {
-    "revision": "e8c56b7fe0ccabeee1a6",
-    "url": "/barnyard-sharks/static/js/main.828709d5.chunk.js"
+    "revision": "ac412eef40d20fa5aac2",
+    "url": "/barnyard-sharks/static/js/main.6a16e5ad.chunk.js"
   },
   {
-    "revision": "f912f8b8a333e4a8578a",
+    "revision": "cf466119bb9d1076e10e",
     "url": "/barnyard-sharks/static/js/2.25ce7b99.chunk.js"
   },
   {
-    "revision": "e8c56b7fe0ccabeee1a6",
-    "url": "/barnyard-sharks/static/css/main.46706e30.chunk.css"
+    "revision": "ac412eef40d20fa5aac2",
+    "url": "/barnyard-sharks/static/css/main.f7fe0549.chunk.css"
   },
   {
-    "revision": "f912f8b8a333e4a8578a",
-    "url": "/barnyard-sharks/static/css/2.9503d39a.chunk.css"
+    "revision": "cf466119bb9d1076e10e",
+    "url": "/barnyard-sharks/static/css/2.623b2835.chunk.css"
   },
   {
-    "revision": "620e21ad795252ea3b4afac6fc2217a7",
+    "revision": "4ce8219bc97f3ecdf197a881899ec561",
     "url": "/barnyard-sharks/index.html"
   }
 ];
