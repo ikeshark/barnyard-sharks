@@ -8,11 +8,11 @@ import {
 } from '../../../classLists';
 
 const styles = {
-  audio: input.label,
+  audio: input.label + ' block mb-4',
   inputLG: input.input,
   iframe: input.label + ' relative w-full h-80px',
   modalInner,
-  submitBtn,
+  submitBtn: submitBtn + ' mb-4 mx-auto',
   embedBtn: `
     absolute top-0 right-0 mt-2 mr-2 h-10/12
     rounded-10 px-2 btn-toggle border border-currentColor

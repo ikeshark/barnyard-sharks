@@ -79,25 +79,24 @@ class SignInForm extends React.Component {
             <label className={styles.label}>
               email
               <input
-                name="email"
-                value={email}
-                disabled={isWaiting}
                 className={styles.input}
+                disabled={isWaiting}
+                inputmode="email"
                 onChange={this.handleChange}
+                name="email"
                 type="text"
-                placeholder="Email Address"
+                value={email}
               />
             </label>
             <label className={styles.label}>
               password
               <input
+                className={styles.input}
                 disabled={isWaiting}
                 name="password"
-                className={styles.input}
-                value={password}
                 onChange={this.handleChange}
                 type="password"
-                placeholder="Password"
+                value={password}
               />
             </label>
             <button

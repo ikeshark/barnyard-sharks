@@ -106,6 +106,8 @@ button, input, select {
   line-height: inherit;
   color: inherit
 }
+button:focus:not(:focus-visible) {outline: none;}
+
 
 
 .bg-white {
